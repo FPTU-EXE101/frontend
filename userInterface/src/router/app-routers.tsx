@@ -1,6 +1,5 @@
 import Mainlayout from '@/layout'
 import Home from '@/pages/home';
-import React from 'react'
 import { Route, Routes } from 'react-router-dom'
 
 const AppRoutes = () => {
