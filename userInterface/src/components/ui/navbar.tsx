@@ -105,7 +105,7 @@ const Navbar = () => {
     <div className="w-full border-b">
       <div className="flex items-center justify-between px-4 py-3">
         <div>
-          <h2 className="text-xl font-bold">Title Project</h2>
+          <h2 className="text-xl font-bold">EXE101 Project</h2>
         </div>
         <NavigationMenu>
           <NavigationMenuList>
