@@ -7,7 +7,7 @@ const features = [
     icon: Users,
     title: "Dễ dàng sử dụng",
     description:
-      "Giao diện thân thiện, dễ sử dụng cho mọi đối tượng người dùng.",
+      "Giao diện thân thiện, dễ sử dụng cho mọi đối tượng người dùng..",
   },
   {
     icon: Shield,
