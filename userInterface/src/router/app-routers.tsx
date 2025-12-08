@@ -1,9 +1,20 @@
-import React from 'react'
+import Mainlayout from '@/layout'
+import Home from '@/pages/home';
+import { Route, Routes } from 'react-router-dom'
 
 const AppRoutes = () => {
   return (
-    <div>AppRouters</div>
-  )
+    <Routes>
+      {/* <Route path="auth">
+        <Route path="login" element={<LoginPage />} />
+        <Route path="register" element={<RegisterPage />} />
+        <Route path="forgot-password" element={<ForgetPassword />} />
+      </Route> */}
+      <Route  element={<Mainlayout />}>
+        <Route index element={<Home/>}/>
+      </Route>
+    </Routes>
+  );
 }
 
 export default AppRoutes
