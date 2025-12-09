@@ -106,7 +106,7 @@ const Navbar = () => {
   // Simulate authentication state - replace with actual auth logic
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [userName] = useState("huy");
-
+  console.log(setIsAuthenticated)
   return (
     <div className="w-full border-b bg-white">
       <div className="flex items-center justify-between px-4 py-3">
