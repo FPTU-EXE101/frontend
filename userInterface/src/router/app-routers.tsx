@@ -8,6 +8,7 @@ import NotFound from "@/pages/NotFound";
 import { Route, Routes } from "react-router-dom";
 import LoginPage from "@/pages/Auth/loginPage";
 import SignupPage from "@/pages/Auth/signUpPage";
+import ForgotPasswordPage from "@/pages/Auth/forgotPasswordPage";
 
 const AppRoutes = () => {
   return (
@@ -16,15 +17,15 @@ const AppRoutes = () => {
       <Route path="auth">
         <Route path="login" element={<LoginPage />} />
         <Route path="signup" element={<SignupPage />} />
-        {/* <Route path="forgot-password" element={<ForgetPassword />} /> */}
+        <Route path="forgot-password" element={<ForgotPasswordPage />} />
       </Route>
       <Route element={<Mainlayout />}>
         <Route index element={<Home />} />
         {/* <Route path="/user" element={<UserInfoLayout />}></Route> */}
       </Route>
-      <Route path="/admin" element={<AdminLayout />}></Route>
-      <Route path="/staff" element={<StaffLayout />}></Route>
-      <Route path="/manager" element={<ManagerLayout />}></Route>
+      <Route path="admin" element={<AdminLayout />}></Route>
+      <Route path="staff" element={<StaffLayout />}></Route>
+      <Route path="manager" element={<ManagerLayout />}></Route>
       {/* 404 Page - must be last */}
       <Route path="*" element={<NotFound />} />
     </Routes>
