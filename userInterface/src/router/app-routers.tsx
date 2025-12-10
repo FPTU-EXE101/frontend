@@ -11,6 +11,7 @@ import SignupPage from "@/pages/Auth/signUpPage";
 
 const AppRoutes = () => {
   return (
+    // asdfasdf
     <Routes>
       <Route path="auth">
         <Route path="login" element={<LoginPage />} />
