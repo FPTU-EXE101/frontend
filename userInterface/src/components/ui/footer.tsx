@@ -1,78 +1,114 @@
-import { Phone, Mail, MapPin } from "lucide-react";
+import {
+  BookOpen,
+  HelpCircle,
+  Info,
+  Mail,
+  MapPin,
+  Phone,
+  Shield,
+} from "lucide-react";
 import { Link } from "react-router-dom";
-import Logo from "./logo";
 
-const footerSections = [
-  {
-    title: "SubTitle 1",
-    links: [
-      { name: "SubChoice 1", href: "/" },
-      { name: "SubChoice 2", href: "/a" },
-      { name: "SubChoice 3", href: "/b" },
-      { name: "SubChoice 4", href: "/c" },
-    ],
-  },
-  {
-    title: "SubTitle 2",
-    links: [
-      { name: "SubChoice 5", href: "/d" },
-      { name: "SubChoice 6", href: "/e" },
-      { name: "SubChoice 7", href: "/f" },
-      { name: "Trợ giúp", href: "/" },
-    ],
-  },
+const companyLinks = [
+  { name: "Về chúng tôi", href: "/about", icon: Info },
+  { name: "Blog", href: "/blog", icon: BookOpen },
+  { name: "Liên hệ", href: "/contact", icon: Phone },
 ];
 
-const contactInfo = [
-  { icon: Phone, text: "(84) 123-456-789" },
-  { icon: Mail, text: "exampleEmail@gmail.com" },
-  { icon: MapPin, text: "Thành phố Hồ Chí Minh, Việt Nam" },
+const supportLinks = [
+  { name: "Trung tâm trợ giúp", href: "/help", icon: HelpCircle },
+  { name: "Điều khoản", href: "/terms", icon: Info },
+  { name: "Bảo mật", href: "/privacy", icon: Shield },
+];
+
+const connectInfo = [
+  { icon: Phone, label: "Hotline:", value: "1900-PETHUB" },
+  { icon: Mail, label: "Email:", value: "support@pethub.vn" },
+  { icon: MapPin, label: "Địa chỉ:", value: "TP. Hồ Chí Minh, Việt Nam" },
 ];
 
 function Footer() {
   return (
-    <footer className="bg-black text-white py-8 mt-auto border-t">
-      <div className="container mx-auto px-4">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-          <div className="col-span-1 md:col-span-1">
-            <div className="flex items-center gap-2 mb-4">
-              <Logo />
+    <footer className="bg-[#7c2419] text-white">
+      <div className="container mx-auto max-w-6xl px-4 py-16">
+        <div className="grid gap-10 xl:grid-cols-[1.5fr_1fr_1fr_1.1fr]">
+          <div className="space-y-6">
+            <div className="flex items-center gap-3">
+              <div className="inline-flex items-center">
+                <img
+                  src="/public/logoPethub.png"
+                  alt="PetHub"
+                  className="w-auto max-w-none object-contain h-9 md:h-10 brightness-0 invert"
+                  decoding="async"
+                />
+              </div>
             </div>
-            <p className="text-muted-foreground mb-4">
-              Lorem Ipsum is simply dummy text of the printing and typesetting
-              industry. Lorem Ipsum has been the industry's standard dummy text
-              ever since the 1500s, when an unknown printer took a galley of
-              type and scrambled it to make a type specimen book.
+            <p className="max-w-sm text-sm leading-7 text-white/75">
+              Giải pháp quản lý Pet Shop & phòng khám thú y toàn diện, hiện đại
+              và nhân văn.
             </p>
           </div>
 
-          {footerSections.map((section, index) => (
-            <div key={index}>
-              <h4 className="text-lg font-semibold mb-4">{section.title}</h4>
-              <ul className="space-y-2">
-                {section.links.map((link, linkIndex) => (
-                  <li key={linkIndex}>
+          <div>
+            <h4 className="mb-6 text-lg font-semibold">Công ty</h4>
+            <ul className="space-y-4 text-sm text-white/80">
+              {companyLinks.map((item) => {
+                const Icon = item.icon;
+                return (
+                  <li key={item.name} className="flex items-center gap-3">
+                    <span className="inline-flex h-9 w-9 items-center justify-center rounded-2xl bg-white/10 text-white">
+                      <Icon className="h-4 w-4" />
+                    </span>
                     <Link
-                      to={link.href}
-                      className="text-muted-foreground hover:text-white transition-colors"
+                      to={item.href}
+                      className="transition hover:text-white"
                     >
-                      {link.name}
+                      {item.name}
                     </Link>
                   </li>
-                ))}
-              </ul>
-            </div>
-          ))}
+                );
+              })}
+            </ul>
+          </div>
 
           <div>
-            <h4 className="text-lg font-semibold mb-4">Thông tin liên hệ</h4>
-            <div className="space-y-2 text-muted-foreground">
-              {contactInfo.map((contact, index) => {
-                const Icon = contact.icon;
+            <h4 className="mb-6 text-lg font-semibold">Hỗ trợ</h4>
+            <ul className="space-y-4 text-sm text-white/80">
+              {supportLinks.map((item) => {
+                const Icon = item.icon;
                 return (
-                  <div key={index} className="flex items-center gap-2">
-                    <Icon className="h-4 w-4" />
-                    <p>{contact.text}</p>
+                  <li key={item.name} className="flex items-center gap-3">
+                    <span className="inline-flex h-9 w-9 items-center justify-center rounded-2xl bg-white/10 text-white">
+                      <Icon className="h-4 w-4" />
+                    </span>
+                    <Link
+                      to={item.href}
+                      className="transition hover:text-white"
+                    >
+                      {item.name}
+                    </Link>
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+
+          <div>
+            <h4 className="mb-6 text-lg font-semibold">Kết nối</h4>
+            <div className="space-y-4 text-sm text-white/80">
+              {connectInfo.map((item) => {
+                const Icon = item.icon;
+                return (
+                  <div key={item.label} className="flex items-start gap-3">
+                    <span className="inline-flex h-9 w-9 items-center justify-center rounded-2xl bg-white/10 text-white">
+                      <Icon className="h-4 w-4" />
+                    </span>
+                    <div>
+                      <p className="text-sm font-semibold text-white">
+                        {item.label}
+                      </p>
+                      <p className="text-sm text-white/80">{item.value}</p>
+                    </div>
                   </div>
                 );
               })}
@@ -80,8 +116,8 @@ function Footer() {
           </div>
         </div>
 
-        <div className="border-t border-border mt-8 pt-4 text-center text-muted-foreground">
-          <p>&copy; 2026 Lorem Ipsum. Tất cả các quyền được bảo lưu.</p>
+        <div className="mt-12 border-t border-white/10 pt-6 text-center text-sm text-white/70">
+          © 2026 PetHub. Thiết kế với tình yêu dành cho thú cưng.
         </div>
       </div>
     </footer>

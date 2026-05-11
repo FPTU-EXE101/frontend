@@ -13,12 +13,12 @@ const AppRoutes = () => {
   return (
     // asdfasdf
     <Routes>
-      <Route path="auth">
-        <Route path="login" element={<LoginPage />} />
-        <Route path="signup" element={<SignupPage />} />
-        {/* <Route path="forgot-password" element={<ForgetPassword />} /> */}
-      </Route>
       <Route element={<Mainlayout />}>
+        <Route path="auth">
+          <Route path="login" element={<LoginPage />} />
+          <Route path="signup" element={<SignupPage />} />
+          {/* <Route path="forgot-password" element={<ForgetPassword />} /> */}
+        </Route>
         <Route index element={<Home />} />
         {/* <Route path="/user" element={<UserInfoLayout />}></Route> */}
       </Route>
