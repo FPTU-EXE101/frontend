@@ -36,7 +36,7 @@ function Footer() {
             <div className="flex items-center gap-3">
               <div className="inline-flex items-center">
                 <img
-                  src="/public/logoPethub.png"
+                  src="/logoPethub.png"
                   alt="PetHub"
                   className="w-auto max-w-none object-contain h-9 md:h-10 brightness-0 invert"
                   decoding="async"

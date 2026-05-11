@@ -7,7 +7,7 @@ const Navbar = () => {
       <div className="mx-auto flex max-w-[1200px] items-center justify-between px-4 py-4">
         <Link to="/" className="flex items-center gap-3">
           <img
-            src="/public/logoPethub.png"
+            src="/logoPethub.png"
             alt="PetHub"
             className="w-auto max-w-none object-contain h-12 sm:h-12"
             decoding="async"

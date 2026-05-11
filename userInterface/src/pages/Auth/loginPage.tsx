@@ -39,7 +39,7 @@ export default function LoginPage() {
           <div className="w-full max-w-md">
             <div className="mb-10 text-center lg:text-left">
                <img
-                  src="/public/logoPethub.png"
+                  src="/logoPethub.png"
                   alt="PetHub"
                   className="w-auto max-w-none object-contain h-12 sm:h-14"
                   decoding="async"

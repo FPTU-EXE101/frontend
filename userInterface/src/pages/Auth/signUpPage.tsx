@@ -51,7 +51,7 @@ export default function SignupPage() {
             <div className="mb-5">
               <div className="inline-flex items-center">
                 <img
-                  src="/public/logoPethub.png"
+                  src="/logoPethub.png"
                   alt="PetHub"
                   className="w-auto max-w-none object-contain h-12 sm:h-14"
                   decoding="async"
