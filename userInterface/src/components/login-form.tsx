@@ -38,8 +38,13 @@ export function LoginForm({ className, ...props }: ComponentProps<"form">) {
       setSubmitError(null);
       try {
         setLoading(true);
-        await authApi.loginUser(values);
-        // Assuming login success, navigate to home
+        const response = await authApi.loginUser(values);
+        // Save token and isloggedin to localStorage
+        if (response?.data?.token) {
+          localStorage.setItem("token", response.data.token);
+          localStorage.setItem("isLoggedIn", "true");
+        }
+        // Navigate to home
         navigate("/");
       } catch (err) {
         console.error(err);
