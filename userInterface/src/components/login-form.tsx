@@ -1,5 +1,5 @@
 import { useState, type ComponentProps } from "react";
-import { cn } from "@/lib/utils";
+import { cn, parseJwt } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import {
   Field,
@@ -39,12 +39,54 @@ export function LoginForm({ className, ...props }: ComponentProps<"form">) {
       try {
         setLoading(true);
         const response = await authApi.loginUser(values);
-        // Save token and isloggedin to localStorage
         if (response?.data?.token) {
-          localStorage.setItem("token", response.data.token);
+          const token = response.data.token;
+          localStorage.setItem("token", token);
           localStorage.setItem("isLoggedIn", "true");
+
+          const payload = parseJwt(token);
+          const role =
+            (payload?.[
+              "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"
+            ] as string) ||
+            (payload?.role as string) ||
+            "";
+          const email =
+            (payload?.[
+              "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress"
+            ] as string) ||
+            (payload?.email as string) ||
+            "";
+          const name =
+            (payload?.[
+              "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name"
+            ] as string) ||
+            (payload?.name as string) ||
+            "";
+          const userId =
+            (payload?.[
+              "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"
+            ] as string) ||
+            (payload?.sub as string) ||
+            "";
+
+          localStorage.setItem("role", role);
+          localStorage.setItem("email", email);
+          localStorage.setItem("name", name);
+          localStorage.setItem("userId", userId);
+
+          window.dispatchEvent(new Event("authChanged"));
+
+          if (role?.toLowerCase() === "admin") {
+            navigate("/admin");
+            return;
+          }
+
+          if (role?.toLowerCase() === "manager") {
+            navigate("/manager");
+            return;
+          }
         }
-        // Navigate to home
         navigate("/");
       } catch (err) {
         console.error(err);
