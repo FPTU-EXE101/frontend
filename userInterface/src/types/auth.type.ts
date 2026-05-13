@@ -1,7 +1,8 @@
 export interface Register {
-  username: string;
+  userName: string;
+  firstName: string;
+  lastName: string;
   password: string;
-  phoneNumber: number;
   email: string;
 }
 export interface Login {

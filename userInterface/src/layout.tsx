@@ -10,7 +10,8 @@ const Mainlayout = () => {
         <Outlet />
       </div>
 
-      <div className="mt-8">
+      <div>
+      
         <Footer />
       </div>
     </div>

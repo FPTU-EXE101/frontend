@@ -30,6 +30,7 @@ const connectInfo = [
 function Footer() {
   return (
     <footer className="bg-[#7c2419] text-white">
+     
       <div className="container mx-auto max-w-6xl px-4 py-16">
         <div className="grid gap-10 xl:grid-cols-[1.5fr_1fr_1fr_1.1fr]">
           <div className="space-y-6">

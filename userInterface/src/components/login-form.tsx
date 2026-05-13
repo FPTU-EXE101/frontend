@@ -1,29 +1,82 @@
+import { useState, type ComponentProps } from "react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import {
   Field,
   FieldDescription,
+  FieldError,
   FieldGroup,
   FieldLabel,
   FieldSeparator,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import authApi from "@/apis/authAPI";
+import { useFormik } from "formik";
+import * as Yup from "yup";
 
-export function LoginForm({
-  className,
-  ...props
-}: React.ComponentProps<"form">) {
+const validationSchema = Yup.object({
+  email: Yup.string()
+    .trim()
+    .email("Email không hợp lệ.")
+    .required("Vui lòng nhập email."),
+  password: Yup.string().required("Vui lòng nhập mật khẩu."),
+});
+
+export function LoginForm({ className, ...props }: ComponentProps<"form">) {
+  const [loading, setLoading] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
+  const navigate = useNavigate();
+
+  const formik = useFormik({
+    initialValues: {
+      email: "",
+      password: "",
+    },
+    validationSchema,
+    onSubmit: async (values) => {
+      setSubmitError(null);
+      try {
+        setLoading(true);
+        await authApi.loginUser(values);
+        // Assuming login success, navigate to home
+        navigate("/");
+      } catch (err) {
+        console.error(err);
+        setSubmitError(
+          "Đăng nhập thất bại. Vui lòng kiểm tra email và mật khẩu.",
+        );
+      } finally {
+        setLoading(false);
+      }
+    },
+  });
+
   return (
-    <form className={cn("flex flex-col gap-6", className)} {...props}>
+    <form
+      className={cn("flex flex-col gap-6", className)}
+      onSubmit={formik.handleSubmit}
+      {...props}
+    >
       <FieldGroup>
         <Field>
           <FieldLabel htmlFor="email">Email</FieldLabel>
           <Input
             id="email"
+            name="email"
             type="email"
             placeholder="your@email.com"
+            value={formik.values.email}
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
             required
+          />
+          <FieldError
+            errors={
+              formik.touched.email && formik.errors.email
+                ? [{ message: formik.errors.email }]
+                : undefined
+            }
           />
         </Field>
         <Field>
@@ -36,14 +89,35 @@ export function LoginForm({
               Quên mật khẩu?
             </Link>
           </div>
-          <Input id="password" type="password" required />
+          <Input
+            id="password"
+            name="password"
+            type="password"
+            value={formik.values.password}
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
+            required
+          />
+          <FieldError
+            errors={
+              formik.touched.password && formik.errors.password
+                ? [{ message: formik.errors.password }]
+                : undefined
+            }
+          />
         </Field>
+        {submitError ? (
+          <FieldDescription className="text-center text-sm text-red-600">
+            {submitError}
+          </FieldDescription>
+        ) : null}
         <Field>
           <Button
             type="submit"
-            className="w-full rounded-full bg-[#D56756] px-5 py-3 text-base font-semibold text-white hover:bg-[#b34c47]"
+            disabled={loading}
+            className="w-full rounded-full bg-[#D56756] px-5 py-3 text-base font-semibold text-white hover:bg-[#b34c47] disabled:cursor-not-allowed disabled:bg-[#d89992]"
           >
-            Đăng nhập
+            {loading ? "Đang đăng nhập..." : "Đăng nhập"}
           </Button>
         </Field>
         <FieldSeparator>HOẶC</FieldSeparator>

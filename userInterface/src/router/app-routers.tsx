@@ -8,6 +8,13 @@ import NotFound from "@/pages/NotFound";
 import { Route, Routes } from "react-router-dom";
 import LoginPage from "@/pages/Auth/loginPage";
 import SignupPage from "@/pages/Auth/signUpPage";
+import ConfirmEmailPage from "@/pages/Auth/confirmEmailPage";
+import PricingPage from "@/pages/pricing";
+import UserInfoLayout from "@/pages/User/userInfoLayout";
+import UserHomePage from "@/pages/User/userHomePage";
+import UserServicePage from "@/pages/User/userServicePage";
+import UserBookingPage from "@/pages/User/userBookingPage";
+import UserPetPage from "@/pages/User/userPetPage";
 
 const AppRoutes = () => {
   return (
@@ -17,10 +24,17 @@ const AppRoutes = () => {
         <Route path="auth">
           <Route path="login" element={<LoginPage />} />
           <Route path="signup" element={<SignupPage />} />
+          <Route path="confirm-email" element={<ConfirmEmailPage />} />
           {/* <Route path="forgot-password" element={<ForgetPassword />} /> */}
         </Route>
         <Route index element={<Home />} />
-        {/* <Route path="/user" element={<UserInfoLayout />}></Route> */}
+        <Route path="pricing" element={<PricingPage />} />
+        <Route path="user" element={<UserInfoLayout />}>
+          <Route path="home" element={<UserHomePage />} />
+          <Route path="service" element={<UserServicePage />} />
+          <Route path="booking" element={<UserBookingPage />} />
+          <Route path="pet" element={<UserPetPage />} />
+        </Route>
       </Route>
       <Route path="/admin" element={<AdminLayout />}></Route>
       <Route path="/staff" element={<StaffLayout />}></Route>
