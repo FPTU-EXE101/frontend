@@ -15,10 +15,24 @@ import UserHomePage from "@/pages/User/userHomePage";
 import UserServicePage from "@/pages/User/userServicePage";
 import UserBookingPage from "@/pages/User/userBookingPage";
 import UserPetPage from "@/pages/User/userPetPage";
+import ManagerPetsManage from "@/pages/Manager/managerPetsManage";
+import ManagerDashboard from "@/pages/Manager/managerDashboard";
+import ManagerCustomersManage from "@/pages/Manager/managerCustomersManage";
+import ManagerAppointmentsManage from "@/pages/Manager/managerAppointmentsManage";
+import ManagerServicesManage from "@/pages/Manager/managerServicesManage";
+import ManagerCategoriesManage from "@/pages/Manager/managerCategoriesManage";
+import ManagerProductsMange from "@/pages/Manager/managerProductsMange";
+import {
+  ManagerProductCreate,
+  ManagerServiceCreate,
+} from "@/pages/Manager/managerItemCreate";
+import ManagerCRMManage from "@/pages/Manager/managerCRMManage";
+import ManagerPaymentManage from "@/pages/Manager/managerPaymentManage";
+import ManagerAutomationManage from "@/pages/Manager/managerAutomationManage";
+import ManagerSettingManage from "@/pages/Manager/managerSettingManage";
 
 const AppRoutes = () => {
   return (
-    // asdfasdf
     <Routes>
       <Route element={<Mainlayout />}>
         <Route path="auth">
@@ -38,7 +52,21 @@ const AppRoutes = () => {
       </Route>
       <Route path="/admin" element={<AdminLayout />}></Route>
       <Route path="/staff" element={<StaffLayout />}></Route>
-      <Route path="/manager" element={<ManagerLayout />}></Route>
+      <Route path="/manager" element={<ManagerLayout />}>
+        <Route index path="dashboard" element={<ManagerDashboard />} />
+        <Route path="customers" element={<ManagerCustomersManage />} />
+        <Route path="pets" element={<ManagerPetsManage />} />
+        <Route path="appointments" element={<ManagerAppointmentsManage />} />
+        <Route path="services" element={<ManagerServicesManage />} />
+        <Route path="services/new" element={<ManagerServiceCreate />} />
+        <Route path="categories" element={<ManagerCategoriesManage />} />
+        <Route path="products" element={<ManagerProductsMange />} />
+        <Route path="products/new" element={<ManagerProductCreate />} />
+        <Route path="crm" element={<ManagerCRMManage />} />
+        <Route path="payment" element={<ManagerPaymentManage />} />
+        <Route path="automation" element={<ManagerAutomationManage />} />
+        <Route path="settings" element={<ManagerSettingManage />} />
+      </Route>
       {/* 404 Page - must be last */}
       <Route path="*" element={<NotFound />} />
     </Routes>

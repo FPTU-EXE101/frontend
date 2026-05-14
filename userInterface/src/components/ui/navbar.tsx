@@ -12,6 +12,7 @@ const Navbar = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [userName, setUserName] = useState("");
   const [userEmail, setUserEmail] = useState("");
+  const [userRole, setUserRole] = useState("");
   const [menuOpen, setMenuOpen] = useState(false);
   const navigate = useNavigate();
 
@@ -21,6 +22,7 @@ const Navbar = () => {
       setIsAuthenticated(false);
       setUserName("");
       setUserEmail("");
+      setUserRole("");
       return;
     }
 
@@ -36,10 +38,12 @@ const Navbar = () => {
       setIsAuthenticated(false);
       setUserName("");
       setUserEmail("");
+      setUserRole("");
       return;
     }
 
     setIsAuthenticated(true);
+    setUserRole(role);
     setUserName(
       (payload?.[
         "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name"
@@ -69,6 +73,7 @@ const Navbar = () => {
     setIsAuthenticated(false);
     setUserName("");
     setUserEmail("");
+    setUserRole("");
     setMenuOpen(false);
     navigate("/auth/login");
   };
@@ -143,6 +148,21 @@ const Navbar = () => {
                     align="end"
                     className="min-w-[12rem]"
                   >
+                    {(userRole?.toLowerCase() === "admin" ||
+                      userRole?.toLowerCase() === "manager") && (
+                      <DropdownMenuItem asChild>
+                        <Link
+                          to={
+                            userRole?.toLowerCase() === "admin"
+                              ? "/admin"
+                              : "/manager"
+                          }
+                          className="w-full"
+                        >
+                          Quản lý
+                        </Link>
+                      </DropdownMenuItem>
+                    )}
                     <DropdownMenuItem asChild>
                       <Link to="/user/profile" className="w-full">
                         Hồ sơ
