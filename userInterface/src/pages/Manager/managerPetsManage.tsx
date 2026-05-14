@@ -143,8 +143,13 @@ const ManagerPetsManage = () => {
                     <Button variant="outline" className="w-full">
                       Xem Digital Pet Card
                     </Button>
-                    <Button className="w-full bg-slate-950 text-white hover:bg-slate-800">
-                      Hồ sơ y tế
+                    <Button
+                      asChild
+                      className="w-full bg-slate-950 text-white hover:bg-slate-800"
+                    >
+                      <Link to={`/manager/pets/${pet.id}/medical-record`}>
+                        Hồ sơ y tế
+                      </Link>
                     </Button>
                   </div>
                 </div>

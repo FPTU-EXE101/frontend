@@ -16,6 +16,8 @@ import UserServicePage from "@/pages/User/userServicePage";
 import UserBookingPage from "@/pages/User/userBookingPage";
 import UserPetPage from "@/pages/User/userPetPage";
 import ManagerPetsManage from "@/pages/Manager/managerPetsManage";
+import ManagerPetMedicalRecord from "@/pages/Manager/managerPetMedicalRecord";
+import ManagerPetMedicalRecordCreate from "@/pages/Manager/managerPetMedicalRecordCreate";
 import ManagerDashboard from "@/pages/Manager/managerDashboard";
 import ManagerCustomersManage from "@/pages/Manager/managerCustomersManage";
 import ManagerAppointmentsManage from "@/pages/Manager/managerAppointmentsManage";
@@ -58,6 +60,14 @@ const AppRoutes = () => {
         <Route index path="dashboard" element={<ManagerDashboard />} />
         <Route path="customers" element={<ManagerCustomersManage />} />
         <Route path="pets" element={<ManagerPetsManage />} />
+        <Route
+          path="pets/:id/medical-record"
+          element={<ManagerPetMedicalRecord />}
+        />
+        <Route
+          path="pets/:id/medical-record/new"
+          element={<ManagerPetMedicalRecordCreate />}
+        />
         <Route path="appointments" element={<ManagerAppointmentsManage />} />
         <Route path="services" element={<ManagerServicesManage />} />
         <Route path="services/new" element={<ManagerServiceCreate />} />
