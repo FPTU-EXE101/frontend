@@ -18,6 +18,7 @@ const ManagerProductsMange = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [deletingId, setDeletingId] = useState<string | null>(null);
 
   useEffect(() => {
     const loadItems = async () => {
@@ -34,6 +35,27 @@ const ManagerProductsMange = () => {
 
     loadItems();
   }, []);
+
+  const handleDelete = async (id: string) => {
+    const confirmed = window.confirm(
+      "Bạn có chắc muốn xóa sản phẩm này không?",
+    );
+    if (!confirmed) {
+      return;
+    }
+
+    setDeletingId(id);
+    setError("");
+
+    try {
+      await itemApi.deleteItem(id);
+      setItems((current) => current.filter((item) => item.id !== id));
+    } catch {
+      setError("Xóa sản phẩm thất bại. Vui lòng thử lại.");
+    } finally {
+      setDeletingId(null);
+    }
+  };
 
   const filteredProducts = useMemo(
     () =>
@@ -114,14 +136,22 @@ const ManagerProductsMange = () => {
               </div>
               <div className="flex justify-end gap-2">
                 <Button
+                  asChild
                   variant="outline"
                   className="h-9 w-9 rounded-full p-0 text-slate-700 hover:bg-slate-100"
                 >
-                  <Edit3 className="h-4 w-4" />
+                  <Link
+                    to={`/manager/products/${item.id}/edit`}
+                    aria-label={`Sửa ${item.name}`}
+                  >
+                    <Edit3 className="h-4 w-4" />
+                  </Link>
                 </Button>
                 <Button
                   variant="outline"
                   className="h-9 w-9 rounded-full p-0 text-rose-600 hover:bg-rose-50"
+                  onClick={() => handleDelete(item.id)}
+                  disabled={deletingId === item.id}
                 >
                   <Trash2 className="h-4 w-4" />
                 </Button>

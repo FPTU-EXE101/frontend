@@ -1,5 +1,5 @@
-import { useState, type FormEvent } from "react";
-import { useNavigate } from "react-router-dom";
+import { useEffect, useState, type FormEvent } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import {
   Field,
@@ -10,9 +10,11 @@ import {
 import { Input } from "@/components/ui/input";
 import itemApi from "@/apis/itemsAPI";
 import type { CreateItemRequest } from "@/types/item.type";
+import type { Items } from "@/types/item.type";
 
-interface ManagerItemCreateProps {
+interface ManagerItemFormProps {
   itemType: "service" | "product";
+  mode: "create" | "edit";
 }
 
 const itemTypeMeta = {
@@ -33,8 +35,11 @@ const itemTypeMeta = {
   },
 };
 
-const ManagerItemCreate = ({ itemType }: ManagerItemCreateProps) => {
+const ManagerItemForm = ({ itemType, mode }: ManagerItemFormProps) => {
   const navigate = useNavigate();
+  const params = useParams();
+  const itemId = params.id;
+  const isEdit = mode === "edit";
   const [name, setName] = useState("");
   const [price, setPrice] = useState("");
   const [loading, setLoading] = useState(false);
@@ -42,6 +47,68 @@ const ManagerItemCreate = ({ itemType }: ManagerItemCreateProps) => {
   const [success, setSuccess] = useState<string | null>(null);
 
   const meta = itemTypeMeta[itemType];
+  const pageTitle = isEdit
+    ? `Chỉnh sửa ${itemType === "service" ? "dịch vụ" : "sản phẩm"}`
+    : meta.title;
+  const pageDescription = isEdit
+    ? `Cập nhật thông tin ${itemType === "service" ? "dịch vụ" : "sản phẩm"} hiện có.`
+    : meta.description;
+  const submitLabel = isEdit ? "Cập nhật mục" : "Lưu mục";
+  const successMessage = isEdit
+    ? `${itemType === "service" ? "Dịch vụ" : "Sản phẩm"} đã được cập nhật thành công.`
+    : meta.successMessage;
+
+  useEffect(() => {
+    if (!isEdit) {
+      return;
+    }
+
+    const loadItem = async () => {
+      if (!itemId) {
+        setError("Không xác định mục để sửa.");
+        return;
+      }
+
+      setLoading(true);
+      try {
+        const response = await itemApi.getItemById(itemId);
+        const item = response?.data as Items | undefined;
+        if (!item) {
+          setError("Không tìm thấy mục để sửa.");
+          return;
+        }
+
+        const typeValue = String(item.type).toLowerCase();
+        if (
+          itemType === "service" &&
+          typeValue !== "service" &&
+          typeValue !== "0"
+        ) {
+          setError("Mục này không phải dịch vụ.");
+          return;
+        }
+
+        if (
+          itemType === "product" &&
+          typeValue !== "product" &&
+          typeValue !== "1"
+        ) {
+          setError("Mục này không phải sản phẩm.");
+          return;
+        }
+
+        setName(item.name ?? "");
+        setPrice(String(item.price ?? ""));
+      } catch (err) {
+        console.error(err);
+        setError("Không tải được dữ liệu mục. Vui lòng thử lại.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadItem();
+  }, [isEdit, itemId, itemType]);
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -67,16 +134,26 @@ const ManagerItemCreate = ({ itemType }: ManagerItemCreateProps) => {
 
     try {
       setLoading(true);
-      await itemApi.createItem(payload);
-      setSuccess(meta.successMessage);
-      setName("");
-      setPrice("");
+      if (isEdit) {
+        if (!itemId) {
+          setError("Không xác định mục để cập nhật.");
+          return;
+        }
+        await itemApi.updateItem(itemId, payload);
+      } else {
+        await itemApi.createItem(payload);
+      }
+      setSuccess(successMessage);
       setTimeout(() => {
         navigate(meta.backPath);
       }, 500);
     } catch (err) {
       console.error(err);
-      setError("Không tạo được mục mới. Vui lòng thử lại.");
+      setError(
+        isEdit
+          ? "Không cập nhật được mục. Vui lòng thử lại."
+          : "Không tạo được mục mới. Vui lòng thử lại.",
+      );
     } finally {
       setLoading(false);
     }
@@ -86,10 +163,8 @@ const ManagerItemCreate = ({ itemType }: ManagerItemCreateProps) => {
     <div className="space-y-6">
       <section className="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm">
         <div className="mb-6">
-          <h1 className="text-3xl font-semibold text-slate-950">
-            {meta.title}
-          </h1>
-          <p className="mt-2 text-sm text-slate-500">{meta.description}</p>
+          <h1 className="text-3xl font-semibold text-slate-950">{pageTitle}</h1>
+          <p className="mt-2 text-sm text-slate-500">{pageDescription}</p>
         </div>
 
         <form className="space-y-6" onSubmit={handleSubmit}>
@@ -104,6 +179,7 @@ const ManagerItemCreate = ({ itemType }: ManagerItemCreateProps) => {
                 placeholder="Nhập tên..."
                 value={name}
                 onChange={(event) => setName(event.target.value)}
+                disabled={loading}
                 required
               />
             </Field>
@@ -119,6 +195,7 @@ const ManagerItemCreate = ({ itemType }: ManagerItemCreateProps) => {
                 step="1000"
                 value={price}
                 onChange={(event) => setPrice(event.target.value)}
+                disabled={loading}
                 required
               />
               <FieldDescription>
@@ -144,7 +221,11 @@ const ManagerItemCreate = ({ itemType }: ManagerItemCreateProps) => {
                   className="rounded-full bg-[#D56756] px-5 py-3 text-base font-semibold text-white hover:bg-[#b2483c]"
                   disabled={loading}
                 >
-                  {loading ? "Đang tạo..." : "Lưu mục"}
+                  {loading
+                    ? isEdit
+                      ? "Đang cập nhật..."
+                      : "Đang tạo..."
+                    : submitLabel}
                 </Button>
                 <Button
                   type="button"
@@ -164,8 +245,14 @@ const ManagerItemCreate = ({ itemType }: ManagerItemCreateProps) => {
 };
 
 export const ManagerServiceCreate = () => (
-  <ManagerItemCreate itemType="service" />
+  <ManagerItemForm itemType="service" mode="create" />
 );
 export const ManagerProductCreate = () => (
-  <ManagerItemCreate itemType="product" />
+  <ManagerItemForm itemType="product" mode="create" />
+);
+export const ManagerServiceEdit = () => (
+  <ManagerItemForm itemType="service" mode="edit" />
+);
+export const ManagerProductEdit = () => (
+  <ManagerItemForm itemType="product" mode="edit" />
 );

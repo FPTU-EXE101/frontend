@@ -24,7 +24,9 @@ import ManagerCategoriesManage from "@/pages/Manager/managerCategoriesManage";
 import ManagerProductsMange from "@/pages/Manager/managerProductsMange";
 import {
   ManagerProductCreate,
+  ManagerProductEdit,
   ManagerServiceCreate,
+  ManagerServiceEdit,
 } from "@/pages/Manager/managerItemCreate";
 import ManagerCRMManage from "@/pages/Manager/managerCRMManage";
 import ManagerPaymentManage from "@/pages/Manager/managerPaymentManage";
@@ -59,9 +61,11 @@ const AppRoutes = () => {
         <Route path="appointments" element={<ManagerAppointmentsManage />} />
         <Route path="services" element={<ManagerServicesManage />} />
         <Route path="services/new" element={<ManagerServiceCreate />} />
+        <Route path="services/:id/edit" element={<ManagerServiceEdit />} />
         <Route path="categories" element={<ManagerCategoriesManage />} />
         <Route path="products" element={<ManagerProductsMange />} />
         <Route path="products/new" element={<ManagerProductCreate />} />
+        <Route path="products/:id/edit" element={<ManagerProductEdit />} />
         <Route path="crm" element={<ManagerCRMManage />} />
         <Route path="payment" element={<ManagerPaymentManage />} />
         <Route path="automation" element={<ManagerAutomationManage />} />

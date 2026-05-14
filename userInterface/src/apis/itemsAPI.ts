@@ -15,7 +15,7 @@ const itemApi = {
         : undefined,
     ),
   updateItem: (id: string, data: CreateItemRequest | FormData) =>
-    axiosClient.patch(
+    axiosClient.put(
       `${ITEM_API_URL}/${id}`,
       data,
       data instanceof FormData
