@@ -14,7 +14,6 @@ import UserInfoLayout from "@/pages/User/userInfoLayout";
 import UserHomePage from "@/pages/User/userHomePage";
 import UserServicePage from "@/pages/User/userServicePage";
 import UserBookingPage from "@/pages/User/userBookingPage";
-import UserPetPage from "@/pages/User/userPetPage";
 import ManagerPetsManage from "@/pages/Manager/managerPetsManage";
 import ManagerPetMedicalRecord from "@/pages/Manager/managerPetMedicalRecord";
 import ManagerPetMedicalRecordCreate from "@/pages/Manager/managerPetMedicalRecordCreate";
@@ -34,6 +33,7 @@ import ManagerCRMManage from "@/pages/Manager/managerCRMManage";
 import ManagerPaymentManage from "@/pages/Manager/managerPaymentManage";
 import ManagerAutomationManage from "@/pages/Manager/managerAutomationManage";
 import ManagerSettingManage from "@/pages/Manager/managerSettingManage";
+import ManagerPetCreatePage from "@/pages/Manager/managerPetCreate";
 
 const AppRoutes = () => {
   return (
@@ -51,7 +51,6 @@ const AppRoutes = () => {
           <Route path="home" element={<UserHomePage />} />
           <Route path="service" element={<UserServicePage />} />
           <Route path="booking" element={<UserBookingPage />} />
-          <Route path="pet" element={<UserPetPage />} />
         </Route>
       </Route>
       <Route path="/admin" element={<AdminLayout />}></Route>
@@ -60,6 +59,7 @@ const AppRoutes = () => {
         <Route index path="dashboard" element={<ManagerDashboard />} />
         <Route path="customers" element={<ManagerCustomersManage />} />
         <Route path="pets" element={<ManagerPetsManage />} />
+        <Route path="pets/new" element={<ManagerPetCreatePage />} />
         <Route
           path="pets/:id/medical-record"
           element={<ManagerPetMedicalRecord />}

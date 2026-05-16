@@ -19,7 +19,7 @@ import {
   SidebarMenu,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import { Link, NavLink } from "react-router-dom";
+import { Link, NavLink} from "react-router-dom";
 import { Button } from "@/components/ui/button";
 
 const managerMenuItems = [
@@ -92,19 +92,24 @@ const managerMenuItems = [
 ];
 
 export function ManagerSidebar() {
+  
+
+  
   return (
     <Sidebar>
       <SidebarContent className="flex h-full flex-col gap-4 p-4">
-        <div className="space-y-3 rounded-[2rem] border border-slate-200 bg-white px-4 py-5 shadow-sm">
-          <div className="flex items-center gap-3">
-            <div className="flex h-11 w-11 items-center justify-center rounded-3xl bg-[#D56756] text-xl font-bold text-white">
-              P
-            </div>
-            <div>
-              <h2 className="text-lg font-semibold text-slate-950">PetHub</h2>
-              <p className="text-xs text-slate-500">Quản lý phòng khám</p>
-            </div>
-          </div>
+        <div
+          
+          className="space-y-3    bg-white px-4 py-5 "
+        >
+          <Link to="/" className="flex items-center gap-3">
+            <img
+              src="/logoPethub.png"
+              alt="PetHub"
+              className="w-auto max-w-none object-contain h-12 sm:h-12"
+              decoding="async"
+            />
+          </Link>
         </div>
 
         <SidebarGroup className="flex-1">

@@ -52,7 +52,7 @@ const ManagerPetsManage = () => {
         return (
           pet.name.toLowerCase().includes(query) ||
           pet.color.toLowerCase().includes(query) ||
-          pet.custoemrId?.toLowerCase().includes(query)
+          pet.customerId?.toLowerCase().includes(query)
         );
       }),
     [pets, searchTerm],
@@ -60,8 +60,8 @@ const ManagerPetsManage = () => {
 
   return (
     <div className="space-y-6">
-      <section className="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm">
-        <div className="mb-5 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+      <section className=" rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm">
+        <div className=" mb-5 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <div className="mb-3 flex items-center gap-2 text-sm text-slate-500">
               <span className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-slate-100 text-slate-700">
@@ -126,7 +126,7 @@ const ManagerPetsManage = () => {
                   <div className="grid gap-3 text-sm text-slate-600">
                     <div className="flex items-center gap-2">
                       <Heart className="h-4 w-4 text-rose-500" />
-                      <span>Chủ: {pet.custoemrId || "Chưa rõ"}</span>
+                      <span>Chủ: {pet.customerId || "Chưa rõ"}</span>
                     </div>
                     <div className="flex items-center gap-2">
                       <FileText className="h-4 w-4 text-slate-400" />

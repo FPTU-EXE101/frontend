@@ -165,7 +165,7 @@ const ManagerPetMedicalRecord = () => {
                     Chủ nhân
                   </div>
                   <div className="mt-4 space-y-2 text-sm text-slate-700">
-                    <p>{pet?.custoemrId || "Chưa rõ"}</p>
+                    <p>{pet?.customerId || "Chưa rõ"}</p>
                     <p className="text-xs text-slate-500">Thông tin liên hệ</p>
                   </div>
                 </div>

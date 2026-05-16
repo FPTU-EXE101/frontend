@@ -1,8 +1,11 @@
-import type { UserRole } from "./enum.type";
-
 export interface User {
+  id: string;
+  firstName: string;
+  lastName: string;
+  userName: string;
   email: string;
-  fullName: string;
-  role: UserRole;
-  status: string;
+  plan: number;
+  createAt: string;
+  updateAt: string;
+  emailConfirmed: boolean;
 }
