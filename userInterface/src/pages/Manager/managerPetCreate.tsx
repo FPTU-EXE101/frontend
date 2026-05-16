@@ -11,7 +11,7 @@ import { Input } from "@/components/ui/input";
 import { useNavigate } from "react-router-dom";
 import petApi from "@/apis/petAPI";
 import userApi from "@/apis/userAPI";
-import type { CreatePetRequest, Pet } from "@/types/pet.type";
+import type { CreatePetRequest } from "@/types/pet.type";
 import type { UserProfileValues } from "@/types/userProfile.type";
 import { useFormik } from "formik";
 import * as Yup from "yup";
@@ -44,7 +44,7 @@ const ManagerPetCreatePage = () => {
   const [selectedOwner, setSelectedOwner] = useState<UserProfileValues | null>(
     null,
   );
-  const [ownerPets, setOwnerPets] = useState<Pet[]>([]);
+  
   const [ownerLoading, setOwnerLoading] = useState(false);
   const navigate = useNavigate();
 
@@ -80,7 +80,6 @@ const ManagerPetCreatePage = () => {
   const handleOwnerSelect = async (owner: UserProfileValues) => {
     setSelectedOwner(owner);
     setUserSearch("");
-    setOwnerPets([]);
     setSubmitError(null);
     formik.setFieldValue("name", "");
 
@@ -92,8 +91,7 @@ const ManagerPetCreatePage = () => {
 
     try {
       setOwnerLoading(true);
-      const response = await petApi.getPetByCustomerId(customerId);
-      setOwnerPets(response?.data ?? []);
+      await petApi.getPetByCustomerId(customerId);
     } catch (err) {
       console.error(err);
       setSubmitError("Không tải được thú cưng của chủ này.");
@@ -140,7 +138,6 @@ const ManagerPetCreatePage = () => {
           setSubmitSuccess(true);
           formik.resetForm();
           setSelectedOwner(null);
-          setOwnerPets([]);
           setTimeout(() => {
             navigate("/manager/pets");
           }, 1500);
@@ -223,36 +220,17 @@ const ManagerPetCreatePage = () => {
 
             <Field>
               <FieldLabel htmlFor="name">Tên thú cưng *</FieldLabel>
-              {selectedOwner && ownerPets.length > 0 ? (
-                <select
-                  id="name"
-                  name="name"
-                  value={formik.values.name}
-                  onChange={formik.handleChange}
-                  onBlur={formik.handleBlur}
-                  className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm text-slate-900 outline-none focus:border-[#D56756] focus:ring-2 focus:ring-[#D56756]/20"
-                  required
-                >
-                  <option value="">Chọn thú cưng</option>
-                  {ownerPets.map((pet) => (
-                    <option key={pet.id} value={pet.name}>
-                      {pet.name}
-                    </option>
-                  ))}
-                </select>
-              ) : (
-                <Input
-                  id="name"
-                  name="name"
-                  type="text"
-                  placeholder="Nhập tên thú cưng"
-                  value={formik.values.name}
-                  onChange={formik.handleChange}
-                  onBlur={formik.handleBlur}
-                  disabled={!selectedOwner}
-                  required
-                />
-              )}
+              <Input
+                id="name"
+                name="name"
+                type="text"
+                placeholder="Nhập tên thú cưng"
+                value={formik.values.name}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                disabled={!selectedOwner}
+                required
+              />
               <FieldError
                 errors={
                   formik.touched.name && formik.errors.name
