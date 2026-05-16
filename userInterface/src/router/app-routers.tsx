@@ -34,6 +34,7 @@ import ManagerPaymentManage from "@/pages/Manager/managerPaymentManage";
 import ManagerAutomationManage from "@/pages/Manager/managerAutomationManage";
 import ManagerSettingManage from "@/pages/Manager/managerSettingManage";
 import ManagerPetCreatePage from "@/pages/Manager/managerPetCreate";
+import AboutUs from "@/pages/aboutUs";
 
 const AppRoutes = () => {
   return (
@@ -47,10 +48,12 @@ const AppRoutes = () => {
         </Route>
         <Route index element={<Home />} />
         <Route path="pricing" element={<PricingPage />} />
+        <Route path="about-us" element={<AboutUs />} />
         <Route path="user" element={<UserInfoLayout />}>
           <Route path="home" element={<UserHomePage />} />
           <Route path="service" element={<UserServicePage />} />
           <Route path="booking" element={<UserBookingPage />} />
+
         </Route>
       </Route>
       <Route path="/admin" element={<AdminLayout />}></Route>

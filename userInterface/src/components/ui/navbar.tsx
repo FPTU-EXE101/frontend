@@ -94,7 +94,7 @@ const Navbar = () => {
           <>
             <nav className="hidden items-center gap-8 md:flex">
               <Link
-                to="/user/home"
+                to="/"
                 className="text-sm font-medium text-slate-700 transition hover:text-slate-950"
               >
                 Trang chủ
@@ -196,6 +196,12 @@ const Navbar = () => {
                 className="text-sm font-medium text-slate-700 transition hover:text-slate-950"
               >
                 Bảng giá
+              </Link>
+              <Link
+                to="/about-us"
+                className="text-sm font-medium text-slate-700 transition hover:text-slate-950"
+              >
+                Về chúng tôi
               </Link>
               <Link
                 to="/auth/login"
