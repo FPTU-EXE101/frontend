@@ -35,6 +35,7 @@ import ManagerAutomationManage from "@/pages/Manager/managerAutomationManage";
 import ManagerSettingManage from "@/pages/Manager/managerSettingManage";
 import ManagerPetCreatePage from "@/pages/Manager/managerPetCreate";
 import AboutUs from "@/pages/aboutUs";
+import Features from "@/pages/features";
 
 const AppRoutes = () => {
   return (
@@ -49,6 +50,7 @@ const AppRoutes = () => {
         <Route index element={<Home />} />
         <Route path="pricing" element={<PricingPage />} />
         <Route path="about-us" element={<AboutUs />} />
+        <Route path="features" element={<Features />} />
         <Route path="user" element={<UserInfoLayout />}>
           <Route path="home" element={<UserHomePage />} />
           <Route path="service" element={<UserServicePage />} />
