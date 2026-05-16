@@ -44,7 +44,7 @@ const ManagerPetCreatePage = () => {
   const [selectedOwner, setSelectedOwner] = useState<UserProfileValues | null>(
     null,
   );
-  
+
   const [ownerLoading, setOwnerLoading] = useState(false);
   const navigate = useNavigate();
 
