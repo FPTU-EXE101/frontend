@@ -1,10 +1,11 @@
 import type { CreateAppointmentRequest } from "@/types/appoinment";
 import axiosClient from "./axiosClient";
 
-const APPOINTMENT_API_URL = "/Appointments";
+const APPOINTMENTS_API_URL = "/appointments";
+const APPOINTMENT_API_URL = "/appointment";
 const CREATE_APPOINTMENT_URL = "/appointment/";
 const appointmentApi = {
-  getAllAppointments: () => axiosClient.get(`${APPOINTMENT_API_URL}`),
+  getAllAppointments: () => axiosClient.get(`${APPOINTMENTS_API_URL}`),
   getAppointmentById: (id: string) =>
     axiosClient.get(`${APPOINTMENT_API_URL}/${id}`),
   createAppointment: (data: CreateAppointmentRequest) =>
@@ -14,8 +15,8 @@ const appointmentApi = {
   deleteAppointment: (id: string) =>
     axiosClient.delete(`${APPOINTMENT_API_URL}/${id}`),
   getAppointmentsByCustomerId: (customerId: string) =>
-    axiosClient.get(`${APPOINTMENT_API_URL}/customer/${customerId}`),
+    axiosClient.get(`${APPOINTMENTS_API_URL}/customer/${customerId}`),
   getAppointmentsByPetId: (petId: string) =>
-    axiosClient.get(`${APPOINTMENT_API_URL}/pet/${petId}`),
+    axiosClient.get(`${APPOINTMENTS_API_URL}/pet/${petId}`),
 };
 export default appointmentApi;

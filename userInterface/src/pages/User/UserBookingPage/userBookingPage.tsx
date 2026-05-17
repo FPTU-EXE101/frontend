@@ -2,7 +2,14 @@ import { useEffect, useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import appointmentApi from "@/apis/appointmentAPI";
 import petApi from "@/apis/petAPI";
-import { CalendarDays, Heart, Phone, Info, XCircle, Plus } from "lucide-react";
+import {
+  CalendarDays,
+  Heart,
+  Phone,
+  Info,
+  XCircle,
+  CheckCircle,
+} from "lucide-react";
 import type { Appointment } from "@/types/appoinment";
 import type { Pet } from "@/types/pet.type";
 import { Link } from "react-router-dom";
@@ -49,6 +56,8 @@ const UserBookingPage = () => {
   const [activeFilter, setActiveFilter] = useState<BookingStatusKey>("all");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [cancelingId, setCancelingId] = useState<string | null>(null);
+  const [cancelSuccess, setCancelSuccess] = useState<string | null>(null);
 
   useEffect(() => {
     const loadAppointments = async () => {
@@ -104,6 +113,30 @@ const UserBookingPage = () => {
     loadAppointments();
   }, []);
 
+  const handleCancelAppointment = async (appointmentId: string) => {
+    if (!window.confirm("Bạn chắc chắn muốn hủy lịch hẹn này?")) {
+      return;
+    }
+
+    setCancelingId(appointmentId);
+    setCancelSuccess(null);
+
+    try {
+      await appointmentApi.deleteAppointment(appointmentId);
+
+      // Remove the cancelled appointment from state
+      setAppointments((prev) => prev.filter((apt) => apt.id !== appointmentId));
+
+      setCancelSuccess(`Hủy lịch hẹn thành công!`);
+      setTimeout(() => setCancelSuccess(null), 3000);
+    } catch (err) {
+      console.error(err);
+      alert("Hủy lịch hẹn thất bại. Vui lòng thử lại sau.");
+    } finally {
+      setCancelingId(null);
+    }
+  };
+
   const bookings = useMemo(() => {
     return appointments.map((appointment) => ({
       ...appointment,
@@ -150,11 +183,16 @@ const UserBookingPage = () => {
             </p>
           </div>
           <Button className="inline-flex  items-center rounded-full bg-[#D56756] px-5 py-3 text-sm font-semibold text-white hover:bg-[#c25248]">
-            <Link to={`new`}>
-               Đặt lịch mới
-            </Link>
+            <Link to={`new`}>Đặt lịch mới</Link>
           </Button>
         </div>
+
+        {cancelSuccess && (
+          <div className="rounded-[30px] border border-emerald-200 bg-emerald-50 p-4 text-emerald-700 shadow-sm flex items-center gap-3">
+            <CheckCircle className="h-5 w-5 flex-shrink-0" />
+            <span>{cancelSuccess}</span>
+          </div>
+        )}
 
         <div className="overflow-x-auto rounded-3xl border border-slate-200 bg-white p-4 shadow-sm">
           <div className="flex flex-wrap gap-3">
@@ -260,10 +298,15 @@ const UserBookingPage = () => {
                         </p>
                       </div>
                       <Button
+                        onClick={() => handleCancelAppointment(booking.id)}
+                        disabled={cancelingId === booking.id}
                         variant="outline"
-                        className="rounded-full border-red-200 text-red-600 hover:border-red-300 hover:bg-red-50"
+                        className="rounded-full border-red-200 text-red-600 hover:border-red-300 hover:bg-red-50 disabled:opacity-50"
                       >
-                        <XCircle className="h-4 w-4" /> Hủy lịch hẹn
+                        <XCircle className="h-4 w-4" />
+                        {cancelingId === booking.id
+                          ? "Đang hủy..."
+                          : "Hủy lịch hẹn"}
                       </Button>
                     </div>
                   </div>
