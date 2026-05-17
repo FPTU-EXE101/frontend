@@ -10,10 +10,10 @@ import LoginPage from "@/pages/Auth/loginPage";
 import SignupPage from "@/pages/Auth/signUpPage";
 import ConfirmEmailPage from "@/pages/Auth/confirmEmailPage";
 import PricingPage from "@/pages/pricing";
-import UserInfoLayout from "@/pages/User/userInfoLayout";
-import UserHomePage from "@/pages/User/userHomePage";
-import UserServicePage from "@/pages/User/userServicePage";
-import UserBookingPage from "@/pages/User/userBookingPage";
+import UserInfoLayout from "@/pages/User/userInfoLayout/userInfoLayout";
+import UserHomePage from "@/pages/User/UserHomePage/userHomePage";
+import UserServicePage from "@/pages/User/userServicePage/userServicePage";
+import UserBookingPage from "@/pages/User/UserBookingPage/userBookingPage";
 import ManagerPetsManage from "@/pages/Manager/managerPetsManage";
 import ManagerPetMedicalRecord from "@/pages/Manager/managerPetMedicalRecord";
 import ManagerPetMedicalRecordCreate from "@/pages/Manager/managerPetMedicalRecordCreate";
@@ -36,6 +36,8 @@ import ManagerSettingManage from "@/pages/Manager/managerSettingManage";
 import ManagerPetCreatePage from "@/pages/Manager/managerPetCreate";
 import AboutUs from "@/pages/aboutUs";
 import Features from "@/pages/features";
+import UserPetPage from "@/pages/User/userPetPage/userPetPage";
+import UserCreateBookingPage from "@/pages/User/UserBookingPage/UserCreateBooking/userCreateBookingPage";
 
 const AppRoutes = () => {
   return (
@@ -53,9 +55,10 @@ const AppRoutes = () => {
         <Route path="features" element={<Features />} />
         <Route path="user" element={<UserInfoLayout />}>
           <Route path="home" element={<UserHomePage />} />
+          <Route path="pet" element={<UserPetPage />} />
           <Route path="service" element={<UserServicePage />} />
           <Route path="booking" element={<UserBookingPage />} />
-
+          <Route path="booking/new" element={<UserCreateBookingPage />} />
         </Route>
       </Route>
       <Route path="/admin" element={<AdminLayout />}></Route>

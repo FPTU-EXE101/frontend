@@ -2,9 +2,10 @@ import { useEffect, useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import appointmentApi from "@/apis/appointmentAPI";
 import petApi from "@/apis/petAPI";
-import { CalendarDays, Heart, Phone, Info, XCircle } from "lucide-react";
+import { CalendarDays, Heart, Phone, Info, XCircle, Plus } from "lucide-react";
 import type { Appointment } from "@/types/appoinment";
 import type { Pet } from "@/types/pet.type";
+import { Link } from "react-router-dom";
 
 type BookingStatusKey = Appointment["status"] | "all";
 
@@ -148,8 +149,10 @@ const UserBookingPage = () => {
               Quản lý tất cả lịch hẹn của bạn
             </p>
           </div>
-          <Button className="inline-flex items-center rounded-full bg-[#D56756] px-5 py-3 text-sm font-semibold text-white hover:bg-[#c25248]">
-            Đặt lịch mới
+          <Button className="inline-flex  items-center rounded-full bg-[#D56756] px-5 py-3 text-sm font-semibold text-white hover:bg-[#c25248]">
+            <Link to={`new`}>
+               Đặt lịch mới
+            </Link>
           </Button>
         </div>
 

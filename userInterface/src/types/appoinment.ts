@@ -16,8 +16,8 @@ export interface Appointment {
 export interface CreateAppointmentRequest {
   customerId: string;
   petId: string;
-  appointmentDate: string;
-  startTime: string;
-  endTime: string;
+  appointmentDate: string; //string($date)
+  startTime: string; //string($time)
+  endTime: string; //string($time)
   appointmentNote: string;
 }
