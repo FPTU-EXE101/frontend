@@ -14,6 +14,13 @@ import type { Appointment } from "@/types/appoinment";
 import type { Pet } from "@/types/pet.type";
 import { Link } from "react-router-dom";
 
+type CancelTarget = {
+  id: string;
+  title: string;
+  dateLabel: string;
+  time: string;
+};
+
 type BookingStatusKey = Appointment["status"] | "all";
 
 const statusFilters: {
@@ -58,6 +65,7 @@ const UserBookingPage = () => {
   const [error, setError] = useState("");
   const [cancelingId, setCancelingId] = useState<string | null>(null);
   const [cancelSuccess, setCancelSuccess] = useState<string | null>(null);
+  const [cancelTarget, setCancelTarget] = useState<CancelTarget | null>(null);
 
   useEffect(() => {
     const loadAppointments = async () => {
@@ -113,20 +121,27 @@ const UserBookingPage = () => {
     loadAppointments();
   }, []);
 
-  const handleCancelAppointment = async (appointmentId: string) => {
-    if (!window.confirm("Bạn chắc chắn muốn hủy lịch hẹn này?")) {
-      return;
-    }
+  const openCancelModal = (booking: CancelTarget) => {
+    setCancelTarget(booking);
+  };
 
+  const closeCancelModal = () => {
+    setCancelTarget(null);
+  };
+
+  const handleCancelAppointment = async () => {
+    if (!cancelTarget) return;
+
+    const appointmentId = cancelTarget.id;
     setCancelingId(appointmentId);
     setCancelSuccess(null);
+    closeCancelModal();
 
     try {
       await appointmentApi.deleteAppointment(appointmentId);
-      // Remove the cancelled appointment from state
       setAppointments((prev) => prev.filter((apt) => apt.id !== appointmentId));
 
-      setCancelSuccess(`Hủy lịch hẹn thành công!`);
+      setCancelSuccess("Hủy lịch hẹn thành công!");
       setTimeout(() => setCancelSuccess(null), 3000);
     } catch (err) {
       console.error(err);
@@ -279,6 +294,7 @@ const UserBookingPage = () => {
                     </div>
 
                     <div className="flex flex-col gap-4 rounded-3xl border border-slate-200 bg-slate-50 p-5 text-sm text-slate-700 shadow-sm sm:w-[320px]">
+                      {/* Header dùng chung */}
                       <div className="inline-flex items-center justify-between gap-2 rounded-full bg-white px-4 py-2 text-xs font-semibold uppercase tracking-[0.2em] text-slate-600 shadow-sm">
                         <span className="inline-flex items-center gap-2 text-slate-700">
                           <Info className="h-4 w-4 text-[#D56756]" />
@@ -290,23 +306,40 @@ const UserBookingPage = () => {
                           {booking.status}
                         </span>
                       </div>
+
+                      {/* Nội dung thay đổi theo status */}
                       <div className="text-sm leading-6 text-slate-600">
-                        <p>Quý khách có thể hủy lịch nếu cần thay đổi.</p>
+                        {booking.status !== 2 ? (
+                          <p>Quý khách có thể hủy lịch nếu cần thay đổi.</p>
+                        ) : (
+                          <p>Lịch hẹn đã bị huỷ</p>
+                        )}
                         <p className="mt-2 text-xs text-slate-500">
                           Nếu cần hỗ trợ, gọi hotline 028-1234-567.
                         </p>
                       </div>
-                      <Button
-                        onClick={() => handleCancelAppointment(booking.id)}
-                        disabled={cancelingId === booking.id}
-                        variant="outline"
-                        className="rounded-full border-red-200 text-red-600 hover:border-red-300 hover:bg-red-50 disabled:opacity-50"
-                      >
-                        <XCircle className="h-4 w-4" />
-                        {cancelingId === booking.id
-                          ? "Đang hủy..."
-                          : "Hủy lịch hẹn"}
-                      </Button>
+
+                      {/* Chỉ hiện button khi status !== 2 */}
+                      {booking.status === 0  && (
+                        <Button
+                          onClick={() =>
+                            openCancelModal({
+                              id: booking.id,
+                              title: booking.title,
+                              dateLabel: booking.dateLabel,
+                              time: booking.time,
+                            })
+                          }
+                          disabled={cancelingId === booking.id}
+                          variant="outline"
+                          className="rounded-full border-red-200 text-red-600 hover:border-red-300 hover:bg-red-50 disabled:opacity-50"
+                        >
+                          <XCircle className="h-4 w-4" />
+                          {cancelingId === booking.id
+                            ? "Đang hủy..."
+                            : "Hủy lịch hẹn"}
+                        </Button>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -337,6 +370,74 @@ const UserBookingPage = () => {
           </div>
         </div>
       </div>
+
+      {/* Cancel Confirmation Modal */}
+      {cancelTarget && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4"
+          onClick={closeCancelModal}
+        >
+          <div
+            className="relative w-full max-w-sm rounded-3xl bg-white p-8 shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Icon */}
+            <div className="flex justify-center mb-5">
+              <div className="flex h-16 w-16 items-center justify-center rounded-full bg-red-100">
+                <XCircle className="h-9 w-9 text-red-500" />
+              </div>
+            </div>
+
+            {/* Title */}
+            <h2 className="text-center text-2xl font-bold text-slate-900 mb-2">
+              Xác nhận hủy lịch hẹn?
+            </h2>
+            <p className="text-center text-sm text-slate-500 mb-6 leading-6">
+              Bạn có chắc chắn muốn hủy lịch hẹn này không?
+              <br />
+              Hành động này không thể hoàn tác.
+            </p>
+
+            {/* Appointment info */}
+            <div className="rounded-2xl bg-[#FAF5F0] px-5 py-4 mb-7 space-y-2 text-sm">
+              <div className="flex justify-between">
+                <span className="text-slate-500">Dịch vụ:</span>
+                <span className="font-semibold text-slate-800 text-right max-w-[60%]">
+                  {cancelTarget.title}
+                </span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-slate-500">Ngày:</span>
+                <span className="font-semibold text-slate-800 text-right max-w-[60%]">
+                  {cancelTarget.dateLabel}
+                </span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-slate-500">Giờ:</span>
+                <span className="font-semibold text-slate-800">
+                  {cancelTarget.time}
+                </span>
+              </div>
+            </div>
+
+            {/* Buttons */}
+            <div className="flex gap-3">
+              <button
+                onClick={closeCancelModal}
+                className="flex-1 rounded-full border border-slate-200 py-3 text-sm font-bold text-slate-700 hover:bg-slate-50 transition"
+              >
+                Không, giữ lại
+              </button>
+              <button
+                onClick={handleCancelAppointment}
+                className="flex-1 rounded-full bg-red-500 py-3 text-sm font-bold text-white hover:bg-red-600 transition"
+              >
+                Có, hủy lịch
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
