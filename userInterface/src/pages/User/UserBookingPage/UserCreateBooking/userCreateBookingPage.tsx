@@ -133,9 +133,7 @@ const UserCreateBookingPage = () => {
       appointmentNote: note.trim() || "Không có ghi chú",
     };
 
-    // 🔍 DEBUG: log exact payload and userId
-    console.log("[DEBUG] userId from localStorage:", userId);
-    console.log("[DEBUG] payload gửi lên:", JSON.stringify(payload, null, 2));
+    
 
     try {
       await appointmentApi.createAppointment(payload);

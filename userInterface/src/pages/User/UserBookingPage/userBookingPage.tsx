@@ -123,7 +123,6 @@ const UserBookingPage = () => {
 
     try {
       await appointmentApi.deleteAppointment(appointmentId);
-
       // Remove the cancelled appointment from state
       setAppointments((prev) => prev.filter((apt) => apt.id !== appointmentId));
 
