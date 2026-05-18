@@ -147,40 +147,42 @@ const AppointmentList = ({
                           </strong>
                         </span>
                         <span>
-                          Nhắc lịch: {formatReminderTime(reminder?.reminderTime)}
+                          Nhắc lịch:{" "}
+                          {formatReminderTime(reminder?.reminderTime)}
                         </span>
                       </div>
                     </div>
-
-                    <div className="flex flex-wrap gap-2 lg:justify-end">
-                      <Button
-                        variant="outline"
-                        className="h-9 rounded-full"
-                        onClick={() => onEdit(appointment)}
-                      >
-                        <Edit3 className="h-4 w-4" />
-                        Sửa
-                      </Button>
-                      {reminder && (
+                    {appointment.status === 0 ? (
+                      <div className="flex flex-wrap gap-2 lg:justify-end">
                         <Button
                           variant="outline"
-                          className="h-9 rounded-full text-amber-700 hover:bg-amber-50"
-                          onClick={() => onDeleteReminder(reminder)}
+                          className="h-9 rounded-full"
+                          onClick={() => onEdit(appointment)}
                         >
-                          <X className="h-4 w-4" />
-                          Xóa nhắc
+                          <Edit3 className="h-4 w-4" />
+                          Sửa
                         </Button>
-                      )}
-                      <Button
-                        variant="outline"
-                        className="h-9 rounded-full text-rose-600 hover:bg-rose-50"
-                        disabled={deletingId === appointment.id}
-                        onClick={() => onDeleteAppointment(appointment)}
-                      >
-                        <Trash2 className="h-4 w-4" />
-                        Xóa
-                      </Button>
-                    </div>
+                        {reminder && (
+                          <Button
+                            variant="outline"
+                            className="h-9 rounded-full text-amber-700 hover:bg-amber-50"
+                            onClick={() => onDeleteReminder(reminder)}
+                          >
+                            <X className="h-4 w-4" />
+                            Xóa nhắc
+                          </Button>
+                        )}
+                        <Button
+                          variant="outline"
+                          className="h-9 rounded-full text-rose-600 hover:bg-rose-50"
+                          disabled={deletingId === appointment.id}
+                          onClick={() => onDeleteAppointment(appointment)}
+                        >
+                          <Trash2 className="h-4 w-4" />
+                          Xóa
+                        </Button>
+                      </div>
+                    ) : null}
                   </div>
                 </article>
               );
