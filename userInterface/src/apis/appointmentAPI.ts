@@ -1,4 +1,4 @@
-import type { CreateAppointmentRequest } from "@/types/appoinment";
+import type { CreateAppointmentRequest } from "@/types/appointment";
 import axiosClient from "./axiosClient";
 
 const APPOINTMENTS_API_URL = "/appointments";

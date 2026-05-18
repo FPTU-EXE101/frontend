@@ -1,7 +1,7 @@
 import type { CreateItemRequest } from "@/types/item.type";
 import axiosClient from "./axiosClient";
 
-const ITEM_API_URL = "/Items";
+const ITEM_API_URL = "/items";
 
 const itemApi = {
   getAllItems: () => axiosClient.get(`${ITEM_API_URL}`),
