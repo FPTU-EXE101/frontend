@@ -11,7 +11,7 @@ import { Button } from "@/components/ui/button";
 import petApi from "@/apis/petAPI";
 import appointmentApi from "@/apis/appointmentAPI";
 import type { Pet } from "@/types/pet.type";
-import type { CreateAppointmentRequest, Appointment } from "@/types/appointment";
+import type { CreateAppointmentRequest, Appointment } from "@/types/appointment.type";
 import Calendar from "./Calendar";
 import TimeSlotPicker, { type BookedSlot } from "./TimeSlotPicker";
 import StepBar from "./StepBar";

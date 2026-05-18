@@ -4,7 +4,7 @@ import axiosClient from "./axiosClient";
 const ITEM_API_URL = "/items";
 
 const itemApi = {
-  getAllItems: () => axiosClient.get(`${ITEM_API_URL}`),
+  getAllItems: () => axiosClient.get(`${ITEM_API_URL}/item`),
   getItemById: (id: string) => axiosClient.get(`${ITEM_API_URL}/${id}`),
   createItem: (data: CreateItemRequest | FormData) =>
     axiosClient.post(

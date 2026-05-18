@@ -1,18 +1,23 @@
-import type { ReminderStatus } from "./enum.type"
+import type { AppointmentStatus } from "./enum.type";
 
-export interface AppointmentRemind{
-    id: string
-    appointmentId: string
-    reminderTime: string
-    status: ReminderStatus
-    createAt: Date
+
+export interface Appointment {
+  id: string;
+  customerId: string;
+  petId: string;
+  appointmentDate: string;
+  startTime: string;
+  endTime: string;
+  appointmentNote: string;
+  status: AppointmentStatus;
+  createAt: string;
+  updateAt: string;
 }
-export interface CreateAppointmentRemind{
-    appointmentId: string
-    reminderTime: string
-}
-export interface UpdateAppointmentRemind{
-    appointmentId: string
-    reminderTime: string
-    status: ReminderStatus
+export interface CreateAppointmentRequest {
+  customerId: string;
+  petId: string;
+  appointmentDate: string; //string($date)
+  startTime: string; //string($time)
+  endTime: string; //string($time)
+  appointmentNote: string;
 }

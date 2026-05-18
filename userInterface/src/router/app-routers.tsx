@@ -19,7 +19,7 @@ import ManagerPetMedicalRecord from "@/pages/Manager/managerPetMedicalRecord";
 import ManagerPetMedicalRecordCreate from "@/pages/Manager/managerPetMedicalRecordCreate";
 import ManagerDashboard from "@/pages/Manager/managerDashboard";
 import ManagerCustomersManage from "@/pages/Manager/managerCustomersManage";
-import ManagerAppointmentsManage from "@/pages/Manager/managerAppointmentsManage";
+import ManagerAppointmentsManage from "@/pages/Manager/managerAppointmentsManage/managerAppointmentsManage";
 import ManagerServicesManage from "@/pages/Manager/managerServicesManage";
 import ManagerCategoriesManage from "@/pages/Manager/managerCategoriesManage";
 import ManagerProductsMange from "@/pages/Manager/managerProductsMange";

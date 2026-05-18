@@ -10,7 +10,7 @@ import {
   XCircle,
   CheckCircle,
 } from "lucide-react";
-import type { Appointment } from "@/types/appointment";
+import type { Appointment } from "@/types/appointment.type";
 import type { Pet } from "@/types/pet.type";
 import { Link } from "react-router-dom";
 

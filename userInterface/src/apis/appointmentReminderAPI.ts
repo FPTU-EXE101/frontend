@@ -1,4 +1,4 @@
-import type { CreateAppointmentRemind, UpdateAppointmentRemind } from "@/types/appointment.type";
+import type { CreateAppointmentRemind, UpdateAppointmentRemind } from "@/types/appointmentRemind.type";
 import axiosClient from "./axiosClient";
 const REMINDERS_API_URL = "/reminds"
 const REMINDER_API_URL = "/remind"
