@@ -179,7 +179,7 @@ const AppointmentList = ({
                           onClick={() => onDeleteAppointment(appointment)}
                         >
                           <Trash2 className="h-4 w-4" />
-                          Xóa
+                          Huỷ lịch
                         </Button>
                       </div>
                     ) : null}
