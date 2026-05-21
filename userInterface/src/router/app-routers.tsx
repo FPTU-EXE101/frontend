@@ -85,7 +85,7 @@ const AppRoutes = () => {
         <Route path="products/new" element={<ManagerProductCreate />} />
         <Route path="products/:id/edit" element={<ManagerProductEdit />} />
         <Route path="crm" element={<ManagerCRMManage />} />
-        <Route path="payment" element={<ManagerPaymentManage />} />
+        <Route path="payments" element={<ManagerPaymentManage />} />
         <Route path="automation" element={<ManagerAutomationManage />} />
         <Route path="settings" element={<ManagerSettingManage />} />
       </Route>

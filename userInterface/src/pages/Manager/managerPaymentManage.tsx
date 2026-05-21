@@ -1,10 +1,8 @@
 
+import POSPaymentPage from "../payment/POSPaymentPage";
+
 const ManagerPaymentManage = () => {
-  return (
-    <div>
-      
-    </div>
-  );
-}
+  return <POSPaymentPage />;
+};
 
 export default ManagerPaymentManage;

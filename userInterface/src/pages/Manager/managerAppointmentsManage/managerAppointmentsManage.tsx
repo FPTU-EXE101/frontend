@@ -6,7 +6,10 @@ import reminderApi from "@/apis/appointmentReminderAPI";
 import petApi from "@/apis/petAPI";
 import userApi from "@/apis/userAPI";
 import { Button } from "@/components/ui/button";
-import type { Appointment, CreateAppointmentRequest } from "@/types/appointment.type";
+import type {
+  Appointment,
+  CreateAppointmentRequest,
+} from "@/types/appointment.type";
 import type { AppointmentRemind } from "@/types/appointmentRemind.type";
 import type { AppointmentStatus, ReminderStatus } from "@/types/enum.type";
 import type { Pet } from "@/types/pet.type";
@@ -32,14 +35,16 @@ const ManagerAppointmentsManage = () => {
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [reminders, setReminders] = useState<AppointmentRemind[]>([]);
   const [petNames, setPetNames] = useState<Record<string, string>>({});
-  const [customerNames, setCustomerNames] = useState<Record<string, string>>({});
+  const [customerNames, setCustomerNames] = useState<Record<string, string>>(
+    {},
+  );
   const [selectedDate, setSelectedDate] = useState(() => toDateKey(new Date()));
   const [viewDate, setViewDate] = useState(() => new Date());
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [cancelingId, setCancelingId] = useState<string | null>(null);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [form, setForm] = useState<AppointmentFormState | null>(null);
@@ -141,20 +146,26 @@ const ManagerAppointmentsManage = () => {
 
   const reminderByAppointmentId = useMemo(
     () =>
-      reminders.reduce<Record<string, AppointmentRemind>>((result, reminder) => {
-        result[reminder.appointmentId] = reminder;
-        return result;
-      }, {}),
+      reminders.reduce<Record<string, AppointmentRemind>>(
+        (result, reminder) => {
+          result[reminder.appointmentId] = reminder;
+          return result;
+        },
+        {},
+      ),
     [reminders],
   );
 
   const appointmentsByDate = useMemo(
     () =>
-      appointments.reduce<Record<string, Appointment[]>>((result, appointment) => {
-        const key = normalizeDateKey(appointment.appointmentDate);
-        result[key] = [...(result[key] ?? []), appointment];
-        return result;
-      }, {}),
+      appointments.reduce<Record<string, Appointment[]>>(
+        (result, appointment) => {
+          const key = normalizeDateKey(appointment.appointmentDate);
+          result[key] = [...(result[key] ?? []), appointment];
+          return result;
+        },
+        {},
+      ),
     [appointments],
   );
 
@@ -222,7 +233,8 @@ const ManagerAppointmentsManage = () => {
     return appointments
       .filter((appointment) => {
         const isSameDate =
-          normalizeDateKey(appointment.appointmentDate) === form.appointmentDate;
+          normalizeDateKey(appointment.appointmentDate) ===
+          form.appointmentDate;
         const isActive = appointment.status === 0 || appointment.status === 1;
         const isCurrentAppointment = form.id === appointment.id;
         return isSameDate && isActive && !isCurrentAppointment;
@@ -355,6 +367,17 @@ const ManagerAppointmentsManage = () => {
     window.setTimeout(() => setSuccess(""), 2500);
   };
 
+  const updateAppointmentStatus = (
+    appointment: Appointment,
+    status: AppointmentStatus,
+  ) => {
+    setAppointments((current) =>
+      current.map((item) =>
+        item.id === appointment.id ? { ...item, status } : item,
+      ),
+    );
+  };
+
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (!form) return;
@@ -415,49 +438,51 @@ const ManagerAppointmentsManage = () => {
     }
   };
 
-  const handleDeleteAppointment = async (appointment: Appointment) => {
-    const confirmed = window.confirm("Bạn có chắc muốn xóa lịch hẹn này không?");
+  const handleCancelAppointment = async (appointment: Appointment) => {
+    const confirmed = window.confirm(
+      "Bạn có chắc muốn Huỷ lịch hẹn này không?",
+    );
     if (!confirmed) return;
 
-    setDeletingId(appointment.id);
+    setCancelingId(appointment.id);
     setError("");
 
     try {
       await appointmentApi.deleteAppointment(appointment.id);
-      setAppointments((current) =>
-        current.filter((item) => item.id !== appointment.id),
-      );
-      setReminders((current) =>
-        current.filter((item) => item.appointmentId !== appointment.id),
-      );
-      showSuccess("Đã xóa lịch hẹn.");
+      updateAppointmentStatus(appointment, 2);
+      showSuccess("Đã Huỷ lịch hẹn.");
     } catch (err) {
       console.error(err);
-      setError("Xóa lịch hẹn thất bại. Vui lòng thử lại.");
+      setError("Huỷ lịch hẹn thất bại. Vui lòng thử lại.");
     } finally {
-      setDeletingId(null);
+      setCancelingId(null);
     }
   };
 
-  const handleDeleteReminder = async (reminder: AppointmentRemind) => {
-    const confirmed = window.confirm("Bạn có chắc muốn xóa nhắc lịch này không?");
+  const handleCancelReminder = async (reminder: AppointmentRemind) => {
+    const confirmed = window.confirm(
+      "Bạn có chắc muốn Huỷ nhắc lịch này không?",
+    );
     if (!confirmed) return;
 
     setError("");
 
     try {
       await reminderApi.deleteReminder(reminder.id);
-      setReminders((current) => current.filter((item) => item.id !== reminder.id));
-      showSuccess("Đã xóa nhắc lịch.");
+      setReminders((current) =>
+        current.filter((item) => item.id !== reminder.id),
+      );
+      showSuccess("Đã Huỷ nhắc lịch.");
     } catch (err) {
       console.error(err);
-      setError("Xóa nhắc lịch thất bại. Vui lòng thử lại.");
+      setError("Huỷ nhắc lịch thất bại. Vui lòng thử lại.");
     }
   };
 
   const moveMonth = (step: number) => {
     setViewDate(
-      (current) => new Date(current.getFullYear(), current.getMonth() + step, 1),
+      (current) =>
+        new Date(current.getFullYear(), current.getMonth() + step, 1),
     );
   };
 
@@ -510,7 +535,7 @@ const ManagerAppointmentsManage = () => {
 
         <AppointmentList
           customerNames={customerNames}
-          deletingId={deletingId}
+          cancelingId={cancelingId}
           loading={loading}
           petNames={petNames}
           reminderByAppointmentId={reminderByAppointmentId}
@@ -519,8 +544,8 @@ const ManagerAppointmentsManage = () => {
           statusFilter={statusFilter}
           visibleAppointments={visibleAppointments}
           onCreate={openCreateForm}
-          onDeleteAppointment={handleDeleteAppointment}
-          onDeleteReminder={handleDeleteReminder}
+          onCancelAppointment={handleCancelAppointment}
+          onCancelReminder={handleCancelReminder}
           onEdit={openEditForm}
           onSearchChange={setSearchTerm}
           onStatusFilterChange={setStatusFilter}

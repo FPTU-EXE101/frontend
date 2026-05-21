@@ -1,4 +1,5 @@
 import type { CreateAppointmentRequest } from "@/types/appointment.type";
+import type { AppointmentStatus } from "@/types/enum.type";
 import axiosClient from "./axiosClient";
 
 const APPOINTMENTS_API_URL = "/appointments";
@@ -10,7 +11,10 @@ const appointmentApi = {
     axiosClient.get(`${APPOINTMENT_API_URL}/${id}`),
   createAppointment: (data: CreateAppointmentRequest) =>
     axiosClient.post(`${CREATE_APPOINTMENT_URL}`, data),
-  updateAppointment: (id: string, data: CreateAppointmentRequest) =>
+  updateAppointment: (
+    id: string,
+    data: Partial<CreateAppointmentRequest> & { status?: AppointmentStatus },
+  ) =>
     axiosClient.patch(`${APPOINTMENT_API_URL}/${id}`, data),
   deleteAppointment: (id: string) =>
     axiosClient.delete(`${APPOINTMENT_API_URL}/${id}`),
