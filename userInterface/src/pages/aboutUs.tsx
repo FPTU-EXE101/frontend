@@ -44,44 +44,44 @@ const stats = [
 const teamMembers = [
   {
     name: "Nguyễn Gia Huy",
-    role: "Co-founder & CEO",
-    avatar: "NH",
+    role: "Front-End Developer",
+    avatar: "/teamMemberAvt/teachLead.png",
     color: "#D56756",
     quote: "Mỗi thú cưng đều xứng đáng được chăm sóc tốt nhất.",
   },
   {
     name: "Nguyễn Đức Huy",
-    role: "Co-founder & CTO",
-    avatar: "MK",
+    role: "Back-End Developer",
+    avatar: "/teamMemberAvt/be-dev1.png",
     color: "#B24C40",
     quote: "Công nghệ đơn giản nhất là công nghệ mà ai cũng dùng được.",
   },
   {
     name: "Dương Tuấn Kiệt",
-    role: "Head of Product",
-    avatar: "TT",
+    role: "Back-End Developer",
+    avatar: "/teamMemberAvt/be-dev2.png",
     color: "#9B3A2F",
     quote: "Sản phẩm tốt là sản phẩm giải quyết đúng vấn đề thực tế.",
   },
   {
     name: "Dương Thị Thảo Quyên ",
-    role: "Co-founder & CMO",
-    avatar: "ĐHA",
+    role: "UI/UX Designer",
+    avatar: "/teamMemberAvt/UX.png",
     color: "#6F3D36",
     quote: "Thấu hiểu khách hàng là chìa khóa thành công.",
   },
   {
     name: "Nguyễn Thị Mai Phương",
-    role: "Co-founder & CMO",
-    avatar: "ĐHA",
+    role: "Head Of Product / Marketing Specialist",
+    avatar: "/teamMemberAvt/HeadProduct.png",
     color: "#6F3D36",
     quote: "Phát triển bền vững vì cộng đồng.",
   },
-  
-    {
+
+  {
     name: "Nguyễn Ngọc Ánh",
-    role: "Co-founder & CMO",
-    avatar: "ĐHA",
+    role: "Marketing Specialist",
+    avatar: "/teamMemberAvt/MC.png",
     color: "#6F3D36",
     quote: "Làm việc hiệu quả - tận hưởng cuộc sống",
   },
@@ -89,25 +89,25 @@ const teamMembers = [
 
 const milestones = [
   {
-    year: "2024",
+    year: "1/2026",
     title: "Khởi đầu hành trình",
     description:
       "PetHub được thành lập với mong muốn giúp các cửa hàng thú cưng Việt Nam vận hành chuyên nghiệp hơn.",
   },
   {
-    year: "2024 Q3",
+    year: "3/2026",
     title: "Ra mắt phiên bản Beta",
     description:
       "Phiên bản đầu tiên với tính năng quản lý lịch hẹn và hồ sơ thú cưng được 20 cửa hàng đón nhận.",
   },
   {
-    year: "2025",
+    year: "4/2026",
     title: "Digital Pet Card",
     description:
       "Ra mắt tính năng độc quyền Digital Pet Card với QR Code, tăng tỷ lệ khách quay lại lên 3x.",
   },
   {
-    year: "2026",
+    year: "6/2026",
     title: "Mở rộng toàn quốc",
     description:
       "Phục vụ hơn 500 cửa hàng trên khắp Việt Nam với hệ sinh thái quản lý toàn diện từ A-Z.",
@@ -384,12 +384,12 @@ const AboutUs = () => {
                 className="group rounded-[24px] border border-slate-200 bg-white p-8 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_16px_48px_rgba(213,103,86,0.12)]"
               >
                 {/* avatar */}
-                <div
+                <img
                   className="mx-auto flex h-20 w-20 items-center justify-center rounded-full text-2xl font-bold text-white shadow-lg"
                   style={{ backgroundColor: member.color }}
-                >
-                  {member.avatar}
-                </div>
+                  src={member.avatar}
+                  alt={member.name}
+                />
 
                 <div className="mt-5 text-center">
                   <h3 className="text-lg font-bold text-slate-900">
