@@ -3,9 +3,10 @@ import petApi from "@/apis/petAPI";
 import medicalRecordApi from "@/apis/medicalRecordAPI";
 import type { Pet } from "@/types/pet.type";
 import type { MedicalRecord } from "@/types/medicalRecord.type";
-import { Heart, Info } from "lucide-react";
+import { Heart, Info, X } from "lucide-react";
 import PetCard from "./PetCard";
 import PetDetailModal from "./PetDetailModal";
+import PetQRCode from "@/components/pets/PetQRCode";
 
 const UserPetPage = () => {
   const [pets, setPets] = useState<Pet[]>([]);
@@ -14,6 +15,7 @@ const UserPetPage = () => {
 
   // modal state
   const [selectedPet, setSelectedPet] = useState<Pet | null>(null);
+  const [qrPet, setQrPet] = useState<Pet | null>(null);
   const [medicalRecords, setMedicalRecords] = useState<MedicalRecord[]>([]);
   const [recordsLoading, setRecordsLoading] = useState(false);
 
@@ -66,13 +68,12 @@ const UserPetPage = () => {
     }
   };
 
-  // ── "Xem thẻ" handler (placeholder) ──────────────────────────────────────
   const handleViewPetCard = (pet: Pet) => {
-    // TODO: implement Digital PetCard modal
-    alert(`Digital Card cho ${pet.name} – coming soon!`);
+    setQrPet(pet);
   };
 
   const handleCloseModal = () => setSelectedPet(null);
+  const handleCloseQr = () => setQrPet(null);
 
   // ── render ────────────────────────────────────────────────────────────────
   return (
@@ -175,6 +176,26 @@ const UserPetPage = () => {
           loading={recordsLoading}
           onClose={handleCloseModal}
         />
+      )}
+
+      {qrPet && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div
+            className="absolute inset-0 bg-black/50 backdrop-blur-sm"
+            onClick={handleCloseQr}
+          />
+          <div className="relative z-10 w-full max-w-md">
+            <button
+              type="button"
+              onClick={handleCloseQr}
+              className="absolute right-4 top-4 z-10 flex h-9 w-9 items-center justify-center rounded-full bg-white text-slate-500 shadow-sm hover:bg-slate-50"
+              aria-label="Đóng QR Code"
+            >
+              <X className="h-5 w-5" />
+            </button>
+            <PetQRCode petId={qrPet.id} petName={qrPet.name} />
+          </div>
+        </div>
       )}
     </div>
   );

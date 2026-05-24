@@ -17,7 +17,7 @@ const PetDetailModal = ({
   loading,
   onClose,
 }: PetDetailModalProps) => {
-  const emoji = getPetEmoji((pet as any).species);
+  const emoji = getPetEmoji(pet.species);
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
@@ -38,7 +38,7 @@ const PetDetailModal = ({
             <div>
               <h2 className="text-xl font-bold text-slate-900">{pet.name}</h2>
               <p className="text-sm text-slate-500">
-                {(pet as any).species || "Thú cưng"}
+                {pet.species || "Thú cưng"}
               </p>
             </div>
           </div>
@@ -63,7 +63,7 @@ const PetDetailModal = ({
             <div className="rounded-2xl bg-[#F5F0E8] px-4 py-3">
               <p className="text-xs text-slate-500 mb-1">Cân nặng</p>
               <p className="font-semibold text-slate-800">
-                {(pet as any).weight ? `${(pet as any).weight}kg` : "Chưa rõ"}
+                {pet.weight ? `${pet.weight}kg` : "Chưa rõ"}
               </p>
             </div>
             <div className="rounded-2xl bg-[#F5F0E8] px-4 py-3">
@@ -86,7 +86,7 @@ const PetDetailModal = ({
           <div className="rounded-2xl bg-rose-50 px-4 py-3">
             <p className="text-xs font-semibold text-rose-400 mb-1">Dị ứng</p>
             <p className="text-sm font-medium text-rose-700">
-              {(pet as any).allergy || "Không có"}
+              {pet.allergy || "Không có"}
             </p>
           </div>
 
@@ -94,7 +94,7 @@ const PetDetailModal = ({
           <div className="rounded-2xl bg-sky-50 px-4 py-3">
             <p className="text-xs font-semibold text-sky-400 mb-1">Ghi chú</p>
             <p className="text-sm font-medium text-sky-700">
-              {(pet as any).note || "Không có ghi chú"}
+              {pet.note || "Không có ghi chú"}
             </p>
           </div>
 

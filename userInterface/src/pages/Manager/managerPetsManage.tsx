@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import petApi from "@/apis/petAPI";
 import type { Pet } from "@/types/pet.type";
+import PetQRCode from "@/components/pets/PetQRCode";
 
 const calculateAge = (dateOfBirth: string) => {
   if (!dateOfBirth) return "Chưa rõ";
@@ -140,8 +141,10 @@ const ManagerPetsManage = () => {
                   </div>
 
                   <div className="grid gap-3 sm:grid-cols-2">
-                    <Button variant="outline" className="w-full">
-                      Xem Digital Pet Card
+                    <Button asChild variant="outline" className="w-full">
+                      <Link to={`/pet-card/${pet.id}`} target="_blank">
+                        Xem Digital Pet Card
+                      </Link>
                     </Button>
                     <Button
                       asChild
@@ -152,6 +155,8 @@ const ManagerPetsManage = () => {
                       </Link>
                     </Button>
                   </div>
+
+                  <PetQRCode petId={pet.id} petName={pet.name} />
                 </div>
               </article>
             ))

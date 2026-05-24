@@ -10,7 +10,7 @@ export interface PetCardProps {
 }
 
 const PetCard = ({ pet, onViewDetail, onViewPetCard }: PetCardProps) => {
-  const emoji = getPetEmoji((pet as any).species);
+  const emoji = getPetEmoji(pet.species);
 
   return (
     <div className="rounded-[28px] border border-slate-200 bg-white shadow-sm overflow-hidden hover:shadow-md transition-shadow duration-300">
@@ -26,8 +26,8 @@ const PetCard = ({ pet, onViewDetail, onViewPetCard }: PetCardProps) => {
       <div className="px-5 py-4 space-y-3">
         <div>
           <h3 className="text-lg font-semibold text-slate-900">{pet.name}</h3>
-          {(pet as any).species && (
-            <p className="text-sm text-slate-500">{(pet as any).species}</p>
+          {pet.species && (
+            <p className="text-sm text-slate-500">{pet.species}</p>
           )}
         </div>
 
@@ -38,11 +38,11 @@ const PetCard = ({ pet, onViewDetail, onViewPetCard }: PetCardProps) => {
               {calcAge(pet.dateOfBirth)}
             </span>
           </div>
-          {(pet as any).weight && (
+          {pet.weight && (
             <div className="flex justify-between">
               <span className="text-slate-400">Cân nặng:</span>
               <span className="font-medium text-slate-800">
-                {(pet as any).weight} kg
+                {pet.weight} kg
               </span>
             </div>
           )}

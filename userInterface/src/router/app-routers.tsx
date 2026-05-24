@@ -38,6 +38,7 @@ import AboutUs from "@/pages/aboutUs";
 import Features from "@/pages/features";
 import UserPetPage from "@/pages/User/userPetPage/userPetPage";
 import UserCreateBookingPage from "@/pages/User/UserBookingPage/UserCreateBooking/userCreateBookingPage";
+import DigitalPetCard from "@/pages/DigitalPetCard";
 
 const AppRoutes = () => {
   return (
@@ -53,6 +54,7 @@ const AppRoutes = () => {
         <Route path="pricing" element={<PricingPage />} />
         <Route path="about-us" element={<AboutUs />} />
         <Route path="features" element={<Features />} />
+        <Route path="pet-card/:petId" element={<DigitalPetCard />} />
         <Route path="user" element={<UserInfoLayout />}>
           <Route path="home" element={<UserHomePage />} />
           <Route path="pet" element={<UserPetPage />} />
