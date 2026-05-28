@@ -1,7 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import {
-  Activity,
   ArrowRight,
   Bell,
   CalendarCheck,
@@ -102,13 +101,6 @@ const workflowSteps = [
   },
 ];
 
-const petAvatars = [
-  "https://images.unsplash.com/photo-1537151608828-ea2b11777ee8?auto=format&fit=crop&w=160&q=80",
-  "https://images.unsplash.com/photo-1548199973-03cce0bbc87b?auto=format&fit=crop&w=160&q=80",
-  "https://images.unsplash.com/photo-1574158622682-e40e69881006?auto=format&fit=crop&w=160&q=80",
-  "https://images.unsplash.com/photo-1517849845537-4d257902454a?auto=format&fit=crop&w=160&q=80",
-];
-
 const careJourney = [
   {
     icon: CalendarCheck,
@@ -178,24 +170,34 @@ const Home = () => {
   return (
     <div className="min-h-screen bg-white text-slate-950">
       {/* Hero Section */}
-      <section className="relative isolate overflow-hidden bg-[linear-gradient(135deg,#fff8f5_0%,#fff_42%,#edfdf9_100%)] px-4 py-20 sm:py-24">
-        <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_20%_20%,rgba(213,103,86,0.16),transparent_28%),radial-gradient(circle_at_80%_10%,rgba(20,184,166,0.14),transparent_24%)]" />
-        <div className="absolute inset-0 -z-10 bg-[linear-gradient(rgba(15,23,42,0.04)_1px,transparent_1px),linear-gradient(90deg,rgba(15,23,42,0.04)_1px,transparent_1px)] opacity-60 [background-size:44px_44px]" />
+      <section className="relative isolate overflow-hidden px-4 py-20 text-white sm:py-24">
+        <video
+          className="absolute inset-0 -z-20 h-full w-full object-cover"
+          autoPlay
+          muted
+          loop
+          playsInline
+          preload="auto"
+        >
+          <source src="/videos/dog_car.mp4" type="video/mp4" />
+        </video>
+        <div className="absolute inset-0 -z-10 bg-gradient-to-r from-slate-950/80 via-slate-900/50 to-slate-950/25" />
+        <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_20%_20%,rgba(213,103,86,0.28),transparent_32%),radial-gradient(circle_at_80%_10%,rgba(20,184,166,0.22),transparent_28%)]" />
         <div className="container mx-auto max-w-6xl">
-          <div className="grid items-center gap-12 md:grid-cols-[1.05fr_0.95fr]">
+          <div className="max-w-3xl">
             <div className="space-y-8">
-              <div className="inline-flex items-center rounded-full border border-[#f0c3bc] bg-white/80 px-4 py-2 text-sm font-semibold text-[#B24C40] shadow-sm shadow-[#D56756]/10 backdrop-blur">
+              <div className="inline-flex items-center rounded-full border border-white/25 bg-white/15 px-4 py-2 text-sm font-semibold text-white shadow-sm shadow-slate-950/10 backdrop-blur">
                 Giải pháp quản lý thú cưng toàn diện
               </div>
 
               <div className="space-y-6">
-                <h1 className="max-w-3xl text-4xl font-black leading-[1.05] tracking-tight text-slate-950 sm:text-6xl">
+                <h1 className="max-w-3xl text-4xl font-black leading-[1.05] tracking-tight text-white sm:text-6xl">
                   Quản lý Pet Shop & Phòng khám thú y
                 </h1>
-                <p className="bg-linear-to-r from-[#B24C40] via-[#D56756] to-[#10b9a7] bg-clip-text text-5xl font-black leading-none tracking-tight text-transparent sm:text-7xl">
+                <p className="bg-linear-to-r from-[#F7C5BD] via-white to-[#8FF1E5] bg-clip-text text-5xl font-black leading-none tracking-tight text-transparent drop-shadow-sm sm:text-7xl">
                   Dễ dàng hơn bao giờ hết
                 </p>
-                <p className="max-w-2xl text-lg leading-8 text-slate-700 sm:text-xl">
+                <p className="max-w-2xl text-lg leading-8 text-white/85 sm:text-xl">
                   PetHub giúp bạn quản lý khách hàng, lịch hẹn, hồ sơ thú cưng
                   và tăng doanh thu với Digital Pet Card - “vũ khí bí mật” giữ
                   chân khách hàng của bạn.
@@ -212,95 +214,24 @@ const Home = () => {
                 </Link>
                 <Link
                   to="/demo"
-                  className="inline-flex w-full items-center justify-center rounded-full border border-slate-200 bg-white/85 px-7 py-3.5 text-base font-bold text-slate-800 shadow-sm backdrop-blur transition duration-300 hover:-translate-y-0.5 hover:border-[#D56756]/40 hover:bg-white hover:text-[#B24C40] sm:w-auto"
+                  className="inline-flex w-full items-center justify-center rounded-full border border-white/25 bg-white/15 px-7 py-3.5 text-base font-bold text-white shadow-sm backdrop-blur transition duration-300 hover:-translate-y-0.5 hover:bg-white hover:text-[#B24C40] sm:w-auto"
                 >
                   Xem Demo
                 </Link>
               </div>
 
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                <div className="inline-flex items-center gap-3 rounded-full border border-white/80 bg-white/80 px-4 py-3 shadow-sm shadow-slate-200/70 backdrop-blur">
-                  <CheckCircle className="h-5 w-5 text-[#D56756]" />
-                  <span className="text-sm font-medium text-slate-700">
+                <div className="inline-flex items-center gap-3 rounded-full border border-white/20 bg-white/12 px-4 py-3 shadow-sm shadow-slate-950/10 backdrop-blur">
+                  <CheckCircle className="h-5 w-5 text-[#F7C5BD]" />
+                  <span className="text-sm font-medium text-white/90">
                     Không cần thẻ tín dụng
                   </span>
                 </div>
-                <div className="inline-flex items-center gap-3 rounded-full border border-white/80 bg-white/80 px-4 py-3 shadow-sm shadow-slate-200/70 backdrop-blur">
-                  <CheckCircle className="h-5 w-5 text-[#D56756]" />
-                  <span className="text-sm font-medium text-slate-700">
+                <div className="inline-flex items-center gap-3 rounded-full border border-white/20 bg-white/12 px-4 py-3 shadow-sm shadow-slate-950/10 backdrop-blur">
+                  <CheckCircle className="h-5 w-5 text-[#F7C5BD]" />
+                  <span className="text-sm font-medium text-white/90">
                     Hỗ trợ 24/7
                   </span>
-                </div>
-              </div>
-
-              <div className="flex flex-wrap items-center gap-4 pt-2">
-                <div className="flex -space-x-3">
-                  {petAvatars.map((avatar) => (
-                    <img
-                      key={avatar}
-                      src={avatar}
-                      alt=""
-                      className="h-10 w-10 rounded-full border-2 border-white object-cover shadow-sm"
-                    />
-                  ))}
-                </div>
-                <div>
-                  <div className="flex items-center gap-1 text-[#D56756]">
-                    {Array.from({ length: 5 }).map((_, index) => (
-                      <Star key={index} className="h-4 w-4 fill-current" />
-                    ))}
-                  </div>
-                  <p className="mt-1 text-sm font-semibold text-slate-700">
-                    Được yêu thích bởi các cửa hàng thú cưng hiện đại
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            <div className="relative">
-              <div className="absolute -inset-3 -z-10 rounded-[40px] bg-linear-to-br from-[#D56756]/20 via-white to-teal-300/20 blur-xl" />
-              <div className="relative overflow-hidden rounded-[32px] border border-white/80 bg-white shadow-[0_30px_90px_rgba(15,23,42,0.14)] transition duration-500 hover:-translate-y-1">
-                <img
-                  src="https://images.unsplash.com/photo-1558788353-f76d92427f16?auto=format&fit=crop&w=900&q=80"
-                  alt="Happy dog"
-                  className="aspect-[4/4.3] h-full w-full object-cover"
-                />
-                <div className="absolute inset-x-0 bottom-0 bg-linear-to-t from-slate-950/55 to-transparent p-8 text-white">
-                  <p className="text-sm font-semibold text-white/80">
-                    PetHub operating system
-                  </p>
-                  <p className="mt-1 text-2xl font-bold">
-                    Quản lý mọi điểm chạm của khách hàng
-                  </p>
-                </div>
-              </div>
-              <div className="absolute left-4 top-4 rounded-full border border-white/80 bg-white/90 px-4 py-2 text-sm font-semibold text-slate-800 shadow-lg shadow-slate-900/10 backdrop-blur">
-                Tối ưu vận hành
-              </div>
-              <div className="absolute bottom-4 left-6 rounded-full border border-white/80 bg-white/90 px-4 py-2 text-sm font-semibold text-slate-800 shadow-lg shadow-slate-900/10 backdrop-blur">
-                Đồng hành cùng PetHub
-              </div>
-              <div className="absolute -right-2 top-20 hidden w-64 rounded-3xl border border-white/80 bg-white/92 p-4 shadow-[0_22px_60px_rgba(15,23,42,0.16)] backdrop-blur md:block">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-xs font-bold uppercase tracking-[0.18em] text-slate-400">
-                      Hôm nay
-                    </p>
-                    <p className="mt-1 text-lg font-black text-slate-950">
-                      12 lịch hẹn
-                    </p>
-                  </div>
-                  <div className="grid h-11 w-11 place-items-center rounded-2xl bg-emerald-50 text-emerald-600">
-                    <Activity className="h-5 w-5" />
-                  </div>
-                </div>
-                <div className="mt-4 space-y-2">
-                  <div className="h-2 rounded-full bg-slate-100">
-                    <div className="h-2 w-4/5 rounded-full bg-[#D56756]" />
-                  </div>
-                  <p className="text-xs font-medium text-slate-500">
-                    8 khách đã xác nhận, 4 đang chờ
-                  </p>
                 </div>
               </div>
             </div>
