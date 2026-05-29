@@ -64,7 +64,7 @@ export default function LoginPage() {
               Đăng nhập để quản lý lịch hẹn, hồ sơ và vận hành PetHub.
             </p>
           </div>
-          <LoginForm className="[&_[data-slot=field-label]]:text-white/90 [&_[data-slot=field-description]]:text-white/65 [&_[data-slot=field-separator-content]]:bg-transparent [&_[data-slot=field-separator-content]]:text-white/50" />
+          <LoginForm />
         </div>
       </main>
     </div>
