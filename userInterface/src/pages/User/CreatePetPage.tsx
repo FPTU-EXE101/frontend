@@ -2,8 +2,8 @@ import { useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
 import { ArrowLeft } from "lucide-react";
-import { isAxiosError } from "axios";
 import { useFormik } from "formik";
+import { getBackendErrorMessage } from "@/utils/getBackendErrorMessage";
 import * as Yup from "yup";
 import petApi from "@/apis/petAPI";
 import { Button } from "@/components/ui/button";
@@ -96,14 +96,7 @@ const CreatePetPage = () => {
         }, 1200);
       } catch (error: unknown) {
         console.error(error);
-        let errorMessage =
-          "Tạo thú cưng thất bại. Vui lòng kiểm tra lại thông tin.";
-
-        if (isAxiosError<{ message?: string }>(error)) {
-          errorMessage = error.response?.data?.message || errorMessage;
-        }
-
-        setSubmitError(errorMessage);
+        setSubmitError(getBackendErrorMessage(error));
       } finally {
         setLoading(false);
       }
@@ -232,7 +225,7 @@ const CreatePetPage = () => {
             </Field>
 
             {submitError ? (
-              <FieldDescription className="text-center text-sm text-red-600">
+              <FieldDescription className="text-center text-sm text-red-600 whitespace-pre-line">
                 {submitError}
               </FieldDescription>
             ) : null}

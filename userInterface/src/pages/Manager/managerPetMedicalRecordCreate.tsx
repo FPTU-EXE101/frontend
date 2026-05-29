@@ -13,6 +13,7 @@ import petApi from "@/apis/petAPI";
 import medicalRecordApi from "@/apis/medicalRecordAPI";
 import type { Pet } from "@/types/pet.type";
 import type { CreateMedicalRecordRequest } from "@/types/medicalRecord.type";
+import { getBackendErrorMessage } from "@/utils/getBackendErrorMessage";
 
 const ManagerPetMedicalRecordCreate = () => {
   const params = useParams();
@@ -41,7 +42,7 @@ const ManagerPetMedicalRecordCreate = () => {
         setPet(response?.data ?? null);
       } catch (err) {
         console.error(err);
-        setError("Không tải được thông tin thú cưng.");
+        setError(getBackendErrorMessage(err));
       }
     };
 
@@ -94,7 +95,7 @@ const ManagerPetMedicalRecordCreate = () => {
       }, 500);
     } catch (err) {
       console.error(err);
-      setError("Không tạo được hồ sơ y tế. Vui lòng thử lại.");
+      setError(getBackendErrorMessage(err));
     } finally {
       setLoading(false);
     }
@@ -218,7 +219,7 @@ const ManagerPetMedicalRecordCreate = () => {
             </Field>
 
             {error ? (
-              <FieldDescription className="text-sm text-rose-700">
+              <FieldDescription className="text-sm text-rose-700 whitespace-pre-line">
                 {error}
               </FieldDescription>
             ) : null}

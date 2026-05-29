@@ -15,6 +15,7 @@ import { Link, useNavigate } from "react-router-dom";
 import authApi from "@/apis/authAPI";
 import { useFormik } from "formik";
 import * as Yup from "yup";
+import { getBackendErrorMessage } from "@/utils/getBackendErrorMessage";
 
 const validationSchema = Yup.object({
   email: Yup.string()
@@ -62,9 +63,7 @@ export function LoginForm({ className, ...props }: ComponentProps<"form">) {
         navigate("/");
       } catch (err) {
         console.error(err);
-        setSubmitError(
-          "Đăng nhập thất bại. Vui lòng kiểm tra email và mật khẩu.",
-        );
+        setSubmitError(getBackendErrorMessage(err));
       } finally {
         setLoading(false);
       }
@@ -126,7 +125,7 @@ export function LoginForm({ className, ...props }: ComponentProps<"form">) {
           />
         </Field>
         {submitError ? (
-          <FieldDescription className="text-center text-sm text-red-600">
+          <FieldDescription className="text-center text-sm text-red-600 whitespace-pre-line">
             {submitError}
           </FieldDescription>
         ) : null}

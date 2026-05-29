@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import appointmentApi from "@/apis/appointmentAPI";
+import { getBackendErrorMessage } from "@/utils/getBackendErrorMessage";
 import invoiceApi from "@/apis/invoiceAPI";
 import itemApi from "@/apis/itemsAPI";
 import petApi from "@/apis/petAPI";
@@ -61,7 +62,7 @@ export const usePOSPayment = ({
     } catch (err) {
       if (signal?.aborted) return;
       console.error(err);
-      setError("Không tải được danh sách item. Vui lòng thử lại.");
+      setError(getBackendErrorMessage(err));
     } finally {
       if (!signal?.aborted) {
         setLoadingItems(false);
@@ -165,7 +166,7 @@ export const usePOSPayment = ({
     } catch (err) {
       if (signal?.aborted) return;
       console.error(err);
-      setError("Không tải được danh sách lịch hẹn. Vui lòng thử lại.");
+      setError(getBackendErrorMessage(err));
     } finally {
       if (!signal?.aborted) {
         setLoadingAppointments(false);
@@ -324,7 +325,7 @@ export const usePOSPayment = ({
       }
     } catch (err) {
       console.error(err);
-      setError("Thanh toán thất bại. Vui lòng thử lại.");
+      setError(getBackendErrorMessage(err));
       setPaying(false);
       return;
     }
@@ -351,9 +352,7 @@ export const usePOSPayment = ({
           });
         } catch (err) {
           console.error(err);
-          setError(
-            "Thanh toán thành công nhưng cập nhật trạng thái lịch hẹn thất bại.",
-          );
+          setError(getBackendErrorMessage(err));
           return;
         }
 
@@ -372,7 +371,7 @@ export const usePOSPayment = ({
       setSuccess("Thanh toán thành công.");
     } catch (err) {
       console.error(err);
-      setError("Tạo hóa đơn thành công nhưng xác nhận thanh toán thất bại.");
+      setError(getBackendErrorMessage(err));
     } finally {
       setPaying(false);
     }

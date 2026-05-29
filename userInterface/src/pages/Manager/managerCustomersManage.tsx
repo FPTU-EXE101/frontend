@@ -9,6 +9,7 @@ import userApi from "@/apis/userAPI";
 import { useDebounce } from "@/hooks/useDebounce";
 import { PaginationControls } from "@/components/ui/pagination-controls";
 import { usePagination } from "@/hooks/usePagination";
+import { getBackendErrorMessage } from "@/utils/getBackendErrorMessage";
 
 
 const ManagerCustomersManage = () => {
@@ -28,9 +29,9 @@ const ManagerCustomersManage = () => {
           signal: controller.signal,
         });
         setusers(response?.data ?? []);
-      } catch {
+      } catch (err) {
         if (controller.signal.aborted) return;
-        setError("Không tải được danh sách Khách hàng. Vui lòng thử lại.");
+        setError(getBackendErrorMessage(err));
       } finally {
         if (!controller.signal.aborted) {
           setLoading(false);
@@ -159,7 +160,7 @@ const ManagerCustomersManage = () => {
       />
 
       {error && (
-        <div className="rounded-[2rem] border border-rose-200 bg-rose-50 p-4 text-sm text-rose-700">
+        <div className="rounded-[2rem] border border-rose-200 bg-rose-50 p-4 text-sm text-rose-700 whitespace-pre-line">
           {error}
         </div>
       )}

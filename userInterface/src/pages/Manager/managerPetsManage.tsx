@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import petApi from "@/apis/petAPI";
 import type { Pet } from "@/types/pet.type";
+import { getBackendErrorMessage } from "@/utils/getBackendErrorMessage";
 import PetQRCode from "@/components/pets/PetQRCode";
 import { useDebounce } from "@/hooks/useDebounce";
 import { PaginationControls } from "@/components/ui/pagination-controls";
@@ -44,9 +45,9 @@ const ManagerPetsManage = () => {
           signal: controller.signal,
         });
         setPets(response?.data ?? []);
-      } catch {
+      } catch (err) {
         if (controller.signal.aborted) return;
-        setError("Không tải được danh sách thú cưng. Vui lòng thử lại.");
+        setError(getBackendErrorMessage(err));
       } finally {
         if (!controller.signal.aborted) {
           setLoading(false);
@@ -194,7 +195,7 @@ const ManagerPetsManage = () => {
       </section>
 
       {error && (
-        <div className="rounded-[2rem] border border-rose-200 bg-rose-50 p-4 text-sm text-rose-700">
+        <div className="rounded-[2rem] border border-rose-200 bg-rose-50 p-4 text-sm text-rose-700 whitespace-pre-line">
           {error}
         </div>
       )}

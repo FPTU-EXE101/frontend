@@ -15,6 +15,7 @@ import type { Register } from "@/types/auth.type";
 import { generateUsername } from "@/lib/auth";
 import { useFormik } from "formik";
 import * as Yup from "yup";
+import { getBackendErrorMessage } from "@/utils/getBackendErrorMessage";
 
 type SignupFormValues = {
   firstName: string;
@@ -74,7 +75,7 @@ export function SignupForm({ className, ...props }: ComponentProps<"form">) {
         navigate("/auth/login");
       } catch (err) {
         console.error(err);
-        setSubmitError("Đăng ký thất bại. Vui lòng thử lại.");
+        setSubmitError(getBackendErrorMessage(err));
       } finally {
         setLoading(false);
       }
@@ -187,7 +188,7 @@ export function SignupForm({ className, ...props }: ComponentProps<"form">) {
           />
         </Field>
         {submitError ? (
-          <FieldDescription className="text-center text-sm text-red-600">
+          <FieldDescription className="text-center text-sm text-red-600 whitespace-pre-line">
             {submitError}
           </FieldDescription>
         ) : null}

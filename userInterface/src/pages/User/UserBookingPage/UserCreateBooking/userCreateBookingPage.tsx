@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { isAxiosError } from "axios";
+import { getBackendErrorMessage } from "@/utils/getBackendErrorMessage";
 import {
   PawPrint,
   FileText,
@@ -148,29 +148,8 @@ const UserCreateBookingPage = () => {
       ]);
       setSuccess(true);
     } catch (err: unknown) {
-      console.error(
-        "[DEBUG] Lỗi response:",
-        isAxiosError(err) ? err.response?.status : undefined,
-        isAxiosError(err) ? err.response?.data : undefined,
-      );
-      const responseData = isAxiosError(err) ? err.response?.data : undefined;
-      const serverMsg =
-        typeof responseData === "object" &&
-        responseData !== null &&
-        "message" in responseData &&
-        typeof responseData.message === "string"
-          ? responseData.message
-          : typeof responseData === "object" &&
-              responseData !== null &&
-              "title" in responseData &&
-              typeof responseData.title === "string"
-            ? responseData.title
-            : typeof responseData === "string"
-              ? responseData
-              : "Đặt lịch thất bại. Vui lòng thử lại sau.";
-      setError(
-        typeof serverMsg === "string" ? serverMsg : JSON.stringify(serverMsg),
-      );
+      console.error(err);
+      setError(getBackendErrorMessage(err));
     } finally {
       setSubmitting(false);
     }
@@ -378,7 +357,7 @@ const UserCreateBookingPage = () => {
             </div>
 
             {error && (
-              <div className="rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">
+              <div className="rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700 whitespace-pre-line">
                 {error}
               </div>
             )}

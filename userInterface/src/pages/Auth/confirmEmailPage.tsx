@@ -2,8 +2,8 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { useSearchParams, Link } from "react-router-dom";
 import authApi from "@/apis/authAPI";
 import { CheckCircle, AlertCircle, Loader } from "lucide-react";
-import { isAxiosError } from "axios";
 import { useCooldown } from "@/hooks/useCooldown";
+import { getBackendErrorMessage } from "@/utils/getBackendErrorMessage";
 
 type ConfirmStatus = "loading" | "success" | "error" | "idle";
 
@@ -31,16 +31,7 @@ export default function ConfirmEmailPage() {
       setMessage("Email của bạn đã được xác nhận thành công!");
     } catch (error: unknown) {
       setStatus("error");
-      let errorMessage =
-        "Không thể xác nhận email. Vui lòng thử lại hoặc liên hệ hỗ trợ.";
-
-      if (isAxiosError<{ message?: string }>(error)) {
-        errorMessage = error.response?.data?.message || error.message;
-      } else if (error instanceof Error) {
-        errorMessage = error.message;
-      }
-
-      setMessage(errorMessage);
+      setMessage(getBackendErrorMessage(error));
     }
   }, [token, userId]);
 
@@ -106,7 +97,7 @@ export default function ConfirmEmailPage() {
                 <p className="text-center text-slate-900 font-semibold">
                   Xác nhận thất bại
                 </p>
-                <p className="text-center text-sm text-slate-600">{message}</p>
+                <p className="text-center text-sm text-slate-600 whitespace-pre-line">{message}</p>
               </>
             )}
 

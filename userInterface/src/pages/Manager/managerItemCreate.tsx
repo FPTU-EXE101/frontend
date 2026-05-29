@@ -13,6 +13,7 @@ import itemApi from "@/apis/itemsAPI";
 import type { CreateItemRequest } from "@/types/item.type";
 import type { Items } from "@/types/item.type";
 import { queryKeys } from "@/lib/queryKeys";
+import { getBackendErrorMessage } from "@/utils/getBackendErrorMessage";
 
 interface ManagerItemFormProps {
   itemType: "service" | "product";
@@ -104,7 +105,7 @@ const ManagerItemForm = ({ itemType, mode }: ManagerItemFormProps) => {
         setPrice(String(item.price ?? ""));
       } catch (err) {
         console.error(err);
-        setError("Không tải được dữ liệu mục. Vui lòng thử lại.");
+        setError(getBackendErrorMessage(err));
       } finally {
         setLoading(false);
       }
@@ -155,11 +156,7 @@ const ManagerItemForm = ({ itemType, mode }: ManagerItemFormProps) => {
       }, 500);
     } catch (err) {
       console.error(err);
-      setError(
-        isEdit
-          ? "Không cập nhật được mục. Vui lòng thử lại."
-          : "Không tạo được mục mới. Vui lòng thử lại.",
-      );
+      setError(getBackendErrorMessage(err));
     } finally {
       setLoading(false);
     }
@@ -210,7 +207,7 @@ const ManagerItemForm = ({ itemType, mode }: ManagerItemFormProps) => {
             </Field>
 
             {error ? (
-              <FieldDescription className="text-sm text-rose-700">
+              <FieldDescription className="text-sm text-rose-700 whitespace-pre-line">
                 {error}
               </FieldDescription>
             ) : null}

@@ -11,6 +11,7 @@ import { Input } from "@/components/ui/input";
 import { useNavigate } from "react-router-dom";
 import petApi from "@/apis/petAPI";
 import userApi from "@/apis/userAPI";
+import { getBackendErrorMessage } from "@/utils/getBackendErrorMessage";
 import type { CreatePetRequest } from "@/types/pet.type";
 import type { UserProfileValues } from "@/types/userProfile.type";
 import { useFormik } from "formik";
@@ -114,7 +115,7 @@ const ManagerPetCreatePage = () => {
     } catch (err) {
       if (controller.signal.aborted) return;
       console.error(err);
-      setSubmitError("Không tải được thú cưng của chủ này.");
+      setSubmitError(getBackendErrorMessage(err));
     } finally {
       if (!controller.signal.aborted) {
         setOwnerLoading(false);
@@ -168,9 +169,7 @@ const ManagerPetCreatePage = () => {
         }
       } catch (err) {
         console.error(err);
-        setSubmitError(
-          "Thêm thú cưng thất bại. Vui lòng kiểm tra lại thông tin.",
-        );
+        setSubmitError(getBackendErrorMessage(err));
       } finally {
         setLoading(false);
       }
@@ -352,7 +351,7 @@ const ManagerPetCreatePage = () => {
             ) : null}
 
             {submitError ? (
-              <FieldDescription className="text-center text-sm text-red-600">
+              <FieldDescription className="text-center text-sm text-red-600 whitespace-pre-line">
                 {submitError}
               </FieldDescription>
             ) : null}

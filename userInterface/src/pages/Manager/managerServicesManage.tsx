@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import itemApi from "@/apis/itemsAPI";
 import type { Items } from "@/types/item.type";
+import { getBackendErrorMessage } from "@/utils/getBackendErrorMessage";
 import { useDebounce } from "@/hooks/useDebounce";
 import { queryKeys } from "@/lib/queryKeys";
 import { PaginationControls } from "@/components/ui/pagination-controls";
@@ -37,9 +38,9 @@ const ManagerServicesManage = () => {
           signal: controller.signal,
         });
         setItems(response?.data ?? []);
-      } catch {
+      } catch (err) {
         if (controller.signal.aborted) return;
-        setError("Không tải được danh sách dịch vụ. Vui lòng thử lại.");
+        setError(getBackendErrorMessage(err));
       } finally {
         if (!controller.signal.aborted) {
           setLoading(false);
@@ -64,8 +65,8 @@ const ManagerServicesManage = () => {
       await itemApi.deleteItem(id);
       setItems((current) => current.filter((item) => item.id !== id));
       await queryClient.invalidateQueries({ queryKey: queryKeys.services });
-    } catch {
-      setError("Xóa dịch vụ thất bại. Vui lòng thử lại.");
+    } catch (err) {
+      setError(getBackendErrorMessage(err));
     } finally {
       setDeletingId(null);
     }
@@ -191,7 +192,7 @@ const ManagerServicesManage = () => {
       />
 
       {error && (
-        <div className="rounded-[2rem] border border-rose-200 bg-rose-50 p-4 text-sm text-rose-700">
+        <div className="rounded-[2rem] border border-rose-200 bg-rose-50 p-4 text-sm text-rose-700 whitespace-pre-line">
           {error}
         </div>
       )}

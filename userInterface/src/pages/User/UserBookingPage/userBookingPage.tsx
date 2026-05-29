@@ -18,6 +18,7 @@ import { getCurrentUserId } from "@/lib/auth";
 import { queryKeys } from "@/lib/queryKeys";
 import { PaginationControls } from "@/components/ui/pagination-controls";
 import { usePagination } from "@/hooks/usePagination";
+import { getBackendErrorMessage } from "@/utils/getBackendErrorMessage";
 
 type CancelTarget = {
   id: string;
@@ -68,6 +69,7 @@ const UserBookingPage = () => {
   const [activeFilter, setActiveFilter] = useState<BookingStatusKey>("all");
   const [cancelingId, setCancelingId] = useState<string | null>(null);
   const [cancelSuccess, setCancelSuccess] = useState<string | null>(null);
+  const [cancelError, setCancelError] = useState<string | null>(null);
   const [cancelTarget, setCancelTarget] = useState<CancelTarget | null>(null);
 
   const {
@@ -150,7 +152,8 @@ const UserBookingPage = () => {
       setTimeout(() => setCancelSuccess(null), 3000);
     } catch (err) {
       console.error(err);
-      alert("Hủy lịch hẹn thất bại. Vui lòng thử lại sau.");
+      setCancelError(getBackendErrorMessage(err));
+      setTimeout(() => setCancelError(null), 4000);
     } finally {
       setCancelingId(null);
     }
@@ -211,6 +214,13 @@ const UserBookingPage = () => {
           <div className="rounded-[30px] border border-emerald-200 bg-emerald-50 p-4 text-emerald-700 shadow-sm flex items-center gap-3">
             <CheckCircle className="h-5 w-5 flex-shrink-0" />
             <span>{cancelSuccess}</span>
+          </div>
+        )}
+
+        {cancelError && (
+          <div className="rounded-[30px] border border-red-200 bg-red-50 p-4 text-red-700 shadow-sm flex items-center gap-3 whitespace-pre-line">
+            <XCircle className="h-5 w-5 flex-shrink-0 text-red-500" />
+            <span>{cancelError}</span>
           </div>
         )}
 

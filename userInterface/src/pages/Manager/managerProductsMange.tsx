@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import itemApi from "@/apis/itemsAPI";
 import type { Items } from "@/types/item.type";
+import { getBackendErrorMessage } from "@/utils/getBackendErrorMessage";
 import { useDebounce } from "@/hooks/useDebounce";
 
 const isProductItem = (item: Items) => {
@@ -32,9 +33,9 @@ const ManagerProductsMange = () => {
           signal: controller.signal,
         });
         setItems(response?.data ?? []);
-      } catch {
+      } catch (err) {
         if (controller.signal.aborted) return;
-        setError("Không tải được danh sách sản phẩm. Vui lòng thử lại.");
+        setError(getBackendErrorMessage(err));
       } finally {
         if (!controller.signal.aborted) {
           setLoading(false);
@@ -60,8 +61,8 @@ const ManagerProductsMange = () => {
     try {
       await itemApi.deleteItem(id);
       setItems((current) => current.filter((item) => item.id !== id));
-    } catch {
-      setError("Xóa sản phẩm thất bại. Vui lòng thử lại.");
+    } catch (err) {
+      setError(getBackendErrorMessage(err));
     } finally {
       setDeletingId(null);
     }
@@ -176,7 +177,7 @@ const ManagerProductsMange = () => {
       </section>
 
       {error && (
-        <div className="rounded-[2rem] border border-rose-200 bg-rose-50 p-4 text-sm text-rose-700">
+        <div className="rounded-[2rem] border border-rose-200 bg-rose-50 p-4 text-sm text-rose-700 whitespace-pre-line">
           {error}
         </div>
       )}

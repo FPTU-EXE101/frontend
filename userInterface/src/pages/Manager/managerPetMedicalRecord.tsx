@@ -6,6 +6,7 @@ import petApi from "@/apis/petAPI";
 import medicalRecordApi from "@/apis/medicalRecordAPI";
 import type { Pet } from "@/types/pet.type";
 import type { MedicalRecord } from "@/types/medicalRecord.type";
+import { getBackendErrorMessage } from "@/utils/getBackendErrorMessage";
 
 const calculateAge = (dateOfBirth: string) => {
   if (!dateOfBirth) return "Chưa rõ";
@@ -71,7 +72,7 @@ const ManagerPetMedicalRecord = () => {
         setRecords(filteredRecords);
       } catch (err) {
         console.error(err);
-        setError("Không tải được hồ sơ y tế. Vui lòng thử lại.");
+        setError(getBackendErrorMessage(err));
       } finally {
         setLoading(false);
       }
@@ -297,7 +298,7 @@ const ManagerPetMedicalRecord = () => {
       </section>
 
       {error ? (
-        <div className="rounded-[2rem] border border-rose-200 bg-rose-50 p-4 text-sm text-rose-700">
+        <div className="rounded-[2rem] border border-rose-200 bg-rose-50 p-4 text-sm text-rose-700 whitespace-pre-line">
           {error}
         </div>
       ) : null}

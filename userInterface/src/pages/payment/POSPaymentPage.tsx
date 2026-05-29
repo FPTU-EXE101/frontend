@@ -47,7 +47,7 @@ const POSPaymentPage = ({ appointmentId }: POSPaymentPageProps) => {
       )}
 
       {payment.error && (
-        <div className="mb-4 rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm font-medium text-rose-700">
+        <div className="mb-4 rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm font-medium text-rose-700 whitespace-pre-line">
           {payment.error}
         </div>
       )}

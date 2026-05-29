@@ -6,6 +6,7 @@ import appointmentApi from "@/apis/appointmentAPI";
 import reminderApi from "@/apis/appointmentReminderAPI";
 import petApi from "@/apis/petAPI";
 import userApi from "@/apis/userAPI";
+import { getBackendErrorMessage } from "@/utils/getBackendErrorMessage";
 import { Button } from "@/components/ui/button";
 import type {
   Appointment,
@@ -403,7 +404,7 @@ const ManagerAppointmentsManage = () => {
     } catch (err) {
       if (controller.signal.aborted) return;
       console.error(err);
-      setError("Không tải được thú cưng của khách hàng này.");
+      setError(getBackendErrorMessage(err));
     } finally {
       if (!controller.signal.aborted) {
         setOwnerPetsLoading(false);
@@ -482,7 +483,7 @@ const ManagerAppointmentsManage = () => {
       await loadAppointments();
     } catch (err) {
       console.error(err);
-      setError("Lưu lịch hẹn thất bại. Vui lòng kiểm tra dữ liệu và thử lại.");
+      setError(getBackendErrorMessage(err));
     } finally {
       setSaving(false);
     }
@@ -505,7 +506,7 @@ const ManagerAppointmentsManage = () => {
       showSuccess("Đã Huỷ lịch hẹn.");
     } catch (err) {
       console.error(err);
-      setError("Huỷ lịch hẹn thất bại. Vui lòng thử lại.");
+      setError(getBackendErrorMessage(err));
     } finally {
       setCancelingId(null);
     }
@@ -530,7 +531,7 @@ const ManagerAppointmentsManage = () => {
       showSuccess("Đã Huỷ nhắc lịch.");
     } catch (err) {
       console.error(err);
-      setError("Huỷ nhắc lịch thất bại. Vui lòng thử lại.");
+      setError(getBackendErrorMessage(err));
     } finally {
       setCancelingId(null);
     }
@@ -576,7 +577,7 @@ const ManagerAppointmentsManage = () => {
       )}
 
       {error && (
-        <div className="rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">
+        <div className="rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700 whitespace-pre-line">
           {error}
         </div>
       )}

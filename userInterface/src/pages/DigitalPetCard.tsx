@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import petApi from "@/apis/petAPI";
 import { Button } from "@/components/ui/button";
+import { getBackendErrorMessage } from "@/utils/getBackendErrorMessage";
 import type { GetPetByIdResponse, PetDetail } from "@/types/pet.type";
 
 const emptyText = "Chưa cập nhật";
@@ -145,7 +146,7 @@ const DigitalPetCard = () => {
       } catch (err) {
         console.error(err);
         setPet(null);
-        setError("Không tải được Digital Pet Card. Vui lòng thử lại sau.");
+        setError(getBackendErrorMessage(err));
       } finally {
         setLoading(false);
       }
@@ -186,7 +187,7 @@ const DigitalPetCard = () => {
           <h1 className="text-xl font-semibold text-slate-950">
             Không mở được Pet Card
           </h1>
-          <p className="mt-2 text-sm leading-6 text-slate-500">
+          <p className="mt-2 text-sm leading-6 text-slate-500 whitespace-pre-line">
             {error || "Không tìm thấy thông tin thú cưng."}
           </p>
           <Button asChild className="mt-6 rounded-full bg-slate-950 text-white">
