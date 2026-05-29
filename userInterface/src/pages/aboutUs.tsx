@@ -143,7 +143,7 @@ const AboutUs = () => {
               quán và tăng trưởng doanh thu dựa trên dữ liệu thực tế.
             </p>
 
-            <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
+            {/* <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
               <Link
                 to="/auth/register"
                 className="inline-flex items-center gap-2 rounded-full bg-[#D56756] px-7 py-3.5 text-base font-semibold text-white shadow-lg transition hover:bg-[#B24C40]"
@@ -157,7 +157,7 @@ const AboutUs = () => {
               >
                 Xem bảng giá
               </Link>
-            </div>
+            </div> */}
           </div>
         </div>
       </section>
@@ -181,10 +181,12 @@ const AboutUs = () => {
               >
                 {/* avatar */}
                 <img
-                  className="mx-auto flex h-20 w-20 items-center justify-center rounded-full text-2xl font-bold text-white shadow-lg"
+                  className="mx-auto flex h-20 w-20 items-center justify-center rounded-full object-cover text-2xl font-bold text-white shadow-lg"
                   style={{ backgroundColor: member.color }}
                   src={member.avatar}
-                  alt={member.name}
+                  alt={`${member.name} - ${member.role}`}
+                  loading="lazy"
+                  decoding="async"
                 />
 
                 <div className="mt-5 text-center">

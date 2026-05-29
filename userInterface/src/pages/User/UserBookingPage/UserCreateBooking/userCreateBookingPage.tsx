@@ -1,5 +1,6 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { isAxiosError } from "axios";
 import {
   PawPrint,
@@ -17,6 +18,7 @@ import Calendar from "./Calendar";
 import TimeSlotPicker, { type BookedSlot } from "./TimeSlotPicker";
 import StepBar from "./StepBar";
 import { getCurrentUserId } from "@/lib/auth";
+import { queryKeys } from "@/lib/queryKeys";
 
 // ─── constants ────────────────────────────────────────────────────────────────
 
@@ -49,11 +51,19 @@ const toISO = (date: Date) => {
 
 const UserCreateBookingPage = () => {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
+  const userId = getCurrentUserId();
 
   // data
-  const [pets, setPets] = useState<Pet[]>([]);
-  const [petsLoading, setPetsLoading] = useState(true);
-  const [appointments, setAppointments] = useState<Appointment[]>([]);
+  const { data: pets = [], isLoading: petsLoading } = useQuery({
+    queryKey: queryKeys.userPets(userId ?? ""),
+    queryFn: async ({ signal }) => {
+      if (!userId) return [];
+      const response = await petApi.getPetByCustomerId(userId, { signal });
+      return (response?.data ?? []) as Pet[];
+    },
+    enabled: Boolean(userId),
+  });
 
   // form state
   const [step, setStep] = useState(0);
@@ -67,30 +77,18 @@ const UserCreateBookingPage = () => {
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState("");
 
-  // fetch pets owned by this customer
-  useEffect(() => {
-    const userId = getCurrentUserId();
-    if (!userId) return;
-
-    petApi
-      .getPetByCustomerId(userId)
-      .then((res) => setPets(res?.data ?? []))
-      .catch(console.error)
-      .finally(() => setPetsLoading(false));
-  }, []);
-
-  // fetch appointments for the selected pet
-  useEffect(() => {
-    if (!selectedPet?.id) {
-      setAppointments([]);
-      return;
-    }
-
-    appointmentApi
-      .getAppointmentsByPetId(selectedPet.id)
-      .then((res) => setAppointments(res?.data ?? []))
-      .catch(console.error);
-  }, [selectedPet?.id]);
+  const { data: appointments = [] } = useQuery({
+    queryKey: queryKeys.petAppointments(selectedPet?.id ?? ""),
+    queryFn: async ({ signal }) => {
+      if (!selectedPet?.id) return [];
+      const response = await appointmentApi.getAppointmentsByPetId(
+        selectedPet.id,
+        { signal },
+      );
+      return (response?.data ?? []) as Appointment[];
+    },
+    enabled: Boolean(selectedPet?.id),
+  });
 
   // Get booked slots for the selected date based on appointment status
   const getBookedSlotsForDate = (): BookedSlot[] => {
@@ -120,7 +118,8 @@ const UserCreateBookingPage = () => {
 
   // ── submit ──────────────────────────────────────────────────────────────
   const handleSubmit = async () => {
-    const userId = getCurrentUserId();
+    if (submitting || success) return;
+
     if (!userId || !selectedPet || !selectedDate || !selectedTime) return;
 
     setSubmitting(true);
@@ -139,6 +138,14 @@ const UserCreateBookingPage = () => {
 
     try {
       await appointmentApi.createAppointment(payload);
+      await Promise.all([
+        queryClient.invalidateQueries({
+          queryKey: queryKeys.userAppointments(userId),
+        }),
+        queryClient.invalidateQueries({
+          queryKey: queryKeys.petAppointments(selectedPet.id),
+        }),
+      ]);
       setSuccess(true);
     } catch (err: unknown) {
       console.error(
@@ -383,6 +390,7 @@ const UserCreateBookingPage = () => {
           <Button
             variant="outline"
             onClick={step === 0 ? () => navigate("/user/booking") : handleBack}
+            disabled={submitting}
             className="rounded-full border-slate-200 text-slate-600 hover:bg-slate-50 px-6"
           >
             {step === 0 ? "Hủy" : "Quay lại"}
@@ -391,7 +399,7 @@ const UserCreateBookingPage = () => {
           {step < 3 ? (
             <Button
               onClick={handleNext}
-              disabled={!canNext()}
+              disabled={!canNext() || submitting}
               className="rounded-full bg-[#D56756] text-white hover:bg-[#c25248] px-8 disabled:opacity-40"
             >
               Tiếp theo

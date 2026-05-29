@@ -6,6 +6,9 @@ import { Button } from "@/components/ui/button";
 import petApi from "@/apis/petAPI";
 import type { Pet } from "@/types/pet.type";
 import PetQRCode from "@/components/pets/PetQRCode";
+import { useDebounce } from "@/hooks/useDebounce";
+import { PaginationControls } from "@/components/ui/pagination-controls";
+import { usePagination } from "@/hooks/usePagination";
 
 const calculateAge = (dateOfBirth: string) => {
   if (!dateOfBirth) return "Chưa rõ";
@@ -29,35 +32,45 @@ const ManagerPetsManage = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const debouncedSearchTerm = useDebounce(searchTerm);
 
   useEffect(() => {
+    const controller = new AbortController();
+
     const loadPets = async () => {
       setLoading(true);
       try {
-        const response = await petApi.getAllPets();
+        const response = await petApi.getAllPets({
+          signal: controller.signal,
+        });
         setPets(response?.data ?? []);
       } catch {
+        if (controller.signal.aborted) return;
         setError("Không tải được danh sách thú cưng. Vui lòng thử lại.");
       } finally {
-        setLoading(false);
+        if (!controller.signal.aborted) {
+          setLoading(false);
+        }
       }
     };
 
     loadPets();
+    return () => controller.abort();
   }, []);
 
   const filteredPets = useMemo(
     () =>
       pets.filter((pet) => {
-        const query = searchTerm.toLowerCase();
+        const query = debouncedSearchTerm.toLowerCase();
         return (
           pet.name.toLowerCase().includes(query) ||
           pet.color.toLowerCase().includes(query) ||
           pet.customerId?.toLowerCase().includes(query)
         );
       }),
-    [pets, searchTerm],
+    [debouncedSearchTerm, pets],
   );
+  const petPagination = usePagination(filteredPets, 12);
 
   return (
     <div className="space-y-6">
@@ -99,7 +112,7 @@ const ManagerPetsManage = () => {
               Đang tải danh sách thú cưng...
             </div>
           ) : filteredPets.length > 0 ? (
-            filteredPets.map((pet) => (
+            petPagination.pageItems.map((pet) => (
               <article
                 key={pet.id}
                 className="overflow-hidden rounded-[2rem] border border-slate-200 bg-slate-50 shadow-sm"
@@ -165,6 +178,18 @@ const ManagerPetsManage = () => {
               Không tìm thấy thú cưng nào với từ khóa hiện tại.
             </div>
           )}
+        </div>
+
+        <div className="mt-6">
+          <PaginationControls
+            canGoNext={petPagination.canGoNext}
+            canGoPrevious={petPagination.canGoPrevious}
+            currentPage={petPagination.currentPage}
+            onNext={petPagination.goNext}
+            onPrevious={petPagination.goPrevious}
+            totalItems={petPagination.totalItems}
+            totalPages={petPagination.totalPages}
+          />
         </div>
       </section>
 

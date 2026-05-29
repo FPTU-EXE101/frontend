@@ -1,10 +1,12 @@
 import type { CreateMedicalRecordRequest } from "@/types/medicalRecord.type";
+import type { AxiosRequestConfig } from "axios";
 import axiosClient from "./axiosClient";
 
 const MEDICAL_RECORD_API_URL = "/medical_record";
 const MEDICALS_RECORD_API_URL = "/medical_records"
 const medicalRecordApi = {
-  getAllMedicalRecords: () => axiosClient.get(`${MEDICALS_RECORD_API_URL}`),
+  getAllMedicalRecords: (config?: AxiosRequestConfig) =>
+    axiosClient.get(`${MEDICALS_RECORD_API_URL}`, config),
   getMedicalRecordById: (id: string) =>
     axiosClient.get(`${MEDICAL_RECORD_API_URL}/${id}`),
   createMedicalRecord: (data: CreateMedicalRecordRequest) =>

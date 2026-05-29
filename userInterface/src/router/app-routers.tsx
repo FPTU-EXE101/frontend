@@ -34,6 +34,7 @@ const CreatePetPage = lazy(() => import("@/pages/User/CreatePetPage"));
 const DigitalPetCard = lazy(() => import("@/pages/DigitalPetCard"));
 const AboutUs = lazy(() => import("@/pages/aboutUs"));
 const Features = lazy(() => import("@/pages/features"));
+const DemoPage = lazy(() => import("@/pages/demo"));
 const ManagerDashboard = lazy(
   () => import("@/pages/Manager/managerDashboard"),
 );
@@ -123,6 +124,7 @@ const AppRoutes = () => {
           <Route path="pricing" element={<PricingPage />} />
           <Route path="about-us" element={<AboutUs />} />
           <Route path="features" element={<Features />} />
+          <Route path="demo" element={<DemoPage />} />
           <Route path="confirm-email" element={<ConfirmEmailPage />} />
           <Route path="pet-card/:petId" element={<DigitalPetCard />} />
           <Route path="user" element={<UserInfoLayout />}>

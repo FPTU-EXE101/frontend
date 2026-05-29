@@ -5,57 +5,68 @@ import { Link } from "react-router-dom";
 
 export default function LoginPage() {
   return (
-    <div className="grid min-h-screen lg:grid-cols-[0.95fr_1.05fr]">
-      <div className="relative hidden overflow-hidden bg-[#f7efe6] lg:block">
-        <img
-          src="https://media.istockphoto.com/id/1595889544/photo/happy-asian-woman-enjoying-her-dog-pet-in-the-home-friendship-pet-and-human-lifestyle-concept.jpg?s=612x612&w=0&k=20&c=RzOk8_uohin9q0rFKtuCFkEiMnejfTGltdPA8ePPDlM="
-          alt="Pet owner with pet"
-          className="absolute inset-0 h-full w-full object-cover"
-        />
-        <div className="absolute inset-0 bg-gradient-to-r from-[#ffffffcc] to-transparent" />
-        <div className="absolute bottom-12 left-12 max-w-md rounded-3xl border border-white/30 bg-white/80 p-8 shadow-2xl backdrop-blur">
-          <p className="text-3xl font-semibold text-slate-950">
-            Hơn cả một dịch vụ, chúng tôi chăm sóc những thành viên trong gia
-            đình bạn.
-          </p>
-          <p className="mt-4 text-sm leading-7 text-slate-700">
-            PetHub SaaS cho Pet Shop & Phòng khám thú y
-          </p>
-        </div>
-      </div>
+    <div className="relative min-h-screen overflow-hidden bg-[#fff8f3]">
+      <style>
+        {`
+          @keyframes authCardIn {
+            from { opacity: 0; transform: translateY(18px); }
+            to { opacity: 1; transform: translateY(0); }
+          }
+          @media (prefers-reduced-motion: reduce) {
+            .auth-card-in { animation: none !important; }
+          }
+          .auth-glass [data-slot="field-label"] { color: rgba(255,255,255,0.92); }
+          .auth-glass [data-slot="field-description"] { color: rgba(255,255,255,0.65); }
+          .auth-glass [data-slot="field-separator-content"] {
+            background: transparent;
+            color: rgba(255,255,255,0.55);
+          }
+          .auth-glass [data-slot="field-separator"] .bg-border { background: rgba(255,255,255,0.2); }
+        `}
+      </style>
 
-      <div className="flex flex-col gap-6 bg-[#fff8f2] px-6 py-10 md:px-12 md:py-14">
-        <div className="flex items-center justify-between">
-          <Link
-            to="/"
-            className="inline-flex items-center gap-2 text-sm font-medium text-slate-600 transition hover:text-slate-900"
-          >
-            <ArrowLeft className="h-4 w-4" />
-            Quay về trang chủ
-          </Link>
-        </div>
+      <video
+        className="fixed inset-0 h-full w-full object-cover"
+        src="/videos/catPlay.mp4"
+        autoPlay
+        muted
+        loop
+        playsInline
+        aria-hidden="true"
+      />
+      {/* Overlay rất nhạt — video vẫn là nhân vật chính */}
+      <div className="fixed inset-0 bg-[linear-gradient(135deg,rgba(255,255,255,0.08)_0%,rgba(15,23,42,0.18)_100%)]" />
 
-        <div className="flex flex-1 items-center justify-center">
-          <div className="w-full max-w-md">
-            <div className="mb-10 text-center lg:text-left">
-               <img
-                  src="/logoPethub.png"
-                  alt="PetHub"
-                  className="w-auto max-w-none object-contain h-12 sm:h-14"
-                  decoding="async"
-                />
-             
-              <h1 className="text-4xl font-bold tracking-tight text-slate-950">
-                Chào mừng trở lại!
-              </h1>
-              <p className="mt-3 max-w-xl text-sm leading-7 text-slate-600">
-                Đăng nhập để quản lý lịch hẹn, hồ sơ và vận hành PetHub.
-              </p>
-            </div>
-            <LoginForm />
+      <Link
+        to="/"
+        className="fixed left-4 top-4 z-20 inline-flex items-center gap-2 rounded-full border border-white/30 bg-white/20 px-4 py-2 text-sm font-semibold text-white shadow-sm backdrop-blur-md transition hover:-translate-y-0.5 hover:bg-white/35 sm:left-6 sm:top-6"
+      >
+        <ArrowLeft className="h-4 w-4" />
+        Quay về trang chủ
+      </Link>
+
+      {/* Desktop: form bên phải — Mobile: giữa màn hình */}
+      <main className="relative z-10 flex min-h-screen items-center justify-center px-4 py-24 sm:px-6 md:justify-end md:pr-[10%]">
+        <div className="auth-card-in auth-glass w-full max-w-[460px] rounded-[28px] border border-white/20 bg-white/[0.08] p-6 shadow-[0_24px_64px_rgba(0,0,0,0.22)] backdrop-blur-xl [animation:authCardIn_600ms_ease-out_both] sm:p-8">
+          <div className="mb-8 text-center">
+            <img
+              src="/logoPethub.png"
+              alt="PetHub"
+              className="mx-auto h-12 w-auto max-w-none object-contain sm:h-14"
+              fetchPriority="high"
+              decoding="async"
+            />
+
+            <h1 className="mt-6 text-3xl font-extrabold tracking-tight text-white sm:text-4xl" style={{textShadow:"0 1px 8px rgba(0,0,0,0.35)"}}>
+              Chào mừng trở lại!
+            </h1>
+            <p className="mx-auto mt-3 max-w-sm text-sm leading-7 text-white/80">
+              Đăng nhập để quản lý lịch hẹn, hồ sơ và vận hành PetHub.
+            </p>
           </div>
+          <LoginForm className="[&_[data-slot=field-label]]:text-white/90 [&_[data-slot=field-description]]:text-white/65 [&_[data-slot=field-separator-content]]:bg-transparent [&_[data-slot=field-separator-content]]:text-white/50" />
         </div>
-      </div>
+      </main>
     </div>
   );
 }

@@ -1,5 +1,6 @@
 import { useEffect, useState, type FormEvent } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import {
   Field,
@@ -11,6 +12,7 @@ import { Input } from "@/components/ui/input";
 import itemApi from "@/apis/itemsAPI";
 import type { CreateItemRequest } from "@/types/item.type";
 import type { Items } from "@/types/item.type";
+import { queryKeys } from "@/lib/queryKeys";
 
 interface ManagerItemFormProps {
   itemType: "service" | "product";
@@ -37,6 +39,7 @@ const itemTypeMeta = {
 
 const ManagerItemForm = ({ itemType, mode }: ManagerItemFormProps) => {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const params = useParams();
   const itemId = params.id;
   const isEdit = mode === "edit";
@@ -142,6 +145,9 @@ const ManagerItemForm = ({ itemType, mode }: ManagerItemFormProps) => {
         await itemApi.updateItem(itemId, payload);
       } else {
         await itemApi.createItem(payload);
+      }
+      if (itemType === "service") {
+        await queryClient.invalidateQueries({ queryKey: queryKeys.services });
       }
       setSuccess(successMessage);
       setTimeout(() => {

@@ -26,6 +26,7 @@ import {
   toDateOnly,
   toAppointmentDateTime,
 } from "../utils/payment.utils";
+import { useDebounce } from "@/hooks/useDebounce";
 
 interface UsePOSPaymentOptions {
   initialAppointmentId?: string;
@@ -47,30 +48,35 @@ export const usePOSPayment = ({
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [lastInvoiceId, setLastInvoiceId] = useState("");
+  const debouncedSearchTerm = useDebounce(searchTerm);
+  const debouncedAppointmentSearchTerm = useDebounce(appointmentSearchTerm);
 
-  const fetchItems = useCallback(async () => {
+  const fetchItems = useCallback(async (signal?: AbortSignal) => {
     setLoadingItems(true);
     setError("");
 
     try {
-      const response = await itemApi.getAllItems();
+      const response = await itemApi.getAllItems({ signal });
       setItems(normalizeList<Items>(response?.data));
     } catch (err) {
+      if (signal?.aborted) return;
       console.error(err);
       setError("Không tải được danh sách item. Vui lòng thử lại.");
     } finally {
-      setLoadingItems(false);
+      if (!signal?.aborted) {
+        setLoadingItems(false);
+      }
     }
   }, []);
 
-  const fetchAppointments = useCallback(async () => {
+  const fetchAppointments = useCallback(async (signal?: AbortSignal) => {
     setLoadingAppointments(true);
     setError("");
 
     try {
       const [appointmentResponse, invoiceResponse] = await Promise.all([
-        appointmentApi.getAllAppointments(),
-        invoiceApi.getAllInvoices(),
+        appointmentApi.getAllAppointments({ signal }),
+        invoiceApi.getAllInvoices({ signal }),
       ]);
 
       const appointmentData = normalizeList<Appointment>(
@@ -97,8 +103,10 @@ export const usePOSPayment = ({
       ).filter(Boolean);
 
       const [petResponses, customerResponses] = await Promise.all([
-        Promise.allSettled(petIds.map((id) => petApi.getPetById(id))),
-        Promise.allSettled(customerIds.map((id) => userApi.getUserById(id))),
+        Promise.allSettled(petIds.map((id) => petApi.getPetById(id, { signal }))),
+        Promise.allSettled(
+          customerIds.map((id) => userApi.getUserById(id, { signal })),
+        ),
       ]);
 
       const petNames = petResponses.reduce<Record<string, string>>(
@@ -155,20 +163,27 @@ export const usePOSPayment = ({
         if (initialAppointment) setSelectedAppointment(initialAppointment);
       }
     } catch (err) {
+      if (signal?.aborted) return;
       console.error(err);
       setError("Không tải được danh sách lịch hẹn. Vui lòng thử lại.");
     } finally {
-      setLoadingAppointments(false);
+      if (!signal?.aborted) {
+        setLoadingAppointments(false);
+      }
     }
   }, [initialAppointmentId]);
 
   useEffect(() => {
-    fetchItems();
-    fetchAppointments();
+    const controller = new AbortController();
+
+    fetchItems(controller.signal);
+    fetchAppointments(controller.signal);
+
+    return () => controller.abort();
   }, [fetchAppointments, fetchItems]);
 
   const visibleAppointments = useMemo(() => {
-    const query = appointmentSearchTerm.trim().toLowerCase();
+    const query = debouncedAppointmentSearchTerm.trim().toLowerCase();
     if (!query) return appointments;
 
     return appointments.filter((appointment) => {
@@ -185,14 +200,14 @@ export const usePOSPayment = ({
 
       return searchable.includes(query);
     });
-  }, [appointmentSearchTerm, appointments]);
+  }, [appointments, debouncedAppointmentSearchTerm]);
 
   const filteredItems = useMemo(() => {
-    const query = searchTerm.trim().toLowerCase();
+    const query = debouncedSearchTerm.trim().toLowerCase();
     if (!query) return items;
 
     return items.filter((item) => item.name.toLowerCase().includes(query));
-  }, [items, searchTerm]);
+  }, [debouncedSearchTerm, items]);
 
   const serviceItems = useMemo(
     () => filteredItems.filter(isServiceItem),

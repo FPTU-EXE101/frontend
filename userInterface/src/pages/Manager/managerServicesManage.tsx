@@ -1,10 +1,15 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
+import { useQueryClient } from "@tanstack/react-query";
 import { Search, Scissors, Edit3, Trash2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import itemApi from "@/apis/itemsAPI";
 import type { Items } from "@/types/item.type";
+import { useDebounce } from "@/hooks/useDebounce";
+import { queryKeys } from "@/lib/queryKeys";
+import { PaginationControls } from "@/components/ui/pagination-controls";
+import { usePagination } from "@/hooks/usePagination";
 
 const isServiceItem = (item: Items) => {
   const typeValue = String(item.type).toLowerCase();
@@ -14,26 +19,36 @@ const isServiceItem = (item: Items) => {
 const formatPrice = (value: number) => value.toLocaleString("vi-VN") + "đ";
 
 const ManagerServicesManage = () => {
+  const queryClient = useQueryClient();
   const [items, setItems] = useState<Items[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const debouncedSearchTerm = useDebounce(searchTerm);
 
   useEffect(() => {
+    const controller = new AbortController();
+
     const loadItems = async () => {
       setLoading(true);
       try {
-        const response = await itemApi.getAllItems();
+        const response = await itemApi.getAllItems({
+          signal: controller.signal,
+        });
         setItems(response?.data ?? []);
       } catch {
+        if (controller.signal.aborted) return;
         setError("Không tải được danh sách dịch vụ. Vui lòng thử lại.");
       } finally {
-        setLoading(false);
+        if (!controller.signal.aborted) {
+          setLoading(false);
+        }
       }
     };
 
     loadItems();
+    return () => controller.abort();
   }, []);
 
   const handleDelete = async (id: string) => {
@@ -48,6 +63,7 @@ const ManagerServicesManage = () => {
     try {
       await itemApi.deleteItem(id);
       setItems((current) => current.filter((item) => item.id !== id));
+      await queryClient.invalidateQueries({ queryKey: queryKeys.services });
     } catch {
       setError("Xóa dịch vụ thất bại. Vui lòng thử lại.");
     } finally {
@@ -60,10 +76,11 @@ const ManagerServicesManage = () => {
       items.filter(
         (item) =>
           isServiceItem(item) &&
-          item.name.toLowerCase().includes(searchTerm.toLowerCase()),
+          item.name.toLowerCase().includes(debouncedSearchTerm.toLowerCase()),
       ),
-    [items, searchTerm],
+    [debouncedSearchTerm, items],
   );
+  const servicePagination = usePagination(filteredServices, 10);
 
   return (
     <div className="space-y-6">
@@ -113,7 +130,7 @@ const ManagerServicesManage = () => {
             Đang tải dịch vụ...
           </div>
         ) : filteredServices.length > 0 ? (
-          filteredServices.map((item) => (
+          servicePagination.pageItems.map((item) => (
             <div
               key={item.id}
               className="grid grid-cols-[3fr_1fr_1fr_1fr] items-center gap-0 border-b border-slate-200 px-6 py-5 text-sm text-slate-700 last:border-b-0"
@@ -162,6 +179,16 @@ const ManagerServicesManage = () => {
           </div>
         )}
       </section>
+
+      <PaginationControls
+        canGoNext={servicePagination.canGoNext}
+        canGoPrevious={servicePagination.canGoPrevious}
+        currentPage={servicePagination.currentPage}
+        onNext={servicePagination.goNext}
+        onPrevious={servicePagination.goPrevious}
+        totalItems={servicePagination.totalItems}
+        totalPages={servicePagination.totalPages}
+      />
 
       {error && (
         <div className="rounded-[2rem] border border-rose-200 bg-rose-50 p-4 text-sm text-rose-700">

@@ -49,6 +49,7 @@ function Footer() {
                   src="/logoPethub.png"
                   alt="PetHub"
                   className="h-9 w-auto max-w-none object-contain brightness-0 invert md:h-10"
+                  loading="lazy"
                   decoding="async"
                 />
               </div>

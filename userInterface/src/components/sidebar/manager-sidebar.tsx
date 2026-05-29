@@ -107,6 +107,7 @@ export function ManagerSidebar() {
               src="/logoPethub.png"
               alt="PetHub"
               className="w-auto max-w-none object-contain h-12 sm:h-12"
+              loading="lazy"
               decoding="async"
             />
           </Link>

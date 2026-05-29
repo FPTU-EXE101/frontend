@@ -77,12 +77,6 @@ const features = [
   },
 ];
 
-const trustHighlights = [
-  { value: "Booking", label: "Quản lý lịch hẹn rõ ràng" },
-  { value: "Pet Card", label: "Hồ sơ thú cưng bằng QR" },
-  { value: "POS", label: "Thanh toán và hóa đơn nhanh" },
-];
-
 const workflowSteps = [
   {
     icon: CalendarCheck,
@@ -240,7 +234,7 @@ const Home = () => {
       </section>
 
       {/* Trust Strip */}
-      <section className="border-y border-slate-200/70 bg-white px-4 py-10">
+      {/* <section className="border-y border-slate-200/70 bg-white px-4 py-10">
         <div className="container mx-auto max-w-6xl">
           <div className="grid gap-4 md:grid-cols-3">
             {trustHighlights.map((stat) => (
@@ -258,7 +252,7 @@ const Home = () => {
             ))}
           </div>
         </div>
-      </section>
+      </section> */}
 
       {/* Care Journey Timeline */}
       <section className="relative overflow-hidden bg-[linear-gradient(180deg,#ffffff_0%,#fff8f5_100%)] px-4 py-20 sm:py-24">
@@ -621,7 +615,9 @@ const Home = () => {
                     <img
                       className="h-full w-full rounded-[26px] object-cover"
                       src="https://images.ctfassets.net/nx3pzsky0bc9/1fEtKqdrdowlwjnwdVEd1R/0246ea0fc7e61c2a4d56c59d3910c603/Untitled_design-40.jpg?q=65&w=804"
-                      alt=""
+                      alt="Golden Retriever trong hồ sơ thú cưng mẫu"
+                      loading="lazy"
+                      decoding="async"
                     />
                   </div>
                 </div>

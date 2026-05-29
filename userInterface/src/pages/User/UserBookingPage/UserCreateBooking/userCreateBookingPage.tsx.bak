@@ -300,6 +300,8 @@ const UserCreateBookingPage = () => {
 
   // ── submit ──────────────────────────────────────────────────────────────
   const handleSubmit = async () => {
+    if (submitting) return;
+
     const userId = getCurrentUserId();
     if (!userId || !selectedPet || !selectedDate || !selectedTime) return;
 
@@ -542,6 +544,7 @@ const UserCreateBookingPage = () => {
           <Button
             variant="outline"
             onClick={step === 0 ? () => navigate("/user/booking") : handleBack}
+            disabled={submitting}
             className="rounded-full border-slate-200 text-slate-600 hover:bg-slate-50 px-6"
           >
             {step === 0 ? "Hủy" : "Quay lại"}
@@ -550,7 +553,7 @@ const UserCreateBookingPage = () => {
           {step < 3 ? (
             <Button
               onClick={handleNext}
-              disabled={!canNext()}
+              disabled={!canNext() || submitting}
               className="rounded-full bg-[#D56756] text-white hover:bg-[#c25248] px-8 disabled:opacity-40"
             >
               Tiếp theo

@@ -1,5 +1,6 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
 import petApi from "@/apis/petAPI";
 import medicalRecordApi from "@/apis/medicalRecordAPI";
 import type { Pet } from "@/types/pet.type";
@@ -7,14 +8,15 @@ import type { MedicalRecord } from "@/types/medicalRecord.type";
 import { Heart, Info, Plus, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { getCurrentUserId } from "@/lib/auth";
+import { queryKeys } from "@/lib/queryKeys";
+import { PaginationControls } from "@/components/ui/pagination-controls";
+import { usePagination } from "@/hooks/usePagination";
 import PetCard from "./PetCard";
 import PetDetailModal from "./PetDetailModal";
 import PetQRCode from "@/components/pets/PetQRCode";
 
 const UserPetPage = () => {
-  const [pets, setPets] = useState<Pet[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
+  const userId = getCurrentUserId();
 
   // modal state
   const [selectedPet, setSelectedPet] = useState<Pet | null>(null);
@@ -22,36 +24,25 @@ const UserPetPage = () => {
   const [medicalRecords, setMedicalRecords] = useState<MedicalRecord[]>([]);
   const [recordsLoading, setRecordsLoading] = useState(false);
 
-  // ── fetch pets ────────────────────────────────────────────────────────────
-  useEffect(() => {
-    const loadPets = async () => {
-      const userId = getCurrentUserId();
-
+  const {
+    data: pets = [],
+    isLoading: loading,
+    isError,
+  } = useQuery({
+    queryKey: queryKeys.userPets(userId ?? ""),
+    queryFn: async ({ signal }) => {
       if (!userId) {
-        setError(
+        throw new Error(
           "Không tìm thấy thông tin người dùng. Vui lòng đăng nhập lại.",
         );
-        setLoading(false);
-        return;
       }
 
-      setLoading(true);
-      setError("");
-
-      try {
-        const response = await petApi.getPetByCustomerId(userId);
-        const petsData: Pet[] = response?.data ?? [];
-        setPets(petsData);
-      } catch (err) {
-        console.error(err);
-        setError("Không tải được danh sách thú cưng. Vui lòng thử lại sau.");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    loadPets();
-  }, []);
+      const response = await petApi.getPetByCustomerId(userId, { signal });
+      return (response?.data ?? []) as Pet[];
+    },
+    enabled: Boolean(userId),
+  });
+  const petPagination = usePagination(pets, 12);
 
   // ── "Chi tiết" handler: mở PetDetailModal + fetch hồ sơ bệnh án ──────────
   const handleViewDetail = async (pet: Pet) => {
@@ -127,9 +118,13 @@ const UserPetPage = () => {
             <span className="inline-block animate-spin text-3xl mb-3">🐾</span>
             <p>Đang tải danh sách thú cưng...</p>
           </div>
-        ) : error ? (
+        ) : !userId ? (
           <div className="rounded-[30px] border border-rose-200 bg-rose-50 p-6 text-rose-700 shadow-sm">
-            {error}
+            Không tìm thấy thông tin người dùng. Vui lòng đăng nhập lại.
+          </div>
+        ) : isError ? (
+          <div className="rounded-[30px] border border-rose-200 bg-rose-50 p-6 text-rose-700 shadow-sm">
+            Không tải được danh sách thú cưng. Vui lòng thử lại sau.
           </div>
         ) : pets.length === 0 ? (
           <div className="rounded-[30px] border border-slate-200 bg-white p-10 text-center shadow-sm">
@@ -151,15 +146,26 @@ const UserPetPage = () => {
             </Button>
           </div>
         ) : (
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-            {pets.map((pet) => (
-              <PetCard
-                key={pet.id}
-                pet={pet}
-                onViewDetail={handleViewDetail}
-                onViewPetCard={handleViewPetCard}
-              />
-            ))}
+          <div className="space-y-5">
+            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+              {petPagination.pageItems.map((pet) => (
+                <PetCard
+                  key={pet.id}
+                  pet={pet}
+                  onViewDetail={handleViewDetail}
+                  onViewPetCard={handleViewPetCard}
+                />
+              ))}
+            </div>
+            <PaginationControls
+              canGoNext={petPagination.canGoNext}
+              canGoPrevious={petPagination.canGoPrevious}
+              currentPage={petPagination.currentPage}
+              onNext={petPagination.goNext}
+              onPrevious={petPagination.goPrevious}
+              totalItems={petPagination.totalItems}
+              totalPages={petPagination.totalPages}
+            />
           </div>
         )}
 

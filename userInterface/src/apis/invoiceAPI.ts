@@ -5,13 +5,14 @@ import type {
   GetInvoiceByCustomerIdResponse,
   GetInvoiceDetailsResponse,
 } from "@/types/invoice.type";
+import type { AxiosRequestConfig } from "axios";
 import axiosClient from "./axiosClient";
 
 const INVOICE_API_URL = "/invoice";
 
 const invoiceApi = {
-  getAllInvoices: () =>
-    axiosClient.get<GetAllInvoicesResponse[]>(INVOICE_API_URL),
+  getAllInvoices: (config?: AxiosRequestConfig) =>
+    axiosClient.get<GetAllInvoicesResponse[]>(INVOICE_API_URL, config),
 
   createInvoice: (data: CreateInvoice) =>
     axiosClient.post<GetInvoiceByIdResponse>(INVOICE_API_URL, data),

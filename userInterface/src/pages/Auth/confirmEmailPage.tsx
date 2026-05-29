@@ -1,8 +1,9 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useSearchParams, Link } from "react-router-dom";
 import authApi from "@/apis/authAPI";
 import { CheckCircle, AlertCircle, Loader } from "lucide-react";
 import { isAxiosError } from "axios";
+import { useCooldown } from "@/hooks/useCooldown";
 
 type ConfirmStatus = "loading" | "success" | "error" | "idle";
 
@@ -10,43 +11,52 @@ export default function ConfirmEmailPage() {
   const [searchParams] = useSearchParams();
   const [status, setStatus] = useState<ConfirmStatus>("idle");
   const [message, setMessage] = useState<string>("");
+  const hasConfirmedRef = useRef(false);
+  const { isCoolingDown, remainingSeconds, startCooldown } = useCooldown(60);
 
   const userId = searchParams.get("userId");
   const token = searchParams.get("token");
 
+  const confirmEmail = useCallback(async () => {
+    if (!userId || !token) {
+      setStatus("error");
+      setMessage("Tham số không hợp lệ. Vui lòng kiểm tra lại link xác nhận.");
+      return;
+    }
+
+    try {
+      setStatus("loading");
+      await authApi.confirmEmail({ userId, token });
+      setStatus("success");
+      setMessage("Email của bạn đã được xác nhận thành công!");
+    } catch (error: unknown) {
+      setStatus("error");
+      let errorMessage =
+        "Không thể xác nhận email. Vui lòng thử lại hoặc liên hệ hỗ trợ.";
+
+      if (isAxiosError<{ message?: string }>(error)) {
+        errorMessage = error.response?.data?.message || error.message;
+      } else if (error instanceof Error) {
+        errorMessage = error.message;
+      }
+
+      setMessage(errorMessage);
+    }
+  }, [token, userId]);
+
   useEffect(() => {
-    const confirmEmail = async () => {
-      // Validate parameters
-      if (!userId || !token) {
-        setStatus("error");
-        setMessage(
-          "Tham số không hợp lệ. Vui lòng kiểm tra lại link xác nhận.",
-        );
-        return;
-      }
-
-      try {
-        setStatus("loading");
-        await authApi.confirmEmail({ userId, token });
-        setStatus("success");
-        setMessage("Email của bạn đã được xác nhận thành công!");
-      } catch (error: unknown) {
-        setStatus("error");
-        let errorMessage =
-          "Không thể xác nhận email. Vui lòng thử lại hoặc liên hệ hỗ trợ.";
-
-        if (isAxiosError<{ message?: string }>(error)) {
-          errorMessage = error.response?.data?.message || error.message;
-        } else if (error instanceof Error) {
-          errorMessage = error.message;
-        }
-
-        setMessage(errorMessage);
-      }
-    };
+    if (hasConfirmedRef.current) return;
+    hasConfirmedRef.current = true;
 
     confirmEmail();
-  }, [userId, token]);
+  }, [confirmEmail]);
+
+  const handleRetryConfirmEmail = async () => {
+    if (isCoolingDown || status === "loading") return;
+
+    startCooldown();
+    await confirmEmail();
+  };
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-[#fff8f2] px-4 py-10">
@@ -58,6 +68,8 @@ export default function ConfirmEmailPage() {
               src="/logoPethub.png"
               alt="PetHub"
               className="mx-auto mb-6 h-14 w-auto object-contain"
+              fetchPriority="high"
+              decoding="async"
             />
             <h1 className="text-2xl font-bold text-slate-950">
               Xác nhận Email
@@ -121,9 +133,19 @@ export default function ConfirmEmailPage() {
 
             {status === "error" && (
               <>
+                <button
+                  type="button"
+                  onClick={handleRetryConfirmEmail}
+                  disabled={isCoolingDown}
+                  className="inline-block rounded-lg bg-blue-600 px-6 py-3 text-center font-medium text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:bg-blue-300"
+                >
+                  {isCoolingDown
+                    ? `Thử lại sau ${remainingSeconds}s`
+                    : "Thử xác nhận lại"}
+                </button>
                 <Link
                   to="/auth/signup"
-                  className="inline-block rounded-lg bg-blue-600 px-6 py-3 text-center font-medium text-white transition hover:bg-blue-700"
+                  className="inline-block rounded-lg border border-slate-300 px-6 py-3 text-center font-medium text-slate-700 transition hover:bg-slate-50"
                 >
                   Đăng ký lại
                 </Link>

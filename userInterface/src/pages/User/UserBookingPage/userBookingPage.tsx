@@ -1,4 +1,5 @@
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import appointmentApi from "@/apis/appointmentAPI";
 import petApi from "@/apis/petAPI";
@@ -14,6 +15,9 @@ import type { Appointment } from "@/types/appointment.type";
 import type { Pet } from "@/types/pet.type";
 import { Link } from "react-router-dom";
 import { getCurrentUserId } from "@/lib/auth";
+import { queryKeys } from "@/lib/queryKeys";
+import { PaginationControls } from "@/components/ui/pagination-controls";
+import { usePagination } from "@/hooks/usePagination";
 
 type CancelTarget = {
   id: string;
@@ -59,68 +63,57 @@ const formatDateLabel = (value: string) => {
 };
 
 const UserBookingPage = () => {
-  const [appointments, setAppointments] = useState<Appointment[]>([]);
-  const [petNames, setPetNames] = useState<Record<string, string>>({});
+  const queryClient = useQueryClient();
+  const userId = getCurrentUserId();
   const [activeFilter, setActiveFilter] = useState<BookingStatusKey>("all");
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
   const [cancelingId, setCancelingId] = useState<string | null>(null);
   const [cancelSuccess, setCancelSuccess] = useState<string | null>(null);
   const [cancelTarget, setCancelTarget] = useState<CancelTarget | null>(null);
 
-  useEffect(() => {
-    const loadAppointments = async () => {
-      const userId = getCurrentUserId();
-
+  const {
+    data: bookingData = { appointments: [], petNames: {} },
+    isLoading: loading,
+    isError,
+  } = useQuery({
+    queryKey: queryKeys.userAppointments(userId ?? ""),
+    queryFn: async ({ signal }) => {
       if (!userId) {
-        setError(
+        throw new Error(
           "Không tìm thấy thông tin người dùng. Vui lòng đăng nhập lại.",
         );
-        setLoading(false);
-        return;
       }
 
-      setLoading(true);
-      setError("");
+      const response = await appointmentApi.getAppointmentsByCustomerId(
+        userId,
+        { signal },
+      );
+      const appointmentsData: Appointment[] = response?.data ?? [];
+      const petIds = Array.from(
+        new Set(appointmentsData.map((appointment) => appointment.petId)),
+      ).filter(Boolean);
+      const petResponses = await Promise.all(
+        petIds.map((petId) => petApi.getPetById(petId, { signal })),
+      );
+      const petMap = petResponses.reduce<Record<string, string>>(
+        (acc, petResponse) => {
+          const pet = petResponse?.data as Pet | null;
+          if (pet?.id) {
+            acc[pet.id] = pet.name || "Thú cưng";
+          }
+          return acc;
+        },
+        {},
+      );
 
-      try {
-        const response =
-          await appointmentApi.getAppointmentsByCustomerId(userId);
-        const appointmentsData: Appointment[] = response?.data ?? [];
-        setAppointments(appointmentsData);
+      return {
+        appointments: appointmentsData,
+        petNames: petMap,
+      };
+    },
+    enabled: Boolean(userId),
+  });
 
-        const petIds = Array.from(
-          new Set(appointmentsData.map((appointment) => appointment.petId)),
-        ).filter(Boolean);
-
-        if (petIds.length > 0) {
-          const petResponses = await Promise.all(
-            petIds.map((petId) => petApi.getPetById(petId)),
-          );
-
-          const petMap = petResponses.reduce<Record<string, string>>(
-            (acc, petResponse) => {
-              const pet = petResponse?.data as Pet | null;
-              if (pet?.id) {
-                acc[pet.id] = pet.name || "Thú cưng";
-              }
-              return acc;
-            },
-            {},
-          );
-
-          setPetNames(petMap);
-        }
-      } catch (err) {
-        console.error(err);
-        setError("Không tải được lịch hẹn. Vui lòng thử lại sau.");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    loadAppointments();
-  }, []);
+  const { appointments, petNames } = bookingData;
 
   const openCancelModal = (booking: CancelTarget) => {
     setCancelTarget(booking);
@@ -131,6 +124,7 @@ const UserBookingPage = () => {
   };
 
   const handleCancelAppointment = async () => {
+    if (cancelingId) return;
     if (!cancelTarget) return;
 
     const appointmentId = cancelTarget.id;
@@ -140,7 +134,17 @@ const UserBookingPage = () => {
 
     try {
       await appointmentApi.deleteAppointment(appointmentId);
-      setAppointments((prev) => prev.filter((apt) => apt.id !== appointmentId));
+      if (userId) {
+        queryClient.setQueryData(queryKeys.userAppointments(userId), {
+          appointments: appointments.filter(
+            (appointment) => appointment.id !== appointmentId,
+          ),
+          petNames,
+        });
+        await queryClient.invalidateQueries({
+          queryKey: queryKeys.userAppointments(userId),
+        });
+      }
 
       setCancelSuccess("Hủy lịch hẹn thành công!");
       setTimeout(() => setCancelSuccess(null), 3000);
@@ -167,6 +171,7 @@ const UserBookingPage = () => {
     if (activeFilter === "all") return bookings;
     return bookings.filter((booking) => booking.status === activeFilter);
   }, [activeFilter, bookings]);
+  const bookingPagination = usePagination(currentBookings, 10);
 
   const counts = useMemo(() => {
     const result: Record<BookingStatusKey, number> = {
@@ -233,14 +238,18 @@ const UserBookingPage = () => {
           <div className="rounded-[30px] border border-slate-200 bg-white p-8 text-center text-slate-600 shadow-sm">
             Đang tải lịch hẹn...
           </div>
-        ) : error ? (
+        ) : !userId ? (
           <div className="rounded-[30px] border border-rose-200 bg-rose-50 p-6 text-rose-700 shadow-sm">
-            {error}
+            Không tìm thấy thông tin người dùng. Vui lòng đăng nhập lại.
+          </div>
+        ) : isError ? (
+          <div className="rounded-[30px] border border-rose-200 bg-rose-50 p-6 text-rose-700 shadow-sm">
+            Không tải được lịch hẹn. Vui lòng thử lại sau.
           </div>
         ) : (
           <div className="grid gap-6">
             {currentBookings.length > 0 ? (
-              currentBookings.map((booking) => (
+              bookingPagination.pageItems.map((booking) => (
                 <div
                   key={booking.id}
                   className="rounded-[30px] border border-slate-200 bg-white p-6 shadow-sm"
@@ -350,6 +359,15 @@ const UserBookingPage = () => {
                 Bạn chưa có lịch hẹn nào.
               </div>
             )}
+            <PaginationControls
+              canGoNext={bookingPagination.canGoNext}
+              canGoPrevious={bookingPagination.canGoPrevious}
+              currentPage={bookingPagination.currentPage}
+              onNext={bookingPagination.goNext}
+              onPrevious={bookingPagination.goPrevious}
+              totalItems={bookingPagination.totalItems}
+              totalPages={bookingPagination.totalPages}
+            />
           </div>
         )}
 
@@ -425,15 +443,17 @@ const UserBookingPage = () => {
             <div className="flex gap-3">
               <button
                 onClick={closeCancelModal}
+                disabled={Boolean(cancelingId)}
                 className="flex-1 rounded-full border border-slate-200 py-3 text-sm font-bold text-slate-700 hover:bg-slate-50 transition"
               >
                 Không, giữ lại
               </button>
               <button
                 onClick={handleCancelAppointment}
+                disabled={Boolean(cancelingId)}
                 className="flex-1 rounded-full bg-red-500 py-3 text-sm font-bold text-white hover:bg-red-600 transition"
               >
-                Có, hủy lịch
+                {cancelingId ? "Đang hủy..." : "Có, hủy lịch"}
               </button>
             </div>
           </div>

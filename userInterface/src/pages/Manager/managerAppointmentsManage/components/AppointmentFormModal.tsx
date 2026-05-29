@@ -64,6 +64,7 @@ const AppointmentFormModal = ({
           <button
             type="button"
             onClick={onClose}
+            disabled={saving}
             className="rounded-full p-2 text-slate-500 hover:bg-slate-100"
           >
             <X className="h-5 w-5" />
@@ -76,6 +77,7 @@ const AppointmentFormModal = ({
               <button
                 type="button"
                 onClick={() => onCustomerInputModeChange("manual")}
+                disabled={saving}
                 className={`rounded-xl px-3 py-2 transition ${
                   customerInputMode === "manual"
                     ? "bg-white text-slate-950 shadow-sm"
@@ -87,6 +89,7 @@ const AppointmentFormModal = ({
               <button
                 type="button"
                 onClick={() => onCustomerInputModeChange("email")}
+                disabled={saving}
                 className={`rounded-xl px-3 py-2 transition ${
                   customerInputMode === "email"
                     ? "bg-white text-slate-950 shadow-sm"
@@ -105,6 +108,7 @@ const AppointmentFormModal = ({
                 <Input
                   required
                   value={form.customerId}
+                  disabled={saving}
                   onChange={(event) =>
                     onUpdateForm("customerId", event.target.value)
                   }
@@ -116,6 +120,7 @@ const AppointmentFormModal = ({
                 <Input
                   required
                   value={form.petId}
+                  disabled={saving}
                   onChange={(event) => onUpdateForm("petId", event.target.value)}
                   placeholder="Nhập petId"
                 />
@@ -127,6 +132,7 @@ const AppointmentFormModal = ({
                 Email khách hàng
                 <Input
                   value={userSearch}
+                  disabled={saving}
                   onChange={(event) => onOwnerSearchChange(event.target.value)}
                   placeholder="Tìm theo email hoặc username"
                   autoComplete="off"
@@ -140,6 +146,7 @@ const AppointmentFormModal = ({
                       key={owner.id || owner.email}
                       type="button"
                       onClick={() => onOwnerSelect(owner)}
+                      disabled={saving || ownerPetsLoading}
                       className="mb-2 w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-left text-sm text-slate-700 transition hover:bg-slate-100 last:mb-0"
                     >
                       <div className="font-semibold text-slate-900">
@@ -165,7 +172,7 @@ const AppointmentFormModal = ({
                 Thú cưng của khách
                 <select
                   required
-                  disabled={!selectedOwner || ownerPetsLoading}
+                  disabled={!selectedOwner || ownerPetsLoading || saving}
                   value={form.petId}
                   onChange={(event) => onUpdateForm("petId", event.target.value)}
                   className="h-9 w-full rounded-md border border-slate-200 bg-white px-3 text-sm shadow-xs outline-none focus:border-slate-400 disabled:cursor-not-allowed disabled:bg-slate-100"
@@ -192,6 +199,7 @@ const AppointmentFormModal = ({
                 required
                 type="date"
                 value={form.appointmentDate}
+                disabled={saving}
                 onChange={(event) =>
                   onUpdateForm("appointmentDate", event.target.value)
                 }
@@ -202,6 +210,7 @@ const AppointmentFormModal = ({
               <select
                 required
                 value={form.startTime}
+                disabled={saving}
                 onChange={(event) => onUpdateForm("startTime", event.target.value)}
                 className="h-9 w-full rounded-md border border-slate-200 bg-white px-3 text-sm shadow-xs outline-none focus:border-slate-400"
               >
@@ -230,6 +239,7 @@ const AppointmentFormModal = ({
             Ghi chú
             <textarea
               value={form.appointmentNote}
+              disabled={saving}
               onChange={(event) =>
                 onUpdateForm("appointmentNote", event.target.value)
               }
@@ -246,6 +256,7 @@ const AppointmentFormModal = ({
                 <Input
                   type="datetime-local"
                   value={form.reminderTime}
+                  disabled={saving}
                   onChange={(event) =>
                     onUpdateForm("reminderTime", event.target.value)
                   }
@@ -255,6 +266,7 @@ const AppointmentFormModal = ({
                 Trạng thái nhắc
                 <select
                   value={form.reminderStatus}
+                  disabled={saving}
                   onChange={(event) =>
                     onUpdateReminderStatus(
                       Number(event.target.value) as ReminderStatus,
@@ -280,7 +292,11 @@ const AppointmentFormModal = ({
               className="bg-[#D56756] text-white hover:bg-[#b2483c]"
             >
               {saving && <Loader2 className="h-4 w-4 animate-spin" />}
-              {form.id ? "Lưu thay đổi" : "Tạo lịch hẹn"}
+              {saving
+                ? "Đang xử lý..."
+                : form.id
+                  ? "Lưu thay đổi"
+                  : "Tạo lịch hẹn"}
             </Button>
           </div>
         </form>

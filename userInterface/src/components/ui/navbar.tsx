@@ -71,6 +71,7 @@ const Navbar = () => {
             src="/logoPethub.png"
             alt="PetHub"
             className="h-11 w-auto max-w-none object-contain sm:h-12"
+            fetchPriority="high"
             decoding="async"
           />
         </Link>

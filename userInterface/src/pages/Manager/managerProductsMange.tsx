@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import itemApi from "@/apis/itemsAPI";
 import type { Items } from "@/types/item.type";
+import { useDebounce } from "@/hooks/useDebounce";
 
 const isProductItem = (item: Items) => {
   const typeValue = String(item.type).toLowerCase();
@@ -19,21 +20,30 @@ const ManagerProductsMange = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const debouncedSearchTerm = useDebounce(searchTerm);
 
   useEffect(() => {
+    const controller = new AbortController();
+
     const loadItems = async () => {
       setLoading(true);
       try {
-        const response = await itemApi.getAllItems();
+        const response = await itemApi.getAllItems({
+          signal: controller.signal,
+        });
         setItems(response?.data ?? []);
       } catch {
+        if (controller.signal.aborted) return;
         setError("Không tải được danh sách sản phẩm. Vui lòng thử lại.");
       } finally {
-        setLoading(false);
+        if (!controller.signal.aborted) {
+          setLoading(false);
+        }
       }
     };
 
     loadItems();
+    return () => controller.abort();
   }, []);
 
   const handleDelete = async (id: string) => {
@@ -62,9 +72,9 @@ const ManagerProductsMange = () => {
       items.filter(
         (item) =>
           isProductItem(item) &&
-          item.name.toLowerCase().includes(searchTerm.toLowerCase()),
+          item.name.toLowerCase().includes(debouncedSearchTerm.toLowerCase()),
       ),
-    [items, searchTerm],
+    [debouncedSearchTerm, items],
   );
 
   return (

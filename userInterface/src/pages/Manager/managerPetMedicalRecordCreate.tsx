@@ -50,6 +50,8 @@ const ManagerPetMedicalRecordCreate = () => {
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    if (loading) return;
+
     setError("");
     setSuccess("");
 

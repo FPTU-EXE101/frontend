@@ -74,6 +74,7 @@ export const removeToken = (): void => {
   }
 
   localStorage.removeItem(TOKEN_KEY);
+  removeLegacyAuthKeys();
 };
 
 export const getDecodedToken = (): JwtPayload | null => {
@@ -147,5 +148,4 @@ export const isAuthenticated = (): boolean => {
 
 export const logout = (): void => {
   removeToken();
-  removeLegacyAuthKeys();
 };

@@ -231,8 +231,10 @@ const DigitalPetCard = () => {
                 {image ? (
                   <img
                     src={image}
-                    alt={pet.name}
+                    alt={`Ảnh thú cưng ${pet.name || "PetHub"}`}
                     className="h-full w-full object-cover"
+                    loading="lazy"
+                    decoding="async"
                   />
                 ) : (
                   <PawPrint className="h-12 w-12 text-amber-500" />

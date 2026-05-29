@@ -1,13 +1,16 @@
 import type { CreatePetRequest } from "@/types/pet.type";
+import type { AxiosRequestConfig } from "axios";
 import axiosClient from "./axiosClient";
 
 const PET_API_URL = "/pet";
 const PETS_API_URL = "/pets";
 const petApi = {
-  getAllPets: () => axiosClient.get(`${PETS_API_URL}`),
-  getPetById: (id: string) => axiosClient.get(`${PET_API_URL}/${id}`),
-  getPetByCustomerId: (customerId: string) =>{
-    return axiosClient.get(`${PETS_API_URL}/customer/${customerId}`)
+  getAllPets: (config?: AxiosRequestConfig) =>
+    axiosClient.get(`${PETS_API_URL}`, config),
+  getPetById: (id: string, config?: AxiosRequestConfig) =>
+    axiosClient.get(`${PET_API_URL}/${id}`, config),
+  getPetByCustomerId: (customerId: string, config?: AxiosRequestConfig) => {
+    return axiosClient.get(`${PETS_API_URL}/customer/${customerId}`, config);
   },
   createPet: (data: CreatePetRequest) =>
     axiosClient.post(`${PET_API_URL}`, data),

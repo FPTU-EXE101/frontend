@@ -1,5 +1,6 @@
 import type { FormEvent } from "react";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { CheckCircle2, Home, Plus } from "lucide-react";
 import appointmentApi from "@/apis/appointmentAPI";
 import reminderApi from "@/apis/appointmentReminderAPI";
@@ -30,8 +31,18 @@ import {
   toDateTimeInput,
   toTimeInput,
 } from "./utils";
+import { useDebounce } from "@/hooks/useDebounce";
+import { queryKeys } from "@/lib/queryKeys";
+
+type ManagerAppointmentsQueryData = {
+  appointments: Appointment[];
+  reminders: AppointmentRemind[];
+  petNames: Record<string, string>;
+  customerNames: Record<string, string>;
+};
 
 const ManagerAppointmentsManage = () => {
+  const queryClient = useQueryClient();
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [reminders, setReminders] = useState<AppointmentRemind[]>([]);
   const [petNames, setPetNames] = useState<Record<string, string>>({});
@@ -42,13 +53,11 @@ const ManagerAppointmentsManage = () => {
   const [viewDate, setViewDate] = useState(() => new Date());
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
-  const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [cancelingId, setCancelingId] = useState<string | null>(null);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [form, setForm] = useState<AppointmentFormState | null>(null);
-  const [users, setUsers] = useState<UserProfileValues[]>([]);
   const [customerInputMode, setCustomerInputMode] = useState<
     "manual" | "email"
   >("manual");
@@ -58,36 +67,20 @@ const ManagerAppointmentsManage = () => {
   );
   const [ownerPets, setOwnerPets] = useState<Pet[]>([]);
   const [ownerPetsLoading, setOwnerPetsLoading] = useState(false);
+  const ownerPetsControllerRef = useRef<AbortController | null>(null);
+  const debouncedSearchTerm = useDebounce(searchTerm);
+  const debouncedUserSearch = useDebounce(userSearch);
 
   const loadAppointments = async () => {
-    setLoading(true);
-    setError("");
-
-    try {
-      const [appointmentResponse, reminderResponse] = await Promise.all([
-        appointmentApi.getAllAppointments(),
-        reminderApi.getAllReminders(),
-      ]);
-
-      const appointmentData = normalizeList<Appointment>(
-        appointmentResponse?.data,
-      );
-      const reminderData = normalizeList<AppointmentRemind>(
-        reminderResponse?.data,
-      );
-
-      setAppointments(appointmentData);
-      setReminders(reminderData);
-      await loadRelatedNames(appointmentData);
-    } catch (err) {
-      console.error(err);
-      setError("Không tải được danh sách lịch hẹn. Vui lòng thử lại.");
-    } finally {
-      setLoading(false);
-    }
+    await queryClient.invalidateQueries({
+      queryKey: queryKeys.managerAppointments,
+    });
   };
 
-  const loadRelatedNames = async (appointmentData: Appointment[]) => {
+  const loadRelatedNames = async (
+    appointmentData: Appointment[],
+    signal?: AbortSignal,
+  ) => {
     const petIds = Array.from(
       new Set(appointmentData.map((appointment) => appointment.petId)),
     ).filter(Boolean);
@@ -96,22 +89,25 @@ const ManagerAppointmentsManage = () => {
     ).filter(Boolean);
 
     const [petResponses, customerResponses] = await Promise.all([
-      Promise.allSettled(petIds.map((id) => petApi.getPetById(id))),
-      Promise.allSettled(customerIds.map((id) => userApi.getUserById(id))),
+      Promise.allSettled(petIds.map((id) => petApi.getPetById(id, { signal }))),
+      Promise.allSettled(
+        customerIds.map((id) => userApi.getUserById(id, { signal })),
+      ),
     ]);
 
-    setPetNames(
-      petResponses.reduce<Record<string, string>>((result, response) => {
+    const nextPetNames = petResponses.reduce<Record<string, string>>(
+      (result, response) => {
         if (response.status === "fulfilled") {
           const pet = response.value?.data as Pet | undefined;
           if (pet?.id) result[pet.id] = pet.name;
         }
         return result;
-      }, {}),
+      },
+      {},
     );
 
-    setCustomerNames(
-      customerResponses.reduce<Record<string, string>>((result, response) => {
+    const nextCustomerNames = customerResponses.reduce<Record<string, string>>(
+      (result, response) => {
         if (response.status === "fulfilled") {
           const user = response.value?.data as User | undefined;
           if (user?.id) {
@@ -123,25 +119,69 @@ const ManagerAppointmentsManage = () => {
           }
         }
         return result;
-      }, {}),
+      },
+      {},
     );
+
+    return {
+      customerNames: nextCustomerNames,
+      petNames: nextPetNames,
+    };
   };
 
-  useEffect(() => {
-    loadAppointments();
-  }, []);
+  const {
+    data: appointmentQueryData,
+    isLoading: loading,
+    isError: isAppointmentsError,
+  } = useQuery<ManagerAppointmentsQueryData>({
+    queryKey: queryKeys.managerAppointments,
+    queryFn: async ({ signal }) => {
+      const [appointmentResponse, reminderResponse] = await Promise.all([
+        appointmentApi.getAllAppointments({ signal }),
+        reminderApi.getAllReminders({ signal }),
+      ]);
+
+      const appointmentData = normalizeList<Appointment>(
+        appointmentResponse?.data,
+      );
+      const reminderData = normalizeList<AppointmentRemind>(
+        reminderResponse?.data,
+      );
+      const relatedNames = await loadRelatedNames(appointmentData, signal);
+
+      return {
+        appointments: appointmentData,
+        reminders: reminderData,
+        ...relatedNames,
+      };
+    },
+  });
+
+  const { data: users = [] } = useQuery({
+    queryKey: queryKeys.managerUsers,
+    queryFn: async ({ signal }) => {
+      const response = await userApi.getAllUsers({ signal });
+      return (response?.data ?? []) as UserProfileValues[];
+    },
+  });
 
   useEffect(() => {
-    const loadUsers = async () => {
-      try {
-        const response = await userApi.getAllUsers();
-        setUsers(response?.data ?? []);
-      } catch (err) {
-        console.error("Không tải được danh sách người dùng", err);
-      }
-    };
+    if (isAppointmentsError) {
+      setError("Không tải được danh sách lịch hẹn. Vui lòng thử lại.");
+      return;
+    }
 
-    loadUsers();
+    if (!appointmentQueryData) return;
+
+    setAppointments(appointmentQueryData.appointments);
+    setReminders(appointmentQueryData.reminders);
+    setPetNames(appointmentQueryData.petNames);
+    setCustomerNames(appointmentQueryData.customerNames);
+    setError("");
+  }, [appointmentQueryData, isAppointmentsError]);
+
+  useEffect(() => {
+    return () => ownerPetsControllerRef.current?.abort();
   }, []);
 
   const reminderByAppointmentId = useMemo(
@@ -170,7 +210,7 @@ const ManagerAppointmentsManage = () => {
   );
 
   const visibleAppointments = useMemo(() => {
-    const query = searchTerm.trim().toLowerCase();
+    const query = debouncedSearchTerm.trim().toLowerCase();
     return (appointmentsByDate[selectedDate] ?? [])
       .filter((appointment) =>
         statusFilter === "all" ? true : appointment.status === statusFilter,
@@ -193,8 +233,8 @@ const ManagerAppointmentsManage = () => {
   }, [
     appointmentsByDate,
     customerNames,
+    debouncedSearchTerm,
     petNames,
-    searchTerm,
     selectedDate,
     statusFilter,
   ]);
@@ -212,7 +252,7 @@ const ManagerAppointmentsManage = () => {
   );
 
   const ownerOptions = useMemo(() => {
-    const query = userSearch.trim().toLowerCase();
+    const query = debouncedUserSearch.trim().toLowerCase();
     if (!query) return [];
 
     return users
@@ -225,7 +265,7 @@ const ManagerAppointmentsManage = () => {
         );
       })
       .slice(0, 6);
-  }, [userSearch, users]);
+  }, [debouncedUserSearch, users]);
 
   const bookedSlots = useMemo(() => {
     if (!form?.appointmentDate) return [];
@@ -331,6 +371,10 @@ const ManagerAppointmentsManage = () => {
   };
 
   const handleOwnerSelect = async (owner: UserProfileValues) => {
+    ownerPetsControllerRef.current?.abort();
+    const controller = new AbortController();
+    ownerPetsControllerRef.current = controller;
+
     setSelectedOwner(owner);
     setUserSearch("");
     setOwnerPets([]);
@@ -352,13 +396,18 @@ const ManagerAppointmentsManage = () => {
 
     try {
       setOwnerPetsLoading(true);
-      const response = await petApi.getPetByCustomerId(owner.id);
+      const response = await petApi.getPetByCustomerId(owner.id, {
+        signal: controller.signal,
+      });
       setOwnerPets(response?.data ?? []);
     } catch (err) {
+      if (controller.signal.aborted) return;
       console.error(err);
       setError("Không tải được thú cưng của khách hàng này.");
     } finally {
-      setOwnerPetsLoading(false);
+      if (!controller.signal.aborted) {
+        setOwnerPetsLoading(false);
+      }
     }
   };
 
@@ -380,6 +429,7 @@ const ManagerAppointmentsManage = () => {
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    if (saving) return;
     if (!form) return;
 
     setSaving(true);
@@ -439,6 +489,8 @@ const ManagerAppointmentsManage = () => {
   };
 
   const handleCancelAppointment = async (appointment: Appointment) => {
+    if (cancelingId) return;
+
     const confirmed = window.confirm(
       "Bạn có chắc muốn Huỷ lịch hẹn này không?",
     );
@@ -460,11 +512,14 @@ const ManagerAppointmentsManage = () => {
   };
 
   const handleCancelReminder = async (reminder: AppointmentRemind) => {
+    if (cancelingId) return;
+
     const confirmed = window.confirm(
       "Bạn có chắc muốn Huỷ nhắc lịch này không?",
     );
     if (!confirmed) return;
 
+    setCancelingId(reminder.id);
     setError("");
 
     try {
@@ -476,6 +531,8 @@ const ManagerAppointmentsManage = () => {
     } catch (err) {
       console.error(err);
       setError("Huỷ nhắc lịch thất bại. Vui lòng thử lại.");
+    } finally {
+      setCancelingId(null);
     }
   };
 
@@ -503,6 +560,7 @@ const ManagerAppointmentsManage = () => {
 
         <Button
           onClick={openCreateForm}
+          disabled={saving}
           className="h-11 rounded-full bg-[#D56756] px-6 text-white hover:bg-[#b2483c]"
         >
           <Plus className="h-4 w-4" />

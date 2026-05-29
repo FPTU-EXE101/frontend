@@ -57,6 +57,8 @@ export function SignupForm({ className, ...props }: ComponentProps<"form">) {
     },
     validationSchema,
     onSubmit: async (values) => {
+      if (loading) return;
+
       setSubmitError(null);
       const payload: Register = {
         userName: generateUsername(values.email),

@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { useQueryClient } from "@tanstack/react-query";
 import { ArrowLeft } from "lucide-react";
 import { isAxiosError } from "axios";
 import { useFormik } from "formik";
@@ -15,6 +16,7 @@ import {
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { getCurrentUserId } from "@/lib/auth";
+import { queryKeys } from "@/lib/queryKeys";
 import type { CreatePetRequest } from "@/types/pet.type";
 
 type CreatePetFormValues = {
@@ -45,6 +47,7 @@ const validationSchema: Yup.ObjectSchema<CreatePetFormValues> = Yup.object({
 
 const CreatePetPage = () => {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const maxDate = useMemo(() => getTodayInputValue(), []);
   const [loading, setLoading] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
@@ -59,6 +62,8 @@ const CreatePetPage = () => {
     },
     validationSchema,
     onSubmit: async (values) => {
+      if (loading || submitSuccess) return;
+
       setSubmitError(null);
       setSubmitSuccess(false);
 
@@ -81,6 +86,9 @@ const CreatePetPage = () => {
       try {
         setLoading(true);
         await petApi.createPet(payload);
+        await queryClient.invalidateQueries({
+          queryKey: queryKeys.userPets(customerId),
+        });
         setSubmitSuccess(true);
         formik.resetForm();
         setTimeout(() => {
@@ -240,13 +248,14 @@ const CreatePetPage = () => {
                 type="button"
                 variant="outline"
                 onClick={() => navigate("/user/pet")}
+                disabled={loading || submitSuccess}
                 className="flex-1 rounded-full"
               >
                 Hủy bỏ
               </Button>
               <Button
                 type="submit"
-                disabled={loading}
+                disabled={loading || submitSuccess}
                 className="flex-1 rounded-full bg-[#D56756] px-5 py-3 text-base font-semibold text-white hover:bg-[#b34c47] disabled:cursor-not-allowed disabled:bg-[#d89992]"
               >
                 {loading ? "Đang lưu..." : "Thêm thú cưng"}

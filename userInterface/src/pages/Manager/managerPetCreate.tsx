@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Field,
@@ -16,6 +16,7 @@ import type { UserProfileValues } from "@/types/userProfile.type";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { ArrowLeft } from "lucide-react";
+import { useDebounce } from "@/hooks/useDebounce";
 
 const validationSchema = Yup.object({
   name: Yup.string().trim().required("Vui lòng chọn tên thú cưng."),
@@ -47,22 +48,34 @@ const ManagerPetCreatePage = () => {
 
   const [ownerLoading, setOwnerLoading] = useState(false);
   const navigate = useNavigate();
+  const debouncedUserSearch = useDebounce(userSearch);
+  const ownerPetsControllerRef = useRef<AbortController | null>(null);
 
   useEffect(() => {
+    const controller = new AbortController();
+
     const loadUsers = async () => {
       try {
-        const response = await userApi.getAllUsers();
+        const response = await userApi.getAllUsers({
+          signal: controller.signal,
+        });
         setUsers(response?.data ?? []);
       } catch (err) {
+        if (controller.signal.aborted) return;
         console.error("Không tải được danh sách người dùng", err);
       }
     };
 
     loadUsers();
+    return () => controller.abort();
+  }, []);
+
+  useEffect(() => {
+    return () => ownerPetsControllerRef.current?.abort();
   }, []);
 
   const ownerOptions = useMemo(() => {
-    const query = userSearch.trim().toLowerCase();
+    const query = debouncedUserSearch.trim().toLowerCase();
     if (!query) return [];
 
     return users
@@ -75,9 +88,13 @@ const ManagerPetCreatePage = () => {
         );
       })
       .slice(0, 6);
-  }, [userSearch, users]);
+  }, [debouncedUserSearch, users]);
 
   const handleOwnerSelect = async (owner: UserProfileValues) => {
+    ownerPetsControllerRef.current?.abort();
+    const controller = new AbortController();
+    ownerPetsControllerRef.current = controller;
+
     setSelectedOwner(owner);
     setUserSearch("");
     setSubmitError(null);
@@ -91,12 +108,17 @@ const ManagerPetCreatePage = () => {
 
     try {
       setOwnerLoading(true);
-      await petApi.getPetByCustomerId(customerId);
+      await petApi.getPetByCustomerId(customerId, {
+        signal: controller.signal,
+      });
     } catch (err) {
+      if (controller.signal.aborted) return;
       console.error(err);
       setSubmitError("Không tải được thú cưng của chủ này.");
     } finally {
-      setOwnerLoading(false);
+      if (!controller.signal.aborted) {
+        setOwnerLoading(false);
+      }
     }
   };
 
@@ -109,6 +131,8 @@ const ManagerPetCreatePage = () => {
     },
     validationSchema,
     onSubmit: async (values) => {
+      if (loading) return;
+
       setSubmitError(null);
       setSubmitSuccess(false);
 
@@ -344,6 +368,7 @@ const ManagerPetCreatePage = () => {
                 type="button"
                 variant="outline"
                 onClick={() => navigate(-1)}
+                disabled={loading}
                 className="flex-1 rounded-full"
               >
                 Hủy bỏ

@@ -6,6 +6,9 @@ import { Button } from "@/components/ui/button";
 
 import type { User } from "@/types/user.type";
 import userApi from "@/apis/userAPI";
+import { useDebounce } from "@/hooks/useDebounce";
+import { PaginationControls } from "@/components/ui/pagination-controls";
+import { usePagination } from "@/hooks/usePagination";
 
 
 const ManagerCustomersManage = () => {
@@ -13,30 +16,40 @@ const ManagerCustomersManage = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const debouncedSearchTerm = useDebounce(searchTerm);
   // const [numberOfPets, setNumberOfPets] = useState<{ [userId: string]: number }>({});
   useEffect(() => {
+    const controller = new AbortController();
+
     const loadusers = async () => {
       setLoading(true);
       try {
-        const response = await userApi.getAllUsers();
+        const response = await userApi.getAllUsers({
+          signal: controller.signal,
+        });
         setusers(response?.data ?? []);
       } catch {
+        if (controller.signal.aborted) return;
         setError("Không tải được danh sách Khách hàng. Vui lòng thử lại.");
       } finally {
-        setLoading(false);
+        if (!controller.signal.aborted) {
+          setLoading(false);
+        }
       }
     };
 
     loadusers();
+    return () => controller.abort();
   }, []);
   // const fetchNumberOfPets = async (userId: string) => {}
   const filteredServices = useMemo(
     () =>
       users.filter((user) =>
-        user.userName.toLowerCase().includes(searchTerm.toLowerCase()),
+        user.userName.toLowerCase().includes(debouncedSearchTerm.toLowerCase()),
       ),
-    [users, searchTerm],
+    [debouncedSearchTerm, users],
   );
+  const customerPagination = usePagination(filteredServices, 10);
   return (
     <div className="space-y-6">
       <section className="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm">
@@ -87,7 +100,7 @@ const ManagerCustomersManage = () => {
             Đang tải Khách hàng...
           </div>
         ) : filteredServices.length > 0 ? (
-          filteredServices.map((user) => (
+          customerPagination.pageItems.map((user) => (
             <div
               key={user.id}
               className="grid grid-cols-[1.5fr_2fr_1fr_1fr_1fr_1fr] users-center gap-0 border-b border-slate-200 px-6 py-5 text-sm text-slate-700 last:border-b-0"
@@ -134,6 +147,16 @@ const ManagerCustomersManage = () => {
           </div>
         )}
       </section>
+
+      <PaginationControls
+        canGoNext={customerPagination.canGoNext}
+        canGoPrevious={customerPagination.canGoPrevious}
+        currentPage={customerPagination.currentPage}
+        onNext={customerPagination.goNext}
+        onPrevious={customerPagination.goPrevious}
+        totalItems={customerPagination.totalItems}
+        totalPages={customerPagination.totalPages}
+      />
 
       {error && (
         <div className="rounded-[2rem] border border-rose-200 bg-rose-50 p-4 text-sm text-rose-700">

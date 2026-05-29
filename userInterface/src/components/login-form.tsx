@@ -36,6 +36,8 @@ export function LoginForm({ className, ...props }: ComponentProps<"form">) {
     },
     validationSchema,
     onSubmit: async (values) => {
+      if (loading) return;
+
       setSubmitError(null);
       try {
         setLoading(true);

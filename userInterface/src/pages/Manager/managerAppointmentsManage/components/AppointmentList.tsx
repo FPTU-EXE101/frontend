@@ -9,6 +9,8 @@ import type { AppointmentRemind } from "@/types/appointmentRemind.type";
 import type { AppointmentStatus } from "@/types/enum.type";
 import type { StatusFilter } from "../types";
 import AppointmentListItem from "./AppointmentListItem";
+import { PaginationControls } from "@/components/ui/pagination-controls";
+import { usePagination } from "@/hooks/usePagination";
 
 interface AppointmentListProps {
   customerNames: Record<string, string>;
@@ -45,6 +47,8 @@ const AppointmentList = ({
   onSearchChange,
   onStatusFilterChange,
 }: AppointmentListProps) => {
+  const appointmentPagination = usePagination(visibleAppointments, 10);
+
   return (
     <section className="rounded-[1.5rem] border border-slate-200 bg-white shadow-sm">
       <div className="flex flex-col gap-4 border-b border-slate-200 p-6 lg:flex-row lg:items-center lg:justify-between">
@@ -93,7 +97,7 @@ const AppointmentList = ({
           </div>
         ) : visibleAppointments.length > 0 ? (
           <div className="space-y-4">
-            {visibleAppointments.map((appointment) => {
+            {appointmentPagination.pageItems.map((appointment) => {
               const reminder = reminderByAppointmentId[appointment.id];
 
               return (
@@ -113,6 +117,15 @@ const AppointmentList = ({
                 />
               );
             })}
+            <PaginationControls
+              canGoNext={appointmentPagination.canGoNext}
+              canGoPrevious={appointmentPagination.canGoPrevious}
+              currentPage={appointmentPagination.currentPage}
+              onNext={appointmentPagination.goNext}
+              onPrevious={appointmentPagination.goPrevious}
+              totalItems={appointmentPagination.totalItems}
+              totalPages={appointmentPagination.totalPages}
+            />
           </div>
         ) : (
           <div className="flex min-h-[16rem] flex-col items-center justify-center gap-4 text-center text-slate-500">
