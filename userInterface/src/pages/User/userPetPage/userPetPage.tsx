@@ -1,9 +1,12 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import petApi from "@/apis/petAPI";
 import medicalRecordApi from "@/apis/medicalRecordAPI";
 import type { Pet } from "@/types/pet.type";
 import type { MedicalRecord } from "@/types/medicalRecord.type";
-import { Heart, Info, X } from "lucide-react";
+import { Heart, Info, Plus, X } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { getCurrentUserId } from "@/lib/auth";
 import PetCard from "./PetCard";
 import PetDetailModal from "./PetDetailModal";
 import PetQRCode from "@/components/pets/PetQRCode";
@@ -22,7 +25,7 @@ const UserPetPage = () => {
   // ── fetch pets ────────────────────────────────────────────────────────────
   useEffect(() => {
     const loadPets = async () => {
-      const userId = localStorage.getItem("userId") || "";
+      const userId = getCurrentUserId();
 
       if (!userId) {
         setError(
@@ -90,9 +93,20 @@ const UserPetPage = () => {
               Xem thông tin và lịch sử khám bệnh của bé cưng
             </p>
           </div>
-          <div className="flex items-center gap-2 rounded-full bg-rose-50 px-4 py-2 text-sm text-[#D56756] font-medium border border-rose-100">
-            <Heart className="h-4 w-4 fill-rose-200 text-[#D56756]" />
-            {pets.length} thú cưng
+          <div className="flex flex-wrap items-center gap-3">
+            <div className="flex items-center gap-2 rounded-full bg-rose-50 px-4 py-2 text-sm text-[#D56756] font-medium border border-rose-100">
+              <Heart className="h-4 w-4 fill-rose-200 text-[#D56756]" />
+              {pets.length} thú cưng
+            </div>
+            <Button
+              asChild
+              className="rounded-full bg-[#D56756] px-5 py-2.5 text-sm font-semibold text-white hover:bg-[#b34c47]"
+            >
+              <Link to="/user/pet/new">
+                <Plus className="h-4 w-4" />
+                Thêm thú cưng
+              </Link>
+            </Button>
           </div>
         </div>
 
@@ -124,8 +138,17 @@ const UserPetPage = () => {
               Bạn chưa có thú cưng nào được đăng ký.
             </p>
             <p className="text-sm text-slate-400 mt-1">
-              Liên hệ cửa hàng để thêm bé cưng của bạn.
+              Thêm bé cưng đầu tiên để theo dõi hồ sơ và lịch chăm sóc.
             </p>
+            <Button
+              asChild
+              className="mt-5 rounded-full bg-[#D56756] px-5 py-2.5 text-sm font-semibold text-white hover:bg-[#b34c47]"
+            >
+              <Link to="/user/pet/new">
+                <Plus className="h-4 w-4" />
+                Thêm thú cưng
+              </Link>
+            </Button>
           </div>
         ) : (
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">

@@ -1,10 +1,23 @@
-import type { CreateItemRequest } from "@/types/item.type";
+import type { CreateItemRequest, Items } from "@/types/item.type";
 import axiosClient from "./axiosClient";
 
 const ITEM_API_URL = "/items";
+const isServiceType = (type: unknown): boolean => {
+  const typeValue = String(type).toLowerCase();
+  return typeValue === "service" || typeValue === "0";
+};
 
 const itemApi = {
   getAllItems: () => axiosClient.get(`${ITEM_API_URL}/item`),
+  getAllServices: async () => {
+    const response = await axiosClient.get<Items[]>(`${ITEM_API_URL}/item`);
+    return {
+      ...response,
+      data: Array.isArray(response.data)
+        ? response.data.filter((item) => isServiceType(item?.type))
+        : response.data,
+    };
+  },
   getItemById: (id: string) => axiosClient.get(`${ITEM_API_URL}/${id}`),
   createItem: (data: CreateItemRequest | FormData) =>
     axiosClient.post(

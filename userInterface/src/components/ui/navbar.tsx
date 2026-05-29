@@ -1,6 +1,10 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { parseJwt } from "@/lib/utils";
+import {
+  getCurrentUser,
+  isAuthenticated as checkIsAuthenticated,
+  logout,
+} from "@/lib/auth";
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -17,8 +21,7 @@ const Navbar = () => {
   const navigate = useNavigate();
 
   const updateAuthState = () => {
-    const token = localStorage.getItem("token");
-    if (!token) {
+    if (!checkIsAuthenticated()) {
       setIsAuthenticated(false);
       setUserName("");
       setUserEmail("");
@@ -26,15 +29,9 @@ const Navbar = () => {
       return;
     }
 
-    const payload = parseJwt(token);
-    const role =
-      (payload?.[
-        "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"
-      ] as string) ||
-      (payload?.role as string) ||
-      "";
+    const currentUser = getCurrentUser();
 
-    if (!role) {
+    if (!currentUser) {
       setIsAuthenticated(false);
       setUserName("");
       setUserEmail("");
@@ -43,21 +40,9 @@ const Navbar = () => {
     }
 
     setIsAuthenticated(true);
-    setUserRole(role);
-    setUserName(
-      (payload?.[
-        "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name"
-      ] as string) ||
-        (payload?.name as string) ||
-        "User",
-    );
-    setUserEmail(
-      (payload?.[
-        "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress"
-      ] as string) ||
-        (payload?.email as string) ||
-        "",
-    );
+    setUserRole(currentUser.role);
+    setUserName(currentUser.name || "User");
+    setUserEmail(currentUser.email);
   };
 
   useEffect(() => {
@@ -68,7 +53,7 @@ const Navbar = () => {
   }, []);
 
   const handleLogout = () => {
-    localStorage.clear();
+    logout();
     window.dispatchEvent(new Event("authChanged"));
     setIsAuthenticated(false);
     setUserName("");

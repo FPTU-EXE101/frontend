@@ -13,6 +13,7 @@ import {
 import type { Appointment } from "@/types/appointment.type";
 import type { Pet } from "@/types/pet.type";
 import { Link } from "react-router-dom";
+import { getCurrentUserId } from "@/lib/auth";
 
 type CancelTarget = {
   id: string;
@@ -69,7 +70,7 @@ const UserBookingPage = () => {
 
   useEffect(() => {
     const loadAppointments = async () => {
-      const userId = localStorage.getItem("userId") || "";
+      const userId = getCurrentUserId();
 
       if (!userId) {
         setError(
@@ -158,7 +159,7 @@ const UserBookingPage = () => {
       dateLabel: formatDateLabel(appointment.appointmentDate),
       time: appointment.startTime || appointment.endTime || "Chưa rõ",
       petName: petNames[appointment.petId] || appointment.petId || "Thú cưng",
-      phone: localStorage.getItem("phone") || "Chưa rõ",
+      phone: "Chưa rõ",
     }));
   }, [appointments, petNames]);
 

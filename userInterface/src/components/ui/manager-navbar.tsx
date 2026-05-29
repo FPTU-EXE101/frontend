@@ -1,5 +1,6 @@
 import { BellRing } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { getCurrentUserName } from "@/lib/auth";
 
 const formatDateLabel = () => {
   const now = new Date();
@@ -8,8 +9,9 @@ const formatDateLabel = () => {
   }).format(now);
   return `${weekday.charAt(0).toUpperCase() + weekday.slice(1)}, ${now.getDate()} tháng ${now.getMonth() + 1}, ${now.getFullYear()}`;
 };
-const name = localStorage.getItem("name") || "Admin";
 const ManagerNavbar = () => {
+  const name = getCurrentUserName() || "Admin";
+
   return (
     <div className="mb-6 rounded-[2rem] border border-slate-200 bg-white px-6 py-6 shadow-sm">
       <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">

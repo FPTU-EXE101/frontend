@@ -1,100 +1,171 @@
-import Mainlayout from "@/layout";
-import AdminLayout from "@/pages/Admin/adminLayout";
-import Home from "@/pages/home";
-import ManagerLayout from "@/pages/Manager/managerLayout";
-import StaffLayout from "@/pages/Staff/staffLayout";
-import NotFound from "@/pages/NotFound";
-// import UserInfoLayout from "@/pages/User/userInfoLayout";
+import { lazy, Suspense } from "react";
 import { Route, Routes } from "react-router-dom";
-import LoginPage from "@/pages/Auth/loginPage";
-import SignupPage from "@/pages/Auth/signUpPage";
-import ConfirmEmailPage from "@/pages/Auth/confirmEmailPage";
-import PricingPage from "@/pages/pricing";
-import UserInfoLayout from "@/pages/User/userInfoLayout/userInfoLayout";
-import UserHomePage from "@/pages/User/UserHomePage/userHomePage";
-import UserServicePage from "@/pages/User/userServicePage/userServicePage";
-import UserBookingPage from "@/pages/User/UserBookingPage/userBookingPage";
-import ManagerPetsManage from "@/pages/Manager/managerPetsManage";
-import ManagerPetMedicalRecord from "@/pages/Manager/managerPetMedicalRecord";
-import ManagerPetMedicalRecordCreate from "@/pages/Manager/managerPetMedicalRecordCreate";
-import ManagerDashboard from "@/pages/Manager/managerDashboard";
-import ManagerCustomersManage from "@/pages/Manager/managerCustomersManage";
-import ManagerAppointmentsManage from "@/pages/Manager/managerAppointmentsManage/managerAppointmentsManage";
-import ManagerServicesManage from "@/pages/Manager/managerServicesManage";
-import ManagerCategoriesManage from "@/pages/Manager/managerCategoriesManage";
-import ManagerProductsMange from "@/pages/Manager/managerProductsMange";
-import {
-  ManagerProductCreate,
-  ManagerProductEdit,
-  ManagerServiceCreate,
-  ManagerServiceEdit,
-} from "@/pages/Manager/managerItemCreate";
-import ManagerCRMManage from "@/pages/Manager/managerCRMManage";
-import ManagerPaymentManage from "@/pages/Manager/managerPaymentManage";
-import ManagerAutomationManage from "@/pages/Manager/managerAutomationManage";
-import ManagerSettingManage from "@/pages/Manager/managerSettingManage";
-import ManagerPetCreatePage from "@/pages/Manager/managerPetCreate";
-import AboutUs from "@/pages/aboutUs";
-import Features from "@/pages/features";
-import UserPetPage from "@/pages/User/userPetPage/userPetPage";
-import UserCreateBookingPage from "@/pages/User/UserBookingPage/UserCreateBooking/userCreateBookingPage";
-import DigitalPetCard from "@/pages/DigitalPetCard";
+
+const Mainlayout = lazy(() => import("@/layout"));
+const AdminLayout = lazy(() => import("@/pages/Admin/adminLayout"));
+const Home = lazy(() => import("@/pages/home"));
+const ManagerLayout = lazy(() => import("@/pages/Manager/managerLayout"));
+const StaffLayout = lazy(() => import("@/pages/Staff/staffLayout"));
+const NotFound = lazy(() => import("@/pages/NotFound"));
+const LoginPage = lazy(() => import("@/pages/Auth/loginPage"));
+const SignupPage = lazy(() => import("@/pages/Auth/signUpPage"));
+const ConfirmEmailPage = lazy(() => import("@/pages/Auth/confirmEmailPage"));
+const PricingPage = lazy(() => import("@/pages/pricing"));
+const UserInfoLayout = lazy(
+  () => import("@/pages/User/userInfoLayout/userInfoLayout"),
+);
+const UserHomePage = lazy(
+  () => import("@/pages/User/UserHomePage/userHomePage"),
+);
+const UserServicePage = lazy(
+  () => import("@/pages/User/userServicePage/userServicePage"),
+);
+const UserBookingPage = lazy(
+  () => import("@/pages/User/UserBookingPage/userBookingPage"),
+);
+const UserCreateBookingPage = lazy(
+  () =>
+    import(
+      "@/pages/User/UserBookingPage/UserCreateBooking/userCreateBookingPage"
+    ),
+);
+const UserPetPage = lazy(() => import("@/pages/User/userPetPage/userPetPage"));
+const CreatePetPage = lazy(() => import("@/pages/User/CreatePetPage"));
+const DigitalPetCard = lazy(() => import("@/pages/DigitalPetCard"));
+const AboutUs = lazy(() => import("@/pages/aboutUs"));
+const Features = lazy(() => import("@/pages/features"));
+const ManagerDashboard = lazy(
+  () => import("@/pages/Manager/managerDashboard"),
+);
+const ManagerCustomersManage = lazy(
+  () => import("@/pages/Manager/managerCustomersManage"),
+);
+const ManagerPetsManage = lazy(
+  () => import("@/pages/Manager/managerPetsManage"),
+);
+const ManagerPetCreatePage = lazy(
+  () => import("@/pages/Manager/managerPetCreate"),
+);
+const ManagerPetMedicalRecord = lazy(
+  () => import("@/pages/Manager/managerPetMedicalRecord"),
+);
+const ManagerPetMedicalRecordCreate = lazy(
+  () => import("@/pages/Manager/managerPetMedicalRecordCreate"),
+);
+const ManagerAppointmentsManage = lazy(
+  () =>
+    import(
+      "@/pages/Manager/managerAppointmentsManage/managerAppointmentsManage"
+    ),
+);
+const ManagerServicesManage = lazy(
+  () => import("@/pages/Manager/managerServicesManage"),
+);
+const ManagerCategoriesManage = lazy(
+  () => import("@/pages/Manager/managerCategoriesManage"),
+);
+const ManagerProductsMange = lazy(
+  () => import("@/pages/Manager/managerProductsMange"),
+);
+const ManagerServiceCreate = lazy(() =>
+  import("@/pages/Manager/managerItemCreate").then((module) => ({
+    default: module.ManagerServiceCreate,
+  })),
+);
+const ManagerServiceEdit = lazy(() =>
+  import("@/pages/Manager/managerItemCreate").then((module) => ({
+    default: module.ManagerServiceEdit,
+  })),
+);
+const ManagerProductCreate = lazy(() =>
+  import("@/pages/Manager/managerItemCreate").then((module) => ({
+    default: module.ManagerProductCreate,
+  })),
+);
+const ManagerProductEdit = lazy(() =>
+  import("@/pages/Manager/managerItemCreate").then((module) => ({
+    default: module.ManagerProductEdit,
+  })),
+);
+const ManagerCRMManage = lazy(
+  () => import("@/pages/Manager/managerCRMManage"),
+);
+const ManagerPaymentManage = lazy(
+  () => import("@/pages/Manager/managerPaymentManage"),
+);
+const ManagerAutomationManage = lazy(
+  () => import("@/pages/Manager/managerAutomationManage"),
+);
+const ManagerSettingManage = lazy(
+  () => import("@/pages/Manager/managerSettingManage"),
+);
+
+const RouteLoadingFallback = () => (
+  <div className="flex min-h-screen items-center justify-center bg-[#fff8f2] px-4">
+    <div className="rounded-[30px] border border-slate-200 bg-white px-6 py-4 text-sm font-medium text-slate-600 shadow-sm">
+      Đang tải...
+    </div>
+  </div>
+);
 
 const AppRoutes = () => {
   return (
-    <Routes>
-      <Route element={<Mainlayout />}>
-        <Route path="auth">
-          <Route path="login" element={<LoginPage />} />
-          <Route path="signup" element={<SignupPage />} />
+    <Suspense fallback={<RouteLoadingFallback />}>
+      <Routes>
+        <Route element={<Mainlayout />}>
+          <Route path="auth">
+            <Route path="login" element={<LoginPage />} />
+            <Route path="signup" element={<SignupPage />} />
+            <Route path="confirm-email" element={<ConfirmEmailPage />} />
+            {/* <Route path="forgot-password" element={<ForgetPassword />} /> */}
+          </Route>
+          <Route index element={<Home />} />
+          <Route path="pricing" element={<PricingPage />} />
+          <Route path="about-us" element={<AboutUs />} />
+          <Route path="features" element={<Features />} />
           <Route path="confirm-email" element={<ConfirmEmailPage />} />
-          {/* <Route path="forgot-password" element={<ForgetPassword />} /> */}
+          <Route path="pet-card/:petId" element={<DigitalPetCard />} />
+          <Route path="user" element={<UserInfoLayout />}>
+            <Route path="home" element={<UserHomePage />} />
+            <Route path="pet" element={<UserPetPage />} />
+            <Route path="pet/new" element={<CreatePetPage />} />
+            <Route path="service" element={<UserServicePage />} />
+            <Route path="booking" element={<UserBookingPage />} />
+            <Route path="booking/new" element={<UserCreateBookingPage />} />
+          </Route>
         </Route>
-        <Route index element={<Home />} />
-        <Route path="pricing" element={<PricingPage />} />
-        <Route path="about-us" element={<AboutUs />} />
-        <Route path="features" element={<Features />} />
-        <Route path="confirm-email" element={<ConfirmEmailPage />} />
-        <Route path="pet-card/:petId" element={<DigitalPetCard />} />
-        <Route path="user" element={<UserInfoLayout />}>
-          <Route path="home" element={<UserHomePage />} />
-          <Route path="pet" element={<UserPetPage />} />
-          <Route path="service" element={<UserServicePage />} />
-          <Route path="booking" element={<UserBookingPage />} />
-          <Route path="booking/new" element={<UserCreateBookingPage />} />
+        <Route path="/admin" element={<AdminLayout />}></Route>
+        <Route path="/staff" element={<StaffLayout />}></Route>
+        <Route path="/manager" element={<ManagerLayout />}>
+          <Route index path="dashboard" element={<ManagerDashboard />} />
+          <Route path="customers" element={<ManagerCustomersManage />} />
+          <Route path="pets" element={<ManagerPetsManage />} />
+          <Route path="pets/new" element={<ManagerPetCreatePage />} />
+          <Route
+            path="pets/:id/medical-record"
+            element={<ManagerPetMedicalRecord />}
+          />
+          <Route
+            path="pets/:id/medical-record/new"
+            element={<ManagerPetMedicalRecordCreate />}
+          />
+          <Route path="appointments" element={<ManagerAppointmentsManage />} />
+          <Route path="services" element={<ManagerServicesManage />} />
+          <Route path="services/new" element={<ManagerServiceCreate />} />
+          <Route path="services/:id/edit" element={<ManagerServiceEdit />} />
+          <Route path="categories" element={<ManagerCategoriesManage />} />
+          <Route path="products" element={<ManagerProductsMange />} />
+          <Route path="products/new" element={<ManagerProductCreate />} />
+          <Route path="products/:id/edit" element={<ManagerProductEdit />} />
+          <Route path="crm" element={<ManagerCRMManage />} />
+          <Route path="payments" element={<ManagerPaymentManage />} />
+          <Route path="automation" element={<ManagerAutomationManage />} />
+          <Route path="settings" element={<ManagerSettingManage />} />
         </Route>
-      </Route>
-      <Route path="/admin" element={<AdminLayout />}></Route>
-      <Route path="/staff" element={<StaffLayout />}></Route>
-      <Route path="/manager" element={<ManagerLayout />}>
-        <Route index path="dashboard" element={<ManagerDashboard />} />
-        <Route path="customers" element={<ManagerCustomersManage />} />
-        <Route path="pets" element={<ManagerPetsManage />} />
-        <Route path="pets/new" element={<ManagerPetCreatePage />} />
-        <Route
-          path="pets/:id/medical-record"
-          element={<ManagerPetMedicalRecord />}
-        />
-        <Route
-          path="pets/:id/medical-record/new"
-          element={<ManagerPetMedicalRecordCreate />}
-        />
-        <Route path="appointments" element={<ManagerAppointmentsManage />} />
-        <Route path="services" element={<ManagerServicesManage />} />
-        <Route path="services/new" element={<ManagerServiceCreate />} />
-        <Route path="services/:id/edit" element={<ManagerServiceEdit />} />
-        <Route path="categories" element={<ManagerCategoriesManage />} />
-        <Route path="products" element={<ManagerProductsMange />} />
-        <Route path="products/new" element={<ManagerProductCreate />} />
-        <Route path="products/:id/edit" element={<ManagerProductEdit />} />
-        <Route path="crm" element={<ManagerCRMManage />} />
-        <Route path="payments" element={<ManagerPaymentManage />} />
-        <Route path="automation" element={<ManagerAutomationManage />} />
-        <Route path="settings" element={<ManagerSettingManage />} />
-      </Route>
-      {/* 404 Page - must be last */}
-      <Route path="*" element={<NotFound />} />
-    </Routes>
+        {/* 404 Page - must be last */}
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+    </Suspense>
   );
 };
 

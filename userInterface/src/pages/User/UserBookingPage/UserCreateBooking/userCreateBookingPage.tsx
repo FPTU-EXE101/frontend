@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { isAxiosError } from "axios";
 import {
   PawPrint,
   FileText,
@@ -15,6 +16,7 @@ import type { CreateAppointmentRequest, Appointment } from "@/types/appointment.
 import Calendar from "./Calendar";
 import TimeSlotPicker, { type BookedSlot } from "./TimeSlotPicker";
 import StepBar from "./StepBar";
+import { getCurrentUserId } from "@/lib/auth";
 
 // ─── constants ────────────────────────────────────────────────────────────────
 
@@ -67,7 +69,7 @@ const UserCreateBookingPage = () => {
 
   // fetch pets owned by this customer
   useEffect(() => {
-    const userId = localStorage.getItem("userId") || "";
+    const userId = getCurrentUserId();
     if (!userId) return;
 
     petApi
@@ -118,7 +120,7 @@ const UserCreateBookingPage = () => {
 
   // ── submit ──────────────────────────────────────────────────────────────
   const handleSubmit = async () => {
-    const userId = localStorage.getItem("userId") || "";
+    const userId = getCurrentUserId();
     if (!userId || !selectedPet || !selectedDate || !selectedTime) return;
 
     setSubmitting(true);
@@ -138,17 +140,27 @@ const UserCreateBookingPage = () => {
     try {
       await appointmentApi.createAppointment(payload);
       setSuccess(true);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error(
         "[DEBUG] Lỗi response:",
-        err?.response?.status,
-        err?.response?.data,
+        isAxiosError(err) ? err.response?.status : undefined,
+        isAxiosError(err) ? err.response?.data : undefined,
       );
+      const responseData = isAxiosError(err) ? err.response?.data : undefined;
       const serverMsg =
-        err?.response?.data?.message ||
-        err?.response?.data?.title ||
-        err?.response?.data ||
-        "Đặt lịch thất bại. Vui lòng thử lại sau.";
+        typeof responseData === "object" &&
+        responseData !== null &&
+        "message" in responseData &&
+        typeof responseData.message === "string"
+          ? responseData.message
+          : typeof responseData === "object" &&
+              responseData !== null &&
+              "title" in responseData &&
+              typeof responseData.title === "string"
+            ? responseData.title
+            : typeof responseData === "string"
+              ? responseData
+              : "Đặt lịch thất bại. Vui lòng thử lại sau.";
       setError(
         typeof serverMsg === "string" ? serverMsg : JSON.stringify(serverMsg),
       );
@@ -259,9 +271,9 @@ const UserCreateBookingPage = () => {
                     <span className="text-3xl">🐾</span>
                     <div>
                       <p className="font-semibold text-slate-900">{pet.name}</p>
-                      {(pet as any).species && (
+                      {pet.species && (
                         <p className="text-xs text-slate-500">
-                          {(pet as any).species}
+                          {pet.species}
                         </p>
                       )}
                       {pet.color && (
@@ -327,9 +339,9 @@ const UserCreateBookingPage = () => {
                 <p className="font-semibold text-slate-800">
                   {selectedPet?.name}
                 </p>
-                {(selectedPet as any)?.species && (
+                {selectedPet?.species && (
                   <p className="text-xs text-slate-500">
-                    {(selectedPet as any).species}
+                    {selectedPet.species}
                   </p>
                 )}
               </div>
