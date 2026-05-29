@@ -179,7 +179,7 @@ const Home = () => {
           playsInline
           preload="auto"
         >
-          <source src="/videos/dog_car.mp4" type="video/mp4" />
+          <source src="/videos/golden_run.mp4" type="video/mp4" />
         </video>
         <div className="absolute inset-0 -z-10 bg-gradient-to-r from-slate-950/80 via-slate-900/50 to-slate-950/25" />
         <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_20%_20%,rgba(213,103,86,0.28),transparent_32%),radial-gradient(circle_at_80%_10%,rgba(20,184,166,0.22),transparent_28%)]" />

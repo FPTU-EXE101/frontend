@@ -119,7 +119,6 @@ const milestones = [
 const AboutUs = () => {
   return (
     <div className="min-h-screen">
-
       {/* ── 1. HERO ─────────────────────────────────────────────── */}
       <section className="relative overflow-hidden bg-[#f5eadf] px-4 py-24">
         {/* decorative blobs */}
@@ -134,9 +133,8 @@ const AboutUs = () => {
             </span>
 
             <h1 className="mt-6 text-5xl font-bold leading-tight tracking-tight text-slate-950 sm:text-6xl">
-              Được xây dựng vì{" "}
-              <span className="text-[#D56756]">thú cưng</span> và{" "}
-              <span className="text-[#D56756]">người yêu chúng</span>
+              Được xây dựng vì <span className="text-[#D56756]">thú cưng</span>{" "}
+              và <span className="text-[#D56756]">người yêu chúng</span>
             </h1>
 
             <p className="mx-auto mt-6 max-w-2xl text-lg leading-8 text-slate-600">
@@ -163,7 +161,52 @@ const AboutUs = () => {
           </div>
         </div>
       </section>
+      {/* ── 6. TEAM ─────────────────────────────────────────────── */}
+      <section className="bg-[#f9f2e8] px-4 py-20">
+        <div className="container mx-auto max-w-6xl">
+          <div className="mb-14 text-center">
+            <p className="text-sm font-semibold uppercase tracking-[0.3em] text-[#D56756]">
+              Đội ngũ sáng lập
+            </p>
+            <h2 className="mt-3 text-4xl font-bold text-slate-950">
+              Những người đứng sau PetHub
+            </h2>
+          </div>
 
+          <div className="grid gap-8 sm:grid-cols-3">
+            {teamMembers.map((member, i) => (
+              <div
+                key={i}
+                className="group rounded-[24px] border border-slate-200 bg-white p-8 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_16px_48px_rgba(213,103,86,0.12)]"
+              >
+                {/* avatar */}
+                <img
+                  className="mx-auto flex h-20 w-20 items-center justify-center rounded-full text-2xl font-bold text-white shadow-lg"
+                  style={{ backgroundColor: member.color }}
+                  src={member.avatar}
+                  alt={member.name}
+                />
+
+                <div className="mt-5 text-center">
+                  <h3 className="text-lg font-bold text-slate-900">
+                    {member.name}
+                  </h3>
+                  <p className="mt-1 text-sm font-medium text-[#D56756]">
+                    {member.role}
+                  </p>
+                </div>
+
+                <div className="mt-5 rounded-2xl bg-[#F7E3DF] p-4">
+                  <Quote className="mb-2 h-4 w-4 text-[#D56756]" />
+                  <p className="text-sm italic leading-6 text-slate-700">
+                    "{member.quote}"
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
       {/* ── 2. CORE VALUES (từ ảnh mockup) ─────────────────────── */}
       <section className="bg-white px-4 py-20">
         <div className="container mx-auto max-w-6xl">
@@ -268,15 +311,29 @@ const AboutUs = () => {
                   </div>
                   <div>
                     <p className="font-bold text-slate-900">Cộng đồng PetHub</p>
-                    <p className="text-sm text-slate-500">500+ cửa hàng đang dùng</p>
+                    <p className="text-sm text-slate-500">
+                      500+ cửa hàng đang dùng
+                    </p>
                   </div>
                 </div>
 
                 <div className="mt-6 space-y-4">
                   {[
-                    { label: "Khách hàng mới / tháng", value: "+127", trend: "up" },
-                    { label: "Tỷ lệ lịch hẹn thành công", value: "94%", trend: "up" },
-                    { label: "Doanh thu tháng này", value: "32.4M ₫", trend: "up" },
+                    {
+                      label: "Khách hàng mới / tháng",
+                      value: "+127",
+                      trend: "up",
+                    },
+                    {
+                      label: "Tỷ lệ lịch hẹn thành công",
+                      value: "94%",
+                      trend: "up",
+                    },
+                    {
+                      label: "Doanh thu tháng này",
+                      value: "32.4M ₫",
+                      trend: "up",
+                    },
                   ].map((row, i) => (
                     <div
                       key={i}
@@ -361,53 +418,6 @@ const AboutUs = () => {
                 </div>
               ))}
             </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ── 6. TEAM ─────────────────────────────────────────────── */}
-      <section className="bg-[#f9f2e8] px-4 py-20">
-        <div className="container mx-auto max-w-6xl">
-          <div className="mb-14 text-center">
-            <p className="text-sm font-semibold uppercase tracking-[0.3em] text-[#D56756]">
-              Đội ngũ sáng lập
-            </p>
-            <h2 className="mt-3 text-4xl font-bold text-slate-950">
-              Những người đứng sau PetHub
-            </h2>
-          </div>
-
-          <div className="grid gap-8 sm:grid-cols-3">
-            {teamMembers.map((member, i) => (
-              <div
-                key={i}
-                className="group rounded-[24px] border border-slate-200 bg-white p-8 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_16px_48px_rgba(213,103,86,0.12)]"
-              >
-                {/* avatar */}
-                <img
-                  className="mx-auto flex h-20 w-20 items-center justify-center rounded-full text-2xl font-bold text-white shadow-lg"
-                  style={{ backgroundColor: member.color }}
-                  src={member.avatar}
-                  alt={member.name}
-                />
-
-                <div className="mt-5 text-center">
-                  <h3 className="text-lg font-bold text-slate-900">
-                    {member.name}
-                  </h3>
-                  <p className="mt-1 text-sm font-medium text-[#D56756]">
-                    {member.role}
-                  </p>
-                </div>
-
-                <div className="mt-5 rounded-2xl bg-[#F7E3DF] p-4">
-                  <Quote className="mb-2 h-4 w-4 text-[#D56756]" />
-                  <p className="text-sm italic leading-6 text-slate-700">
-                    "{member.quote}"
-                  </p>
-                </div>
-              </div>
-            ))}
           </div>
         </div>
       </section>
