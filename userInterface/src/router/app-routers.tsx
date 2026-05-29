@@ -54,6 +54,7 @@ const AppRoutes = () => {
         <Route path="pricing" element={<PricingPage />} />
         <Route path="about-us" element={<AboutUs />} />
         <Route path="features" element={<Features />} />
+        <Route path="confirm-email" element={<ConfirmEmailPage />} />
         <Route path="pet-card/:petId" element={<DigitalPetCard />} />
         <Route path="user" element={<UserInfoLayout />}>
           <Route path="home" element={<UserHomePage />} />

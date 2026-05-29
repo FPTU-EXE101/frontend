@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useSearchParams, Link } from "react-router-dom";
 import authApi from "@/apis/authAPI";
 import { CheckCircle, AlertCircle, Loader } from "lucide-react";
+import { isAxiosError } from "axios";
 
 type ConfirmStatus = "loading" | "success" | "error" | "idle";
 
@@ -29,12 +30,17 @@ export default function ConfirmEmailPage() {
         await authApi.confirmEmail({ userId, token });
         setStatus("success");
         setMessage("Email của bạn đã được xác nhận thành công!");
-      } catch (error: any) {
+      } catch (error: unknown) {
         setStatus("error");
-        const errorMessage =
-          error?.response?.data?.message ||
-          error?.message ||
+        let errorMessage =
           "Không thể xác nhận email. Vui lòng thử lại hoặc liên hệ hỗ trợ.";
+
+        if (isAxiosError<{ message?: string }>(error)) {
+          errorMessage = error.response?.data?.message || error.message;
+        } else if (error instanceof Error) {
+          errorMessage = error.message;
+        }
+
         setMessage(errorMessage);
       }
     };

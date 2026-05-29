@@ -11,19 +11,32 @@ import {
 import { Input } from "@/components/ui/input";
 import { Link, useNavigate } from "react-router-dom";
 import authApi from "@/apis/authAPI";
+import type { Register } from "@/types/auth.type";
+import { generateUsername } from "@/lib/auth";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 
-const validationSchema = Yup.object({
+type SignupFormValues = {
+  firstName: string;
+  lastName: string;
+  email: string;
+  password: string;
+  confirmPassword: string;
+};
+
+const validationSchema: Yup.ObjectSchema<SignupFormValues> = Yup.object({
   firstName: Yup.string().trim().required("Vui lòng nhập tên."),
   lastName: Yup.string().trim().required("Vui lòng nhập họ."),
   email: Yup.string()
     .trim()
     .email("Email không hợp lệ.")
+    .test(
+      "contains-at",
+      "Email không hợp lệ.",
+      (value) => !value || value.includes("@"),
+    )
     .required("Vui lòng nhập email."),
-  password: Yup.string()
-    .required("Vui lòng nhập mật khẩu.")
-    .min(8, "Mật khẩu phải có ít nhất 8 ký tự."),
+  password: Yup.string().required("Vui lòng nhập mật khẩu."),
   confirmPassword: Yup.string()
     .required("Vui lòng xác nhận mật khẩu.")
     .oneOf([Yup.ref("password")], "Mật khẩu xác nhận không khớp."),
@@ -34,7 +47,7 @@ export function SignupForm({ className, ...props }: ComponentProps<"form">) {
   const [submitError, setSubmitError] = useState<string | null>(null);
   const navigate = useNavigate();
 
-  const formik = useFormik({
+  const formik = useFormik<SignupFormValues>({
     initialValues: {
       firstName: "",
       lastName: "",
@@ -45,12 +58,12 @@ export function SignupForm({ className, ...props }: ComponentProps<"form">) {
     validationSchema,
     onSubmit: async (values) => {
       setSubmitError(null);
-      const payload = {
-        userName: `${values.firstName}${values.lastName}`.trim(),
-        firstName: values.firstName,
-        lastName: values.lastName,
+      const payload: Register = {
+        userName: generateUsername(values.email),
         email: values.email,
         password: values.password,
+        firstName: values.firstName,
+        lastName: values.lastName,
       };
 
       try {
