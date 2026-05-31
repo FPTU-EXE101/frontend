@@ -16,6 +16,7 @@ import { generateUsername } from "@/lib/auth";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { getBackendErrorMessage } from "@/utils/getBackendErrorMessage";
+import { Eye, EyeOff } from "lucide-react";
 
 type SignupFormValues = {
   firstName: string;
@@ -46,6 +47,8 @@ const validationSchema: Yup.ObjectSchema<SignupFormValues> = Yup.object({
 export function SignupForm({ className, ...props }: ComponentProps<"form">) {
   const [loading, setLoading] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const navigate = useNavigate();
 
   const formik = useFormik<SignupFormValues>({
@@ -151,15 +154,31 @@ export function SignupForm({ className, ...props }: ComponentProps<"form">) {
         </Field>
         <Field>
           <FieldLabel htmlFor="password">Mật khẩu</FieldLabel>
-          <Input
-            id="password"
-            name="password"
-            type="password"
-            value={formik.values.password}
-            onChange={formik.handleChange}
-            onBlur={formik.handleBlur}
-            required
-          />
+          <div className="relative">
+            <Input
+              id="password"
+              name="password"
+              type={showPassword ? "text" : "password"}
+              value={formik.values.password}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              className="pr-10"
+              required
+            />
+            <button
+              type="button"
+              aria-label={showPassword ? "Ẩn mật khẩu" : "Hiện mật khẩu"}
+              aria-pressed={showPassword}
+              onClick={() => setShowPassword((current) => !current)}
+              className="absolute right-3 top-1/2 flex h-5 w-5 -translate-y-1/2 items-center justify-center text-slate-500 transition hover:text-slate-800"
+            >
+              {showPassword ? (
+                <EyeOff className="h-4 w-4" aria-hidden="true" />
+              ) : (
+                <Eye className="h-4 w-4" aria-hidden="true" />
+              )}
+            </button>
+          </div>
           <FieldError
             errors={
               formik.touched.password && formik.errors.password
@@ -170,15 +189,33 @@ export function SignupForm({ className, ...props }: ComponentProps<"form">) {
         </Field>
         <Field>
           <FieldLabel htmlFor="confirmPassword">Xác nhận mật khẩu</FieldLabel>
-          <Input
-            id="confirmPassword"
-            name="confirmPassword"
-            type="password"
-            value={formik.values.confirmPassword}
-            onChange={formik.handleChange}
-            onBlur={formik.handleBlur}
-            required
-          />
+          <div className="relative">
+            <Input
+              id="confirmPassword"
+              name="confirmPassword"
+              type={showConfirmPassword ? "text" : "password"}
+              value={formik.values.confirmPassword}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              className="pr-10"
+              required
+            />
+            <button
+              type="button"
+              aria-label={
+                showConfirmPassword ? "Ẩn mật khẩu" : "Hiện mật khẩu"
+              }
+              aria-pressed={showConfirmPassword}
+              onClick={() => setShowConfirmPassword((current) => !current)}
+              className="absolute right-3 top-1/2 flex h-5 w-5 -translate-y-1/2 items-center justify-center text-slate-500 transition hover:text-slate-800"
+            >
+              {showConfirmPassword ? (
+                <EyeOff className="h-4 w-4" aria-hidden="true" />
+              ) : (
+                <Eye className="h-4 w-4" aria-hidden="true" />
+              )}
+            </button>
+          </div>
           <FieldError
             errors={
               formik.touched.confirmPassword && formik.errors.confirmPassword
