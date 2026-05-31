@@ -10,6 +10,9 @@ const NotFound = lazy(() => import("@/pages/NotFound"));
 const LoginPage = lazy(() => import("@/pages/Auth/loginPage"));
 const SignupPage = lazy(() => import("@/pages/Auth/signUpPage"));
 const ConfirmEmailPage = lazy(() => import("@/pages/Auth/confirmEmailPage"));
+const VerifyEmailNotice = lazy(
+  () => import("@/pages/Auth/verifyEmailNotice"),
+);
 const PricingPage = lazy(() => import("@/pages/pricing"));
 const UserInfoLayout = lazy(
   () => import("@/pages/User/userInfoLayout/userInfoLayout"),
@@ -126,6 +129,7 @@ const AppRoutes = () => {
           <Route path="features" element={<Features />} />
           <Route path="demo" element={<DemoPage />} />
           <Route path="confirm-email" element={<ConfirmEmailPage />} />
+          <Route path="verify-email-notice" element={<VerifyEmailNotice />} />
           <Route path="pet-card/:petId" element={<DigitalPetCard />} />
           <Route path="user" element={<UserInfoLayout />}>
             <Route path="home" element={<UserHomePage />} />

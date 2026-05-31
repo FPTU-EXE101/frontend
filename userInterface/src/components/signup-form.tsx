@@ -75,7 +75,7 @@ export function SignupForm({ className, ...props }: ComponentProps<"form">) {
       try {
         setLoading(true);
         await authApi.registerUser(payload);
-        navigate("/auth/login");
+        navigate("/verify-email-notice");
       } catch (err) {
         console.error(err);
         setSubmitError(getBackendErrorMessage(err));
