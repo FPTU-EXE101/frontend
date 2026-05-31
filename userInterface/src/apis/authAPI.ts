@@ -1,16 +1,16 @@
 import type { ChangePassword, Login, Register } from "../types/auth.type";
 import axiosClient from "./axiosClient";
 
-const USER_API_URL = "/Auth";
-const getConfirmEmailUrl = (): string => {
-  const confirmEmailUrl = import.meta.env.VITE_CONFIRM_EMAIL_URL;
+const USER_API_URL = "/auth";
+// const getConfirmEmailUrl = (): string => {
+//   const confirmEmailUrl = import.meta.env.VITE_CONFIRM_EMAIL_URL;
 
-  if (!confirmEmailUrl) {
-    throw new Error("Missing VITE_CONFIRM_EMAIL_URL environment variable.");
-  }
+//   if (!confirmEmailUrl) {
+//     throw new Error("Missing VITE_CONFIRM_EMAIL_URL environment variable.");
+//   }
 
-  return confirmEmailUrl;
-};
+//   return confirmEmailUrl;
+// };
 
 const authApi = {
   registerUser: (data: Register) =>
@@ -19,7 +19,7 @@ const authApi = {
   changePassword: (data: ChangePassword) =>
     axiosClient.patch(`${USER_API_URL}/changePassword`, data),
   confirmEmail: (data: { userId: string; token: string }) =>
-    axiosClient.get(getConfirmEmailUrl(), {
+    axiosClient.get(`${USER_API_URL}/confirm-email`, {
       params: data,
     }),
 };
