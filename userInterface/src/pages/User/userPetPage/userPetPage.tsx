@@ -73,7 +73,6 @@ const UserPetPage = () => {
   return (
     <div className="min-h-[calc(100vh-3rem)] px-4 py-6 sm:px-6 lg:px-8">
       <div className="flex flex-col gap-6">
-
         {/* Header */}
         <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
           <div>
@@ -106,9 +105,9 @@ const UserPetPage = () => {
           <Info className="h-5 w-5 mt-0.5 shrink-0 text-sky-500" />
           <p>
             <span className="font-semibold">Lưu ý quan trọng: </span>
-            Thông tin thú cưng được quản lý bởi cửa hàng. Nếu cần cập nhật
-            thông tin, vui lòng liên hệ với chúng tôi qua hotline{" "}
-            <span className="font-semibold">028-1234-567</span>.
+            🐾 Hãy nhập thông tin thú cưng một cách chính xác và nghiêm túc. Hồ
+            sơ này sẽ được sử dụng xuyên suốt quá trình chăm sóc, đặt lịch và
+            theo dõi sức khỏe của bé tại PetHub. Việc cung cấp thông tin sai lệch có thể dẫn đến việc chăm sóc không phù hợp và ảnh hưởng đến sức khỏe của thú cưng. Cảm ơn bạn đã tin tưởng và đồng hành cùng PetHub trong việc chăm sóc bé cưng yêu quý!
           </p>
         </div>
 
@@ -181,15 +180,16 @@ const UserPetPage = () => {
               </h3>
               <ul className="mt-4 space-y-3 text-sm leading-7 text-slate-100">
                 <li>
-                  • Đưa thú cưng đi khám định kỳ 6 tháng/lần để phát hiện bệnh sớm.
+                  • Đưa thú cưng đi khám định kỳ 6 tháng/lần để phát hiện bệnh
+                  sớm.
                 </li>
                 <li>
                   • Giữ lịch tiêm phòng đầy đủ để bảo vệ sức khỏe bé cưng.
                 </li>
                 <li>
                   • Liên hệ hotline{" "}
-                  <span className="font-semibold">028-1234-567</span> nếu cần
-                  tư vấn khẩn cấp.
+                  <span className="font-semibold">028-1234-567</span> nếu cần tư
+                  vấn khẩn cấp.
                 </li>
               </ul>
             </div>
