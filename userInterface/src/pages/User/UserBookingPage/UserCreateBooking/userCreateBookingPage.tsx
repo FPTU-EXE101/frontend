@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { getBackendErrorMessage } from "@/utils/getBackendErrorMessage";
@@ -15,7 +15,10 @@ import appointmentApi from "@/apis/appointmentAPI";
 import type { Pet } from "@/types/pet.type";
 import type { CreateAppointmentRequest, Appointment } from "@/types/appointment.type";
 import Calendar from "./Calendar";
-import TimeSlotPicker, { type BookedSlot } from "./TimeSlotPicker";
+import TimeSlotPicker, {
+  isPastTimeSlot,
+  type BookedSlot,
+} from "./TimeSlotPicker";
 import StepBar from "./StepBar";
 import { getCurrentUserId } from "@/lib/auth";
 import { queryKeys } from "@/lib/queryKeys";
@@ -103,10 +106,22 @@ const UserCreateBookingPage = () => {
       }));
   };
 
+  useEffect(() => {
+    if (!isPastTimeSlot(selectedDate, selectedTime)) return;
+
+    setSelectedTime(null);
+    setError("Vui lòng chọn giờ khám chưa trôi qua.");
+  }, [selectedDate, selectedTime]);
+
   // ── step navigation ─────────────────────────────────────────────────────
   const canNext = () => {
     if (step === 0) return !!selectedPet;
-    if (step === 1) return !!selectedDate && !!selectedTime;
+    if (step === 1)
+      return (
+        !!selectedDate &&
+        !!selectedTime &&
+        !isPastTimeSlot(selectedDate, selectedTime)
+      );
     if (step === 2) return true;
     return false;
   };
@@ -121,6 +136,11 @@ const UserCreateBookingPage = () => {
     if (submitting || success) return;
 
     if (!userId || !selectedPet || !selectedDate || !selectedTime) return;
+
+    if (isPastTimeSlot(selectedDate, selectedTime)) {
+      setError("Thời gian khám phải lớn hơn thời gian hiện tại.");
+      return;
+    }
 
     setSubmitting(true);
     setError("");
@@ -284,9 +304,18 @@ const UserCreateBookingPage = () => {
             <Calendar selected={selectedDate} onSelect={setSelectedDate} />
             <TimeSlotPicker
               selected={selectedTime}
-              onSelect={setSelectedTime}
+              selectedDate={selectedDate}
+              onSelect={(time) => {
+                setSelectedTime(time);
+                setError("");
+              }}
               bookedSlots={getBookedSlotsForDate()}
             />
+            {error && (
+              <div className="rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700 whitespace-pre-line lg:col-span-2">
+                {error}
+              </div>
+            )}
           </div>
         )}
 
