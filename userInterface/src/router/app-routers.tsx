@@ -17,6 +17,9 @@ const PricingPage = lazy(() => import("@/pages/pricing"));
 const UserInfoLayout = lazy(
   () => import("@/pages/User/userInfoLayout/userInfoLayout"),
 );
+const CustomerProfilePage = lazy(
+  () => import("@/pages/User/customerProfilePage"),
+);
 const UserHomePage = lazy(
   () => import("@/pages/User/UserHomePage/userHomePage"),
 );
@@ -132,6 +135,7 @@ const AppRoutes = () => {
           <Route path="verify-email-notice" element={<VerifyEmailNotice />} />
           <Route path="pet-card/:petId" element={<DigitalPetCard />} />
           <Route path="user" element={<UserInfoLayout />}>
+            <Route path="profile" element={<CustomerProfilePage />} />
             <Route path="home" element={<UserHomePage />} />
             <Route path="pet" element={<UserPetPage />} />
             <Route path="pet/new" element={<CreatePetPage />} />

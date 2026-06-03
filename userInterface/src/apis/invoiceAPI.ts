@@ -20,9 +20,10 @@ const invoiceApi = {
   getInvoiceById: (id: string) =>
     axiosClient.get<GetInvoiceByIdResponse>(`${INVOICE_API_URL}/${id}`),
 
-  getInvoiceByCustomerId: (customerId: string) =>
+  getInvoiceByCustomerId: (customerId: string, config?: AxiosRequestConfig) =>
     axiosClient.get<GetInvoiceByCustomerIdResponse[]>(
       `${INVOICE_API_URL}/customer/${customerId}`,
+      config,
     ),
 
   getInvoiceDetails: (id: string) =>

@@ -14,6 +14,7 @@ import {
   Zap,
   Star,
 } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 
 /* ─── DATA ──────────────────────────────────────────────────────────── */
 
@@ -81,14 +82,12 @@ const features = [
   },
   {
     icon: CreditCard,
-    title: "POS thanh toán nhanh",
+    title: "Giao diện tổng đơn hàng chuyên nghiệp ",
     description:
-      "Tính tiền chuyên nghiệp, in hóa đơn ngay. Hỗ trợ nhiều hình thức thanh toán.",
+      "Tính tiền chuyên nghiệp, quan sát trực quan dịch vụ, sản phẩm đã chọn.",
     details: [
-      "Giao diện POS đơn giản, nhanh",
-      "Tiền mặt, chuyển khoản, QR Pay",
-      "In hóa đơn nhiệt & gửi email",
-      "Quản lý công nợ khách hàng",
+      "Giao diện đơn hàng đơn giản, nhanh",
+      "Tính tiền tự động theo dịch vụ & sản phẩm",
     ],
     color: "#B45309",
     bgColor: "#FEF3C7",
@@ -164,10 +163,90 @@ const highlights = [
 
 /* ─── COMPONENT ─────────────────────────────────────────────────────── */
 
+type Feature = {
+  icon: LucideIcon;
+  title: string;
+  description: string;
+  details: string[];
+  color: string;
+  bgColor: string;
+  tag: string;
+  highlight?: boolean;
+};
+
+const FeatureCard = ({ feature }: { feature: Feature }) => {
+  const Icon = feature.icon;
+
+  return (
+    <div className="group relative h-full w-[280px] shrink-0 rounded-[24px] border border-slate-200 bg-white p-5 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-slate-300 hover:shadow-[0_16px_48px_rgba(0,0,0,0.08)] sm:w-[340px] sm:p-6 lg:w-[380px]">
+      <span
+        className="absolute right-4 top-4 rounded-full px-3 py-1 text-xs font-bold sm:right-5 sm:top-5"
+        style={{ backgroundColor: feature.bgColor, color: feature.color }}
+      >
+        {feature.tag}
+      </span>
+
+      <div
+        className="inline-flex h-12 w-12 items-center justify-center rounded-2xl transition-transform duration-300 group-hover:scale-110 sm:h-13 sm:w-13"
+        style={{ backgroundColor: feature.bgColor, color: feature.color }}
+      >
+        <Icon className="h-6 w-6" />
+      </div>
+
+      <h3 className="mt-5 pr-16 text-lg font-bold text-slate-900 sm:text-xl">
+        {feature.title}
+      </h3>
+      <p className="mt-2 text-sm leading-6 text-slate-500 sm:text-base sm:leading-7">
+        {feature.description}
+      </p>
+
+      <ul className="mt-5 space-y-2">
+        {feature.details.map((detail) => (
+          <li key={detail} className="flex items-start gap-2 text-sm text-slate-600">
+            <CheckCircle
+              className="mt-0.5 h-4 w-4 shrink-0"
+              style={{ color: feature.color }}
+            />
+            <span>{detail}</span>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+};
+
+const FeatureMarqueeRow = ({
+  items,
+  direction,
+}: {
+  items: Feature[];
+  direction: "left" | "right";
+}) => {
+  const duplicatedItems = [...items, ...items];
+  const animationClass =
+    direction === "right" ? "features-marquee-right" : "features-marquee-left";
+
+  return (
+    <div className="features-marquee-row overflow-hidden py-2">
+      <div className={`flex w-max gap-4 sm:gap-5 lg:gap-6 ${animationClass}`}>
+        {duplicatedItems.map((feature, index) => (
+          <FeatureCard
+            key={`${feature.title}-${index}`}
+            feature={feature}
+          />
+        ))}
+      </div>
+    </div>
+  );
+};
+
 const Features = () => {
+  const midpoint = Math.ceil(features.length / 2);
+  const firstFeatureRow = features.slice(0, midpoint);
+  const secondFeatureRow = features.slice(midpoint);
+
   return (
     <div className="min-h-screen">
-
       {/* ── 1. HERO ─────────────────────────────────────────────── */}
       <section className="relative overflow-hidden bg-[#f5eadf] px-4 py-24">
         <div className="pointer-events-none absolute -right-20 -top-20 h-80 w-80 rounded-full bg-[#EFB7AF]/30 blur-3xl" />
@@ -186,9 +265,9 @@ const Features = () => {
             </h1>
 
             <p className="mx-auto mt-6 max-w-2xl text-lg leading-8 text-slate-600">
-              PetHub được thiết kế đặc biệt cho Pet Shop & Phòng khám thú y
-              Việt Nam. Từ quản lý khách hàng, lịch hẹn đến thanh toán — tất
-              cả trong một nền tảng duy nhất.
+              PetHub được thiết kế đặc biệt cho Pet Shop & Phòng khám thú y Việt
+              Nam. Từ quản lý khách hàng, lịch hẹn đến thanh toán — tất cả trong
+              một nền tảng duy nhất.
             </p>
 
             <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
@@ -222,7 +301,30 @@ const Features = () => {
           </div>
         </div>
       </section>
+      {/* ── 3. ALL FEATURES MARQUEE ─────────────────────────────── */}
+      <section className="features-marquee-section overflow-hidden bg-[#f9f2e8] px-4 py-20">
+        <div className="container mx-auto max-w-6xl">
+          <div className="mb-14 text-center">
+            <p className="text-sm font-semibold uppercase tracking-[0.3em] text-[#D56756]">
+              Toàn bộ tính năng
+            </p>
+            <h2 className="mt-3 text-4xl font-bold text-slate-950">
+              Tất cả những gì bạn cần, đã có sẵn
+            </h2>
+            <p className="mx-auto mt-4 max-w-xl text-lg text-slate-600">
+              Không cần ghép nhiều phần mềm. PetHub gộp tất cả vào một nơi, dễ
+              dùng cho cả người không rành công nghệ.
+            </p>
+          </div>
 
+          <div className="relative -mx-4 space-y-4 sm:space-y-5 lg:space-y-6">
+            <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-16 bg-gradient-to-r from-[#f9f2e8] to-transparent sm:w-24" />
+            <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-16 bg-gradient-to-l from-[#f9f2e8] to-transparent sm:w-24" />
+            <FeatureMarqueeRow items={firstFeatureRow} direction="right" />
+            <FeatureMarqueeRow items={secondFeatureRow} direction="left" />
+          </div>
+        </div>
+      </section>
       {/* ── 2. FEATURED CARD (Digital Pet Card - highlight) ─────── */}
       <section className="bg-white px-4 py-20">
         <div className="container mx-auto max-w-6xl">
@@ -237,9 +339,9 @@ const Features = () => {
                   Digital Pet Card — Thẻ thú cưng điện tử
                 </h2>
                 <p className="max-w-lg text-lg leading-8 text-white/85">
-                  Mỗi thú cưng có một thẻ kỹ thuật số riêng với QR Code. Chủ
-                  vật nuôi chỉ cần quét là xem ngay toàn bộ lịch sử y tế —
-                  tiêm phòng, tẩy giun, khám bệnh.
+                  Mỗi thú cưng có một thẻ kỹ thuật số riêng với QR Code. Chủ vật
+                  nuôi chỉ cần quét là xem ngay toàn bộ lịch sử y tế — tiêm
+                  phòng, tẩy giun, khám bệnh.
                 </p>
                 <ul className="space-y-3">
                   {[
@@ -249,7 +351,10 @@ const Features = () => {
                     "Tăng tỷ lệ khách quay lại 3x",
                   ].map((item, i) => (
                     <li key={i} className="flex items-center gap-3">
-                      <CheckCircle className="h-5 w-5 shrink-0 text-white" fill="rgba(255,255,255,0.25)" />
+                      <CheckCircle
+                        className="h-5 w-5 shrink-0 text-white"
+                        fill="rgba(255,255,255,0.25)"
+                      />
                       <span className="text-white/90">{item}</span>
                     </li>
                   ))}
@@ -267,7 +372,9 @@ const Features = () => {
                       </div>
                       <div>
                         <p className="font-bold text-slate-900">Mochi</p>
-                        <p className="text-xs text-slate-500">Pomeranian • 2 tuổi</p>
+                        <p className="text-xs text-slate-500">
+                          Pomeranian • 2 tuổi
+                        </p>
                       </div>
                     </div>
                     <div className="rounded-xl bg-white px-3 py-1.5 text-xs font-bold text-[#7C3AED] shadow-sm">
@@ -277,17 +384,36 @@ const Features = () => {
 
                   <div className="mt-4 space-y-3 text-sm text-slate-600">
                     {[
-                      { label: "Tiêm phòng dại", date: "10/03/2026", status: "Đã tiêm", ok: true },
-                      { label: "Tẩy giun", date: "01/04/2026", status: "Đã làm", ok: true },
-                      { label: "Tái chủng tiếp theo", date: "10/06/2026", status: "Sắp tới", ok: false },
+                      {
+                        label: "Tiêm phòng dại",
+                        date: "10/03/2026",
+                        status: "Đã tiêm",
+                        ok: true,
+                      },
+                      {
+                        label: "Tẩy giun",
+                        date: "01/04/2026",
+                        status: "Đã làm",
+                        ok: true,
+                      },
+                      {
+                        label: "Tái chủng tiếp theo",
+                        date: "10/06/2026",
+                        status: "Sắp tới",
+                        ok: false,
+                      },
                     ].map((row, i) => (
                       <div
                         key={i}
                         className="flex items-center justify-between rounded-2xl bg-slate-50 px-4 py-3"
                       >
-                        <span className="font-medium text-slate-700">{row.label}</span>
+                        <span className="font-medium text-slate-700">
+                          {row.label}
+                        </span>
                         <div className="text-right">
-                          <p className={`text-xs font-bold ${row.ok ? "text-emerald-600" : "text-amber-500"}`}>
+                          <p
+                            className={`text-xs font-bold ${row.ok ? "text-emerald-600" : "text-amber-500"}`}
+                          >
                             {row.status}
                           </p>
                           <p className="text-xs text-slate-400">{row.date}</p>
@@ -298,72 +424,6 @@ const Features = () => {
                 </div>
               </div>
             </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ── 3. ALL FEATURES GRID ────────────────────────────────── */}
-      <section className="bg-[#f9f2e8] px-4 py-20">
-        <div className="container mx-auto max-w-6xl">
-          <div className="mb-14 text-center">
-            <p className="text-sm font-semibold uppercase tracking-[0.3em] text-[#D56756]">
-              Toàn bộ tính năng
-            </p>
-            <h2 className="mt-3 text-4xl font-bold text-slate-950">
-              Tất cả những gì bạn cần, đã có sẵn
-            </h2>
-            <p className="mx-auto mt-4 max-w-xl text-lg text-slate-600">
-              Không cần ghép nhiều phần mềm. PetHub gộp tất cả vào một nơi,
-              dễ dùng cho cả người không rành công nghệ.
-            </p>
-          </div>
-
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {features.map((feature, i) => {
-              const Icon = feature.icon;
-              return (
-                <div
-                  key={i}
-                  className="group relative rounded-[24px] border border-slate-200 bg-white p-7 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-slate-300 hover:shadow-[0_16px_48px_rgba(0,0,0,0.08)]"
-                >
-                  {/* tag */}
-                  <span
-                    className="absolute right-5 top-5 rounded-full px-3 py-1 text-xs font-bold"
-                    style={{ backgroundColor: feature.bgColor, color: feature.color }}
-                  >
-                    {feature.tag}
-                  </span>
-
-                  {/* icon */}
-                  <div
-                    className="inline-flex h-13 w-13 items-center justify-center rounded-2xl transition-transform duration-300 group-hover:scale-110"
-                    style={{ backgroundColor: feature.bgColor, color: feature.color }}
-                  >
-                    <Icon className="h-6 w-6" />
-                  </div>
-
-                  <h3 className="mt-5 text-xl font-bold text-slate-900">
-                    {feature.title}
-                  </h3>
-                  <p className="mt-2 leading-7 text-slate-500">
-                    {feature.description}
-                  </p>
-
-                  {/* detail list */}
-                  <ul className="mt-5 space-y-2">
-                    {feature.details.map((d, j) => (
-                      <li key={j} className="flex items-start gap-2 text-sm text-slate-600">
-                        <CheckCircle
-                          className="mt-0.5 h-4 w-4 shrink-0"
-                          style={{ color: feature.color }}
-                        />
-                        {d}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              );
-            })}
           </div>
         </div>
       </section>
@@ -385,7 +445,9 @@ const Features = () => {
             <div className="grid grid-cols-3 bg-slate-50 px-6 py-4 text-sm font-bold text-slate-700">
               <div>Tính năng</div>
               <div className="text-center text-[#D56756]">PetHub</div>
-              <div className="text-center text-slate-400">Cách cũ (sổ / Excel)</div>
+              <div className="text-center text-slate-400">
+                Cách cũ (sổ / Excel)
+              </div>
             </div>
 
             {[

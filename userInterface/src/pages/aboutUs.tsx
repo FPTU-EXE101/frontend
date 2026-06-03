@@ -120,8 +120,8 @@ const AboutUs = () => {
   return (
     <div className="min-h-screen">
       {/* ── 1. HERO ─────────────────────────────────────────────── */}
-      <section className="relative overflow-hidden bg-[#f5eadf] px-4 py-24">
-        {/* decorative blobs */}
+      {/* <section className="relative overflow-hidden bg-[#f5eadf] px-4 py-24">
+      
         <div className="pointer-events-none absolute -right-20 -top-20 h-80 w-80 rounded-full bg-[#EFB7AF]/30 blur-3xl" />
         <div className="pointer-events-none absolute -left-16 bottom-0 h-64 w-64 rounded-full bg-[#F4D2CA]/40 blur-3xl" />
 
@@ -143,34 +143,29 @@ const AboutUs = () => {
               quán và tăng trưởng doanh thu dựa trên dữ liệu thực tế.
             </p>
 
-            {/* <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
-              <Link
-                to="/auth/register"
-                className="inline-flex items-center gap-2 rounded-full bg-[#D56756] px-7 py-3.5 text-base font-semibold text-white shadow-lg transition hover:bg-[#B24C40]"
-              >
-                Dùng thử miễn phí
-                <ArrowRight className="h-4 w-4" />
-              </Link>
-              <Link
-                to="/pricing"
-                className="inline-flex items-center gap-2 rounded-full border border-[#D56756] bg-white px-7 py-3.5 text-base font-semibold text-[#D56756] transition hover:bg-[#F7E3DF]"
-              >
-                Xem bảng giá
-              </Link>
-            </div> */}
+          
           </div>
         </div>
-      </section>
+      </section> */}
       {/* ── 6. TEAM ─────────────────────────────────────────────── */}
       <section className="bg-[#f9f2e8] px-4 py-20">
         <div className="container mx-auto max-w-6xl">
           <div className="mb-14 text-center">
-            <p className="text-sm font-semibold uppercase tracking-[0.3em] text-[#D56756]">
-              Đội ngũ sáng lập
+            <span className="inline-flex items-center gap-2 rounded-full border border-[#EFB7AF] bg-[#F7E3DF] px-4 py-2 text-sm font-semibold text-[#D56756] shadow-sm">
+              <Target className="h-4 w-4" />
+              Về chúng tôi
+            </span>
+
+            <h1 className="mt-6 text-5xl font-bold leading-tight tracking-tight text-slate-950 sm:text-6xl">
+              Được xây dựng vì <span className="text-[#D56756]">thú cưng</span>{" "}
+              và <span className="text-[#D56756]">người yêu chúng</span>
+            </h1>
+
+            <p className="mx-auto mt-6 max-w-2xl text-lg leading-8 text-slate-600">
+              PetHub được xây dựng để giúp chủ pet clinic và pet store vận hành
+              tự tin hơn mỗi ngày: lịch hẹn rõ ràng, chăm sóc khách hàng nhất
+              quán và tăng trưởng doanh thu dựa trên dữ liệu thực tế.
             </p>
-            <h2 className="mt-3 text-4xl font-bold text-slate-950">
-              Những người đứng sau PetHub
-            </h2>
           </div>
 
           <div className="grid gap-8 sm:grid-cols-3">

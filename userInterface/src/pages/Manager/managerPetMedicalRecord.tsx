@@ -4,8 +4,10 @@ import { ArrowLeft, CalendarDays, FileText, Heart, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import petApi from "@/apis/petAPI";
 import medicalRecordApi from "@/apis/medicalRecordAPI";
+import userApi from "@/apis/userAPI";
 import type { Pet } from "@/types/pet.type";
 import type { MedicalRecord } from "@/types/medicalRecord.type";
+import type { CustomerProfile } from "@/types/customerProfile.type";
 import { getBackendErrorMessage } from "@/utils/getBackendErrorMessage";
 
 const calculateAge = (dateOfBirth: string) => {
@@ -36,10 +38,34 @@ const formatDate = (value: string) => {
   });
 };
 
+const getResponseData = <T,>(value: unknown): T | null => {
+  if (!value || typeof value !== "object") return null;
+
+  const axiosData = (value as { data?: unknown }).data;
+  if (!axiosData) return null;
+
+  if (typeof axiosData === "object" && "data" in axiosData) {
+    return ((axiosData as { data?: T }).data ?? null) as T | null;
+  }
+
+  return axiosData as T;
+};
+
+const getCustomerName = (customer: CustomerProfile | null) => {
+  const fullName = customer?.fullName?.trim();
+  const combinedName = `${customer?.lastName ?? ""} ${
+    customer?.firstName ?? ""
+  }`.trim();
+
+  return fullName || combinedName || customer?.userName || "Chưa rõ";
+};
+
 const ManagerPetMedicalRecord = () => {
   const params = useParams();
   const petId = params.id ?? "";
   const [pet, setPet] = useState<Pet | null>(null);
+  const [customer, setCustomer] = useState<CustomerProfile | null>(null);
+  const [customerLoading, setCustomerLoading] = useState(false);
   const [records, setRecords] = useState<MedicalRecord[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -61,7 +87,25 @@ const ManagerPetMedicalRecord = () => {
           medicalRecordApi.getAllMedicalRecords(),
         ]);
 
-        setPet(petResponse?.data ?? null);
+        const petData = getResponseData<Pet>(petResponse);
+        setPet(petData);
+        setCustomer(null);
+
+        if (petData?.customerId) {
+          setCustomerLoading(true);
+          try {
+            const customerResponse = await userApi.getUserById(
+              petData.customerId,
+            );
+            setCustomer(getResponseData<CustomerProfile>(customerResponse));
+          } catch (customerErr) {
+            console.error(customerErr);
+            setCustomer(null);
+          } finally {
+            setCustomerLoading(false);
+          }
+        }
+
         const allRecords = recordsResponse?.data ?? [];
         const filteredRecords = (allRecords as MedicalRecord[])
           .filter((record) => record.petId === petId)
@@ -82,6 +126,7 @@ const ManagerPetMedicalRecord = () => {
   }, [petId]);
 
   const currentNote = records[0]?.medicalRecordNote || "Chưa có ghi chú cụ thể";
+  const customerPhone = customer?.phoneNumber || customer?.phone;
 
   return (
     <div className="space-y-6">
@@ -166,8 +211,22 @@ const ManagerPetMedicalRecord = () => {
                     Chủ nhân
                   </div>
                   <div className="mt-4 space-y-2 text-sm text-slate-700">
-                    <p>{pet?.customerId || "Chưa rõ"}</p>
-                    <p className="text-xs text-slate-500">Thông tin liên hệ</p>
+                    {customerLoading ? (
+                      <p className="text-slate-500">
+                        Đang tải thông tin chủ nhân...
+                      </p>
+                    ) : (
+                      <>
+                        <p className="font-semibold text-slate-950">
+                          {getCustomerName(customer)}
+                        </p>
+                        <p>{customer?.email || "Chưa có email"}</p>
+                        <p>{customerPhone || "Chưa có số điện thoại"}</p>
+                      </>
+                    )}
+                    <p className="text-xs text-slate-500">
+                      Thông tin liên hệ
+                    </p>
                   </div>
                 </div>
               </div>

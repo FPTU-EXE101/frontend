@@ -20,6 +20,7 @@ import {
   Sparkles,
   Star,
 } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 
 const features = [
   {
@@ -50,7 +51,7 @@ const features = [
     icon: CreditCard,
     title: "POS thanh toán nhanh",
     description:
-      "Tính tiền chuyên nghiệp, in hóa đơn ngay. Hỗ trợ nhiều hình thức thanh toán.",
+      "Tính tiền chuyên nghiệp, quan sát trực quan dịch vụ, sản phẩm đã chọn.",
   },
   {
     icon: Bell,
@@ -160,7 +161,60 @@ const storeValueCards = [
   },
 ];
 
+type HomeFeature = {
+  icon: LucideIcon;
+  title: string;
+  description: string;
+};
+
+const HomeFeatureCard = ({ feature }: { feature: HomeFeature }) => {
+  const Icon = feature.icon;
+
+  return (
+    <div className="group h-full w-[280px] shrink-0 rounded-[28px] border border-slate-200/80 bg-white p-5 shadow-sm shadow-slate-200/70 transition duration-300 hover:-translate-y-1 hover:border-[#D56756]/30 hover:shadow-[0_24px_70px_rgba(15,23,42,0.10)] sm:w-[330px] sm:p-6 lg:w-[370px] lg:p-7">
+      <div className="mb-5 flex h-13 w-13 items-center justify-center rounded-2xl bg-[#fff1ee] text-[#D56756] ring-1 ring-[#f3d3cd] transition duration-300 group-hover:scale-105 group-hover:bg-[#D56756] group-hover:text-white sm:h-14 sm:w-14">
+        <Icon className="h-6 w-6 sm:h-7 sm:w-7" />
+      </div>
+      <h3 className="mb-3 text-lg font-bold tracking-tight text-slate-950 sm:text-xl">
+        {feature.title}
+      </h3>
+      <p className="text-sm leading-7 text-slate-600">
+        {feature.description}
+      </p>
+    </div>
+  );
+};
+
+const HomeFeatureMarqueeRow = ({
+  items,
+  direction,
+}: {
+  items: HomeFeature[];
+  direction: "left" | "right";
+}) => {
+  const duplicatedItems = [...items, ...items];
+  const animationClass =
+    direction === "right" ? "features-marquee-right" : "features-marquee-left";
+
+  return (
+    <div className="overflow-hidden py-2">
+      <div className={`flex w-max gap-4 sm:gap-5 lg:gap-6 ${animationClass}`}>
+        {duplicatedItems.map((feature, index) => (
+          <HomeFeatureCard
+            key={`${feature.title}-${index}`}
+            feature={feature}
+          />
+        ))}
+      </div>
+    </div>
+  );
+};
+
 const Home = () => {
+  const midpoint = Math.ceil(features.length / 2);
+  const firstFeatureRow = features.slice(0, midpoint);
+  const secondFeatureRow = features.slice(midpoint);
+
   return (
     <div className="min-h-screen bg-white text-slate-950">
       {/* Hero Section */}
@@ -319,7 +373,7 @@ const Home = () => {
       </section>
 
       {/* Features Section */}
-      <section className="bg-white px-4 py-20 sm:py-24">
+      <section className="overflow-hidden bg-white px-4 py-20 sm:py-24">
         <div className="container mx-auto max-w-6xl">
           <div className="mb-16 text-center">
             <p className="mb-4 text-sm font-bold uppercase tracking-[0.28em] text-[#D56756]">
@@ -334,26 +388,11 @@ const Home = () => {
             </p>
           </div>
 
-          <div className="grid gap-5 md:grid-cols-3">
-            {features.map((feature, index) => {
-              const Icon = feature.icon;
-              return (
-                <div
-                  key={index}
-                  className="group rounded-[28px] border border-slate-200/80 bg-white p-7 shadow-sm shadow-slate-200/70 transition duration-300 hover:-translate-y-1 hover:border-[#D56756]/30 hover:shadow-[0_24px_70px_rgba(15,23,42,0.10)]"
-                >
-                  <div className="mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-[#fff1ee] text-[#D56756] ring-1 ring-[#f3d3cd] transition duration-300 group-hover:scale-105 group-hover:bg-[#D56756] group-hover:text-white">
-                    <Icon className="h-7 w-7" />
-                  </div>
-                  <h3 className="mb-3 text-xl font-bold tracking-tight text-slate-950">
-                    {feature.title}
-                  </h3>
-                  <p className="text-sm leading-7 text-slate-600">
-                    {feature.description}
-                  </p>
-                </div>
-              );
-            })}
+          <div className="relative -mx-4 space-y-4 sm:space-y-5 lg:space-y-6">
+            <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-16 bg-gradient-to-r from-white to-transparent sm:w-24" />
+            <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-16 bg-gradient-to-l from-white to-transparent sm:w-24" />
+            <HomeFeatureMarqueeRow items={firstFeatureRow} direction="right" />
+            <HomeFeatureMarqueeRow items={secondFeatureRow} direction="left" />
           </div>
         </div>
       </section>

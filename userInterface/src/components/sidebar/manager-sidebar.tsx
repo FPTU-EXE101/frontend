@@ -7,7 +7,7 @@ import {
   Package,
   MessageSquare,
   CreditCard,
-  Zap,
+  // Zap,
   Settings,
 } from "lucide-react";
 import {
@@ -53,12 +53,12 @@ const managerMenuItems = [
     icon: Layers,
     description: "Dịch vụ",
   },
-  {
-    title: "Danh mục",
-    url: "/manager/categories",
-    icon: Package,
-    description: "Danh mục sản phẩm",
-  },
+  // {
+  //   title: "Danh mục",
+  //   url: "/manager/categories",
+  //   icon: Package,
+  //   description: "Danh mục sản phẩm",
+  // },
   {
     title: "Sản phẩm",
     url: "/manager/products",
@@ -77,12 +77,12 @@ const managerMenuItems = [
     icon: CreditCard,
     description: "Thanh toán và hoá đơn",
   },
-  {
-    title: "Tự động hóa",
-    url: "/manager/automation",
-    icon: Zap,
-    description: "Quy trình tự động",
-  },
+  // {
+  //   title: "Tự động hóa",
+  //   url: "/manager/automation",
+  //   icon: Zap,
+  //   description: "Quy trình tự động",
+  // },
   {
     title: "Cài đặt",
     url: "/manager/settings",
