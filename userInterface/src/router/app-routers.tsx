@@ -41,6 +41,9 @@ const DigitalPetCard = lazy(() => import("@/pages/DigitalPetCard"));
 const AboutUs = lazy(() => import("@/pages/aboutUs"));
 const Features = lazy(() => import("@/pages/features"));
 const DemoPage = lazy(() => import("@/pages/demo"));
+const HelpCenter = lazy(() => import("@/pages/helpCenter"));
+const Terms = lazy(() => import("@/pages/terms"));
+const Privacy = lazy(() => import("@/pages/privacy"));
 const ManagerDashboard = lazy(
   () => import("@/pages/Manager/managerDashboard"),
 );
@@ -131,6 +134,9 @@ const AppRoutes = () => {
           <Route path="about-us" element={<AboutUs />} />
           <Route path="features" element={<Features />} />
           <Route path="demo" element={<DemoPage />} />
+          <Route path="help" element={<HelpCenter />} />
+          <Route path="terms" element={<Terms />} />
+          <Route path="privacy" element={<Privacy />} />
           <Route path="confirm-email" element={<ConfirmEmailPage />} />
           <Route path="verify-email-notice" element={<VerifyEmailNotice />} />
           <Route path="pet-card/:petId" element={<DigitalPetCard />} />

@@ -232,17 +232,17 @@ const Home = () => {
         <div className="absolute inset-0 -z-10 bg-gradient-to-r from-slate-950/80 via-slate-900/50 to-slate-950/25" />
         <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_20%_20%,rgba(213,103,86,0.28),transparent_32%),radial-gradient(circle_at_80%_10%,rgba(20,184,166,0.22),transparent_28%)]" />
         <div className="container mx-auto max-w-6xl">
-          <div className="max-w-3xl">
+          <div className="max-w-5xl">
             <div className="space-y-8">
-              <div className="inline-flex items-center rounded-full border border-white/25 bg-white/15 px-4 py-2 text-sm font-semibold text-white shadow-sm shadow-slate-950/10 backdrop-blur">
+              <div className="inline-flex w-max max-w-full items-center whitespace-nowrap rounded-full border border-white/25 bg-white/15 px-4 py-2 text-sm font-semibold text-white shadow-sm shadow-slate-950/10 backdrop-blur">
                 Giải pháp quản lý thú cưng toàn diện
               </div>
 
               <div className="space-y-6">
-                <h1 className="max-w-3xl text-4xl font-black leading-[1.05] tracking-tight text-white sm:text-6xl">
+                <h1 className="max-w-none text-4xl font-black leading-[1.05] tracking-tight text-white md:whitespace-nowrap lg:text-6xl">
                   Quản lý Pet Shop & Phòng khám thú y
                 </h1>
-                <p className="bg-linear-to-r from-[#F7C5BD] via-white to-[#8FF1E5] bg-clip-text text-5xl font-black leading-none tracking-tight text-transparent drop-shadow-sm sm:text-7xl">
+                <p className="bg-linear-to-r from-[#F7C5BD] via-white to-[#8FF1E5] bg-clip-text text-5xl font-black leading-none tracking-tight text-transparent drop-shadow-sm sm:text-5xl">
                   Dễ dàng hơn bao giờ hết
                 </p>
                 <p className="max-w-2xl text-lg leading-8 text-white/85 sm:text-xl">
@@ -254,10 +254,10 @@ const Home = () => {
 
               <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
                 <Link
-                  to="/auth/register"
+                  to="/auth/signup"
                   className="inline-flex w-full items-center justify-center rounded-full bg-[#D56756] px-7 py-3.5 text-base font-bold text-white shadow-[0_18px_45px_rgba(213,103,86,0.35)] transition duration-300 hover:-translate-y-0.5 hover:bg-[#B24C40] hover:shadow-[0_22px_60px_rgba(213,103,86,0.42)] sm:w-auto"
                 >
-                  Dùng thử miễn phí 14 ngày
+                  Đăng ký miễn phí
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Link>
                 <Link

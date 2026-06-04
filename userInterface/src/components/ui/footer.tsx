@@ -1,21 +1,20 @@
 import {
-  BookOpen,
   Facebook,
   HelpCircle,
-  Instagram,
   Info,
-  Linkedin,
   Mail,
   MapPin,
   Phone,
   Shield,
 } from "lucide-react";
+import { TbBrandTiktok } from "react-icons/tb";
+
 import { Link } from "react-router-dom";
 
 const companyLinks = [
-  { name: "Về chúng tôi", href: "/about", icon: Info },
-  { name: "Blog", href: "/blog", icon: BookOpen },
-  { name: "Liên hệ", href: "/contact", icon: Phone },
+  { name: "Về chúng tôi", href: "/about-us", icon: Info },
+  // { name: "Blog", href: "/blog", icon: BookOpen },
+  // { name: "Liên hệ", href: "/contact", icon: Phone },
 ];
 
 const supportLinks = [
@@ -26,14 +25,21 @@ const supportLinks = [
 
 const connectInfo = [
   { icon: Phone, label: "Hotline:", value: "1900-PETHUB" },
-  { icon: Mail, label: "Email:", value: "support@pethub.vn" },
+  { icon: Mail, label: "Email:", value: "pethub0103@gmail.com" },
   { icon: MapPin, label: "Địa chỉ:", value: "TP. Hồ Chí Minh, Việt Nam" },
 ];
 
 const socialLinks = [
-  { name: "Facebook", href: "#", icon: Facebook },
-  { name: "Instagram", href: "#", icon: Instagram },
-  { name: "LinkedIn", href: "#", icon: Linkedin },
+  {
+    name: "Facebook",
+    href: "https://www.facebook.com/profile.php?id=61590569546938",
+    icon: Facebook,
+  },
+  {
+    name: "TikTok",
+    href: "https://www.tiktok.com/@pethub.vn",
+    icon: TbBrandTiktok,
+  },
 ];
 
 function Footer() {
