@@ -1,5 +1,20 @@
 # React + TypeScript + Vite
 
+## PayOS payment return
+
+Frontend success page route: `/payment/success`.
+
+Backend needs to redirect from `/api/payment/return` to the frontend route after
+handling PayOS return/callback:
+
+```text
+${FRONTEND_URL}/payment/success?code=00&id=...&cancel=false&status=PAID&orderCode=...
+```
+
+Do not return JSON directly to the browser for the PayOS return URL, otherwise
+the user will stay on the backend API response instead of seeing the frontend
+success page.
+
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
 Currently, two official plugins are available:

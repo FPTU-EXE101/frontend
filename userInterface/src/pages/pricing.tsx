@@ -1,5 +1,6 @@
 import { CheckCircle, MinusCircle, Rocket, Sparkles, Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { usePremiumUpgradePayment } from "@/hooks/usePremiumUpgradePayment";
 
 type PricingFeature = {
   label: string;
@@ -58,6 +59,8 @@ const pricingPlans: PricingPlan[] = [
 ];
 
 const PricingPage = () => {
+  const premiumUpgrade = usePremiumUpgradePayment();
+
   return (
     <div className="min-h-screen bg-[#fff8f3]">
       <style>
@@ -106,8 +109,42 @@ const PricingPage = () => {
           </div>
 
           <div className="mt-12 grid gap-6 lg:grid-cols-2 lg:gap-8">
+            {premiumUpgrade.isManager ? (
+              <div className="lg:col-span-2">
+                <div className="flex flex-wrap items-center justify-center gap-3 rounded-lg border border-[#D56756]/20 bg-white/85 px-4 py-3 text-sm font-semibold text-slate-700 shadow-sm">
+                  <span>Gói hiện tại:</span>
+                  <span className="rounded-full bg-[#D56756]/10 px-3 py-1 text-[#B24C40]">
+                    {premiumUpgrade.checkingPlan
+                      ? "Đang kiểm tra..."
+                      : premiumUpgrade.planLabel}
+                  </span>
+                  {premiumUpgrade.isPremium ? (
+                    <span className="text-emerald-700">
+                      Bạn đang sử dụng gói Premium.
+                    </span>
+                  ) : null}
+                </div>
+              </div>
+            ) : null}
+
+            {premiumUpgrade.error ? (
+              <div className="lg:col-span-2">
+                <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm font-semibold text-red-700">
+                  {premiumUpgrade.error}
+                </div>
+              </div>
+            ) : null}
+
             {pricingPlans.map((plan, index) => {
               const Icon = plan.icon;
+              const isPremiumPlan = plan.name.toLowerCase() === "premium";
+              const showUpgradeButton =
+                !isPremiumPlan || premiumUpgrade.isManager;
+              const disablePremiumButton =
+                isPremiumPlan &&
+                (premiumUpgrade.loading ||
+                  premiumUpgrade.checkingPlan ||
+                  premiumUpgrade.isPremium);
 
               return (
                 <article
@@ -171,15 +208,27 @@ const PricingPage = () => {
                     ))}
                   </ul>
 
-                  <Button
-                    className={`mt-9 w-full rounded-full px-5 py-6 text-sm font-semibold transition duration-300 hover:scale-[1.01] ${
-                      plan.highlighted
-                        ? "bg-[#D56756] text-white shadow-[0_14px_34px_rgba(213,103,86,0.24)] hover:bg-[#B24C40]"
-                        : "border border-slate-200 bg-slate-100 text-slate-700 hover:bg-slate-200"
-                    }`}
-                  >
-                    {plan.cta}
-                  </Button>
+                  {showUpgradeButton ? (
+                    <Button
+                      className={`mt-9 w-full rounded-full px-5 py-6 text-sm font-semibold transition duration-300 hover:scale-[1.01] ${
+                        plan.highlighted
+                          ? "bg-[#D56756] text-white shadow-[0_14px_34px_rgba(213,103,86,0.24)] hover:bg-[#B24C40]"
+                          : "border border-slate-200 bg-slate-100 text-slate-700 hover:bg-slate-200"
+                      }`}
+                      disabled={disablePremiumButton}
+                      onClick={
+                        isPremiumPlan
+                          ? premiumUpgrade.handleUpgrade
+                          : undefined
+                      }
+                    >
+                      {isPremiumPlan && premiumUpgrade.loading
+                        ? "Đang tạo thanh toán..."
+                        : isPremiumPlan && premiumUpgrade.isPremium
+                          ? "Bạn đang sử dụng gói Premium."
+                          : plan.cta}
+                    </Button>
+                  ) : null}
                 </article>
               );
             })}

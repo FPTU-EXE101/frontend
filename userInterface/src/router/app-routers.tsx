@@ -109,6 +109,9 @@ const ManagerAutomationManage = lazy(
 const ManagerSettingManage = lazy(
   () => import("@/pages/Manager/managerSettingManage"),
 );
+const PaymentSuccessPage = lazy(
+  () => import("@/pages/payment/PaymentSuccessPage"),
+);
 
 const RouteLoadingFallback = () => (
   <div className="flex min-h-screen items-center justify-center bg-[#fff8f2] px-4">
@@ -137,6 +140,7 @@ const AppRoutes = () => {
           <Route path="help" element={<HelpCenter />} />
           <Route path="terms" element={<Terms />} />
           <Route path="privacy" element={<Privacy />} />
+          <Route path="payment/success" element={<PaymentSuccessPage />} />
           <Route path="confirm-email" element={<ConfirmEmailPage />} />
           <Route path="verify-email-notice" element={<VerifyEmailNotice />} />
           <Route path="pet-card/:petId" element={<DigitalPetCard />} />

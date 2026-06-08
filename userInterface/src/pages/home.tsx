@@ -21,6 +21,7 @@ import {
   Star,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
+import { usePremiumUpgradePayment } from "@/hooks/usePremiumUpgradePayment";
 
 const features = [
   {
@@ -211,6 +212,7 @@ const HomeFeatureMarqueeRow = ({
 };
 
 const Home = () => {
+  const premiumUpgrade = usePremiumUpgradePayment();
   const midpoint = Math.ceil(features.length / 2);
   const firstFeatureRow = features.slice(0, midpoint);
   const secondFeatureRow = features.slice(midpoint);
@@ -767,6 +769,32 @@ const Home = () => {
           </div>
 
           <div className="grid gap-8 lg:grid-cols-2">
+            {premiumUpgrade.isManager ? (
+              <div className="lg:col-span-2">
+                <div className="flex flex-wrap items-center justify-center gap-3 rounded-lg border border-[#D56756]/20 bg-white px-4 py-3 text-sm font-semibold text-slate-700 shadow-sm">
+                  <span>Gói hiện tại:</span>
+                  <span className="rounded-full bg-[#D56756]/10 px-3 py-1 text-[#B24C40]">
+                    {premiumUpgrade.checkingPlan
+                      ? "Đang kiểm tra..."
+                      : premiumUpgrade.planLabel}
+                  </span>
+                  {premiumUpgrade.isPremium ? (
+                    <span className="text-emerald-700">
+                      Bạn đang sử dụng gói Premium.
+                    </span>
+                  ) : null}
+                </div>
+              </div>
+            ) : null}
+
+            {premiumUpgrade.error ? (
+              <div className="lg:col-span-2">
+                <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm font-semibold text-red-700">
+                  {premiumUpgrade.error}
+                </div>
+              </div>
+            ) : null}
+
             <div className="rounded-[30px] border border-slate-200 bg-white p-8 shadow-sm shadow-slate-200/70 transition duration-300 hover:-translate-y-1 hover:shadow-[0_24px_70px_rgba(15,23,42,0.10)]">
               <div className="inline-flex h-14 w-14 items-center justify-center rounded-3xl bg-[#F2D0CA] text-[#D56756] shadow-sm">
                 <Zap className="h-6 w-6" />
@@ -875,9 +903,23 @@ const Home = () => {
                 </li>
               </ul>
 
-              <Button className="mt-8 w-full rounded-full bg-[#D56756] px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-[0_25px_60px_rgba(213,103,86,0.2)] hover:bg-[#B24C40]">
-                Gói Premium
-              </Button>
+              {premiumUpgrade.isManager ? (
+                <Button
+                  className="mt-8 w-full rounded-full bg-[#D56756] px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-[0_25px_60px_rgba(213,103,86,0.2)] hover:bg-[#B24C40]"
+                  disabled={
+                    premiumUpgrade.loading ||
+                    premiumUpgrade.checkingPlan ||
+                    premiumUpgrade.isPremium
+                  }
+                  onClick={premiumUpgrade.handleUpgrade}
+                >
+                  {premiumUpgrade.loading
+                    ? "Đang tạo thanh toán..."
+                    : premiumUpgrade.isPremium
+                      ? "Bạn đang sử dụng gói Premium."
+                      : "Gói Premium"}
+                </Button>
+              ) : null}
             </div>
           </div>
         </div>
