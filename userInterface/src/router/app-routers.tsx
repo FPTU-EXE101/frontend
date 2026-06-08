@@ -3,6 +3,13 @@ import { Route, Routes } from "react-router-dom";
 
 const Mainlayout = lazy(() => import("@/layout"));
 const AdminLayout = lazy(() => import("@/pages/Admin/adminLayout"));
+const AdminCreateManager = lazy(
+  () => import("@/pages/Admin/adminCreateManager"),
+);
+const AdminDashboard = lazy(() => import("@/pages/Admin/adminDashboard"));
+const AdminManagersManage = lazy(
+  () => import("@/pages/Admin/adminManagersManage"),
+);
 const Home = lazy(() => import("@/pages/home"));
 const ManagerLayout = lazy(() => import("@/pages/Manager/managerLayout"));
 const StaffLayout = lazy(() => import("@/pages/Staff/staffLayout"));
@@ -154,7 +161,11 @@ const AppRoutes = () => {
             <Route path="booking/new" element={<UserCreateBookingPage />} />
           </Route>
         </Route>
-        <Route path="/admin" element={<AdminLayout />}></Route>
+        <Route path="/admin" element={<AdminLayout />}>
+          <Route index element={<AdminDashboard />} />
+          <Route path="managers/new" element={<AdminCreateManager />} />
+          <Route path="managers" element={<AdminManagersManage />} />
+        </Route>
         <Route path="/staff" element={<StaffLayout />}></Route>
         <Route path="/manager" element={<ManagerLayout />}>
           <Route index path="dashboard" element={<ManagerDashboard />} />

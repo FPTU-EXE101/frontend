@@ -1,4 +1,9 @@
-import type { ChangePassword, Login, Register } from "../types/auth.type";
+import type {
+  ChangePassword,
+  Login,
+  Register,
+  RegisterManager,
+} from "../types/auth.type";
 import axiosClient from "./axiosClient";
 
 const USER_API_URL = "/auth";
@@ -15,6 +20,8 @@ const USER_API_URL = "/auth";
 const authApi = {
   registerUser: (data: Register) =>
     axiosClient.post(`${USER_API_URL}/register`, data),
+  registerManager: (data: RegisterManager) =>
+    axiosClient.post(`${USER_API_URL}/registermanager`, data),
   loginUser: (data: Login) => axiosClient.post(`${USER_API_URL}/login`, data),
   changePassword: (data: ChangePassword) =>
     axiosClient.patch(`${USER_API_URL}/changePassword`, data),

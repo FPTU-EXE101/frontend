@@ -4,6 +4,7 @@ export interface User {
   lastName: string;
   userName: string;
   email: string;
+  role?: string;
   plan: number;
   createAt: string;
   updateAt: string;
