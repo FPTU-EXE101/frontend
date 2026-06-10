@@ -73,7 +73,7 @@ const Navbar = () => {
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-slate-200/70 bg-white/82 shadow-sm shadow-slate-200/40 backdrop-blur-xl supports-[backdrop-filter]:bg-white/72">
-      <div className="mx-auto flex max-w-[1200px] items-center justify-between px-4 py-3">
+      <div className="mx-auto flex max-w-full items-center justify-around px-4 py-3">
         <Link to="/" className="flex items-center gap-3">
           <img
             src="/logoPethub.png"
