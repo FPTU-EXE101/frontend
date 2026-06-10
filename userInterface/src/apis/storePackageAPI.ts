@@ -46,6 +46,8 @@ export interface ItemResponse {
 }
 
 const storePackageApi = {
+  getAllStorePackage: (config?: AxiosRequestConfig) =>
+    axiosClient.get<StorePackageResponse[]>(STORE_PACKAGE_API_URL, config),
   getPackageItems: (config?: AxiosRequestConfig) =>
     axiosClient.get<ItemResponse[]>(`${ITEM_API_URL}/item`, config),
   createStorePackage: (request: StorePackageRequest) =>
