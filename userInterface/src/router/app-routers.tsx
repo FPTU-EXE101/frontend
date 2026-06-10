@@ -1,5 +1,5 @@
 import { lazy, Suspense } from "react";
-import { Route, Routes } from "react-router-dom";
+import { Navigate, Route, Routes } from "react-router-dom";
 
 const Mainlayout = lazy(() => import("@/layout"));
 const AdminLayout = lazy(() => import("@/pages/Admin/adminLayout"));
@@ -17,9 +17,7 @@ const NotFound = lazy(() => import("@/pages/NotFound"));
 const LoginPage = lazy(() => import("@/pages/Auth/loginPage"));
 const SignupPage = lazy(() => import("@/pages/Auth/signUpPage"));
 const ConfirmEmailPage = lazy(() => import("@/pages/Auth/confirmEmailPage"));
-const VerifyEmailNotice = lazy(
-  () => import("@/pages/Auth/verifyEmailNotice"),
-);
+const VerifyEmailNotice = lazy(() => import("@/pages/Auth/verifyEmailNotice"));
 const PricingPage = lazy(() => import("@/pages/pricing"));
 const UserInfoLayout = lazy(
   () => import("@/pages/User/userInfoLayout/userInfoLayout"),
@@ -38,9 +36,7 @@ const UserBookingPage = lazy(
 );
 const UserCreateBookingPage = lazy(
   () =>
-    import(
-      "@/pages/User/UserBookingPage/UserCreateBooking/userCreateBookingPage"
-    ),
+    import("@/pages/User/UserBookingPage/UserCreateBooking/userCreateBookingPage"),
 );
 const UserPetPage = lazy(() => import("@/pages/User/userPetPage/userPetPage"));
 const CreatePetPage = lazy(() => import("@/pages/User/CreatePetPage"));
@@ -51,14 +47,15 @@ const DemoPage = lazy(() => import("@/pages/demo"));
 const HelpCenter = lazy(() => import("@/pages/helpCenter"));
 const Terms = lazy(() => import("@/pages/terms"));
 const Privacy = lazy(() => import("@/pages/privacy"));
-const ManagerDashboard = lazy(
-  () => import("@/pages/Manager/managerDashboard"),
-);
+const ManagerDashboard = lazy(() => import("@/pages/Manager/managerDashboard"));
 const ManagerCustomersManage = lazy(
   () => import("@/pages/Manager/managerCustomersManage"),
 );
 const ManagerPetsManage = lazy(
   () => import("@/pages/Manager/managerPetsManage"),
+);
+const ManagerPetCardManagement = lazy(
+  () => import("@/pages/Manager/managerPetCardManagement"),
 );
 const ManagerPetCreatePage = lazy(
   () => import("@/pages/Manager/managerPetCreate"),
@@ -71,9 +68,7 @@ const ManagerPetMedicalRecordCreate = lazy(
 );
 const ManagerAppointmentsManage = lazy(
   () =>
-    import(
-      "@/pages/Manager/managerAppointmentsManage/managerAppointmentsManage"
-    ),
+    import("@/pages/Manager/managerAppointmentsManage/managerAppointmentsManage"),
 );
 const ManagerServicesManage = lazy(
   () => import("@/pages/Manager/managerServicesManage"),
@@ -104,11 +99,12 @@ const ManagerProductEdit = lazy(() =>
     default: module.ManagerProductEdit,
   })),
 );
-const ManagerCRMManage = lazy(
-  () => import("@/pages/Manager/managerCRMManage"),
-);
+const ManagerCRMManage = lazy(() => import("@/pages/Manager/managerCRMManage"));
 const ManagerPaymentManage = lazy(
   () => import("@/pages/Manager/managerPaymentManage"),
+);
+const ManagerInvoicesManage = lazy(
+  () => import("@/pages/Manager/managerInvoicesManage"),
 );
 const ManagerAutomationManage = lazy(
   () => import("@/pages/Manager/managerAutomationManage"),
@@ -162,14 +158,18 @@ const AppRoutes = () => {
           </Route>
         </Route>
         <Route path="/admin" element={<AdminLayout />}>
-          <Route index element={<AdminDashboard />} />
+          <Route index element={<Navigate to="dashboard" replace />} />
+          <Route path="dashboard" element={<AdminDashboard />} />
           <Route path="managers/new" element={<AdminCreateManager />} />
           <Route path="managers" element={<AdminManagersManage />} />
+          <Route path="petcards" element={<ManagerPetCardManagement />} />
         </Route>
         <Route path="/staff" element={<StaffLayout />}></Route>
         <Route path="/manager" element={<ManagerLayout />}>
-          <Route index path="dashboard" element={<ManagerDashboard />} />
+          <Route index element={<Navigate to="dashboard" replace />} />
+          <Route path="dashboard" element={<ManagerDashboard />} />
           <Route path="customers" element={<ManagerCustomersManage />} />
+          <Route path="petcards" element={<ManagerPetCardManagement />} />
           <Route path="pets" element={<ManagerPetsManage />} />
           <Route path="pets/new" element={<ManagerPetCreatePage />} />
           <Route
@@ -190,6 +190,7 @@ const AppRoutes = () => {
           <Route path="products/:id/edit" element={<ManagerProductEdit />} />
           <Route path="crm" element={<ManagerCRMManage />} />
           <Route path="payments" element={<ManagerPaymentManage />} />
+          <Route path="invoices" element={<ManagerInvoicesManage />} />
           <Route path="automation" element={<ManagerAutomationManage />} />
           <Route path="settings" element={<ManagerSettingManage />} />
         </Route>

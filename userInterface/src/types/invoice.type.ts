@@ -1,12 +1,22 @@
-//api invocie
 export interface Invoice {
   id: string;
   petName: string;
-  appointmentNode: string;
+  appointmentNote: string;
   customerName: string;
+  customerId?: string;
+  customerEmail?: string;
+  customer?: {
+    id?: string;
+    email?: string;
+    name?: string;
+    userName?: string;
+  };
   totalAmount: number;
-  createAt: Date;
+  status: string;
+  payOsOrderCode: string | number | null;
+  createdAt: string;
 }
+
 //api request invoice
 export interface CreateInvoice {
   petId?: string;
@@ -16,48 +26,30 @@ export interface CreateInvoice {
 }
 
 //api response invoice
-export interface GetAllInvoicesResponse {
-  id: string;
-  petName: string;
-  appointmentNode: string;
-  customerName: string;
-  totalAmount: number;
-  status: string;
-  createAt: Date;
-}
-export interface GetInvoiceByIdResponse {
-  id: string;
-  petName: string;
-  appointmentNode: string;
-  customerName: string;
-  totalAmount: number;
-  status: string;
-  createAt: Date;
-}
-export interface GetInvoiceByCustomerIdResponse {
-  id: string;
-  petName: string;
-  appointmentNode: string;
-  customerName: string;
-  totalAmount: number;
-  status: string;
-  createAt: Date;
-}
+export type GetAllInvoicesResponse = Invoice;
+export type GetInvoiceByIdResponse = Invoice;
+export type GetInvoiceByCustomerIdResponse = Invoice;
 
 //api invocie detail
 export interface InvoiceDetail {
   id: string;
-  itemName: string;
-  price: number;
-  quantity: number;
-  subtotal: number;
+  itemName?: string;
+  name?: string;
+  price?: number;
+  quantity?: number;
+  subtotal?: number;
+  total?: number;
+  [key: string]: unknown;
 }
 export interface GetInvoiceDetailsResponse {
   id: string;
-  itemName: string;
-  price: number;
-  quantity: number;
-  subtotal: number;
+  itemName?: string;
+  name?: string;
+  price?: number;
+  quantity?: number;
+  subtotal?: number;
+  total?: number;
+  [key: string]: unknown;
 }
 export interface CreateInvoiceDetail {
   itemId: string;

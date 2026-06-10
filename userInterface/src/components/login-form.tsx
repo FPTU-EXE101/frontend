@@ -53,12 +53,12 @@ export function LoginForm({ className, ...props }: ComponentProps<"form">) {
           window.dispatchEvent(new Event("authChanged"));
 
           if (role?.toLowerCase() === "admin") {
-            navigate("/admin");
+            navigate("/admin/dashboard");
             return;
           }
 
           if (role?.toLowerCase() === "manager") {
-            navigate("/manager");
+            navigate("/manager/dashboard");
             return;
           }
         }

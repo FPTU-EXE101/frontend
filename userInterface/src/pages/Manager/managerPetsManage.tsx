@@ -4,12 +4,19 @@ import { Search, PawPrint, FileText, Heart } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import petApi from "@/apis/petAPI";
+import userApi from "@/apis/userAPI";
 import type { Pet } from "@/types/pet.type";
+import type { User } from "@/types/user.type";
 import { getBackendErrorMessage } from "@/utils/getBackendErrorMessage";
 import PetQRCode from "@/components/pets/PetQRCode";
 import { useDebounce } from "@/hooks/useDebounce";
 import { PaginationControls } from "@/components/ui/pagination-controls";
 import { usePagination } from "@/hooks/usePagination";
+
+type Customer = User & {
+  phone?: string;
+  phoneNumber?: string;
+};
 
 const calculateAge = (dateOfBirth: string) => {
   if (!dateOfBirth) return "Chưa rõ";
@@ -28,8 +35,47 @@ const calculateAge = (dateOfBirth: string) => {
   return "< 1 tháng";
 };
 
+const normalizeText = (value?: string | number | null) =>
+  String(value ?? "")
+    .trim()
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "");
+
+const normalizeList = <T,>(value: unknown): T[] => {
+  const payload =
+    value && typeof value === "object" && "data" in value
+      ? (value as { data?: unknown }).data
+      : value;
+
+  return Array.isArray(payload) ? (payload as T[]) : [];
+};
+
+const getCustomerName = (customer?: Customer, pet?: Pet) => {
+  const fullName = [customer?.lastName, customer?.firstName]
+    .filter(Boolean)
+    .join(" ");
+
+  return (
+    fullName ||
+    customer?.userName ||
+    pet?.customer?.fullName ||
+    pet?.customer?.name ||
+    pet?.customerName ||
+    pet?.ownerName ||
+    "Chưa rõ"
+  );
+};
+
+const getCustomerEmail = (customer?: Customer, pet?: Pet) =>
+  customer?.email || pet?.customer?.email || pet?.email || "";
+
+const getCustomerPhone = (customer?: Customer, pet?: Pet) =>
+  customer?.phoneNumber || customer?.phone || pet?.customer?.phone || pet?.phone || "";
+
 const ManagerPetsManage = () => {
   const [pets, setPets] = useState<Pet[]>([]);
+  const [customers, setCustomers] = useState<Customer[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -40,11 +86,20 @@ const ManagerPetsManage = () => {
 
     const loadPets = async () => {
       setLoading(true);
+      setError("");
+
       try {
-        const response = await petApi.getAllPets({
-          signal: controller.signal,
-        });
-        setPets(response?.data ?? []);
+        const [petsResponse, usersResponse] = await Promise.all([
+          petApi.getAllPets({
+            signal: controller.signal,
+          }),
+          userApi.getAllUsers({
+            signal: controller.signal,
+          }),
+        ]);
+
+        setPets(normalizeList<Pet>(petsResponse?.data));
+        setCustomers(normalizeList<Customer>(usersResponse?.data));
       } catch (err) {
         if (controller.signal.aborted) return;
         setError(getBackendErrorMessage(err));
@@ -59,18 +114,38 @@ const ManagerPetsManage = () => {
     return () => controller.abort();
   }, []);
 
-  const filteredPets = useMemo(
+  const customersById = useMemo(
     () =>
-      pets.filter((pet) => {
-        const query = debouncedSearchTerm.toLowerCase();
-        return (
-          pet.name.toLowerCase().includes(query) ||
-          pet.color.toLowerCase().includes(query) ||
-          pet.customerId?.toLowerCase().includes(query)
-        );
-      }),
-    [debouncedSearchTerm, pets],
+      customers.reduce<Record<string, Customer>>((map, customer) => {
+        map[customer.id] = customer;
+        return map;
+      }, {}),
+    [customers],
   );
+
+  const filteredPets = useMemo(() => {
+    const query = normalizeText(debouncedSearchTerm);
+
+    if (!query) {
+      return pets;
+    }
+
+    return pets.filter((pet) => {
+      const customer = customersById[pet.customerId];
+      const searchableValues = [
+        pet.name,
+        pet.id,
+        getCustomerName(customer, pet),
+        getCustomerEmail(customer, pet),
+        getCustomerPhone(customer, pet),
+      ];
+
+      return searchableValues.some((value) =>
+        normalizeText(value).includes(query),
+      );
+    });
+  }, [customersById, debouncedSearchTerm, pets]);
+
   const petPagination = usePagination(filteredPets, 12);
 
   return (
@@ -97,7 +172,7 @@ const ManagerPetsManage = () => {
               <Input
                 value={searchTerm}
                 onChange={(event) => setSearchTerm(event.target.value)}
-                placeholder="Tìm theo tên thú cưng, giống, chủ nhân..."
+                placeholder="Tìm theo tên/id thú cưng, tên/email/sđt chủ..."
                 className="pl-12"
               />
             </div>
@@ -113,67 +188,83 @@ const ManagerPetsManage = () => {
               Đang tải danh sách thú cưng...
             </div>
           ) : filteredPets.length > 0 ? (
-            petPagination.pageItems.map((pet) => (
-              <article
-                key={pet.id}
-                className="overflow-hidden rounded-[2rem] border border-slate-200 bg-slate-50 shadow-sm"
-              >
-                <div className="flex h-48 items-center justify-center bg-[#F4E8D8]">
-                  <div className="flex h-24 w-24 items-center justify-center rounded-full bg-white shadow-sm">
-                    <PawPrint className="h-12 w-12 text-amber-500" />
-                  </div>
-                </div>
-                <div className="space-y-4 p-5">
-                  <div className="flex items-start justify-between gap-4">
-                    <div>
-                      <h3 className="text-xl font-semibold text-slate-950">
-                        {pet.name}
-                      </h3>
-                      <p className="text-sm text-slate-500">
-                        {pet.color || "Golden Retriever"}
-                      </p>
-                    </div>
-                    <div className="rounded-full bg-white px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-slate-600 shadow-sm">
-                      {calculateAge(pet.dateOfBirth)}
-                    </div>
-                  </div>
+            petPagination.pageItems.map((pet) => {
+              const customer = customersById[pet.customerId];
+              const customerName = getCustomerName(customer, pet);
+              const customerEmail = getCustomerEmail(customer, pet);
 
-                  <div className="grid gap-3 text-sm text-slate-600">
-                    <div className="flex items-center gap-2">
-                      <Heart className="h-4 w-4 text-rose-500" />
-                      <span>Chủ: {pet.customerId || "Chưa rõ"}</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <FileText className="h-4 w-4 text-slate-400" />
-                      <span>
-                        Hồ sơ y tế{" "}
-                        {pet.dateOfBirth
-                          ? `- sinh ${new Date(pet.dateOfBirth).getFullYear()}`
-                          : ""}
-                      </span>
+              return (
+                <article
+                  key={pet.id}
+                  className="overflow-hidden rounded-[2rem] border border-slate-200 bg-slate-50 shadow-sm"
+                >
+                  <div className="flex h-48 items-center justify-center bg-[#F4E8D8]">
+                    <div className="flex h-24 w-24 items-center justify-center rounded-full bg-white shadow-sm">
+                      <PawPrint className="h-12 w-12 text-amber-500" />
                     </div>
                   </div>
+                  <div className="space-y-4 p-5">
+                    <div className="flex items-start justify-between gap-4">
+                      <div>
+                        <h3 className="text-xl font-semibold text-slate-950">
+                          {pet.name}
+                        </h3>
+                        <p className="text-sm text-slate-500">
+                          {pet.color || "Golden Retriever"}
+                        </p>
+                      </div>
+                      <div className="rounded-full bg-white px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-slate-600 shadow-sm">
+                        {calculateAge(pet.dateOfBirth)}
+                      </div>
+                    </div>
 
-                  <div className="grid gap-3 sm:grid-cols-2">
-                    <Button asChild variant="outline" className="w-full">
-                      <Link to={`/pet-card/${pet.id}`} target="_blank">
-                        Xem Digital Pet Card
-                      </Link>
-                    </Button>
-                    <Button
-                      asChild
-                      className="w-full bg-slate-950 text-white hover:bg-slate-800"
-                    >
-                      <Link to={`/manager/pets/${pet.id}/medical-record`}>
-                        Hồ sơ y tế
-                      </Link>
-                    </Button>
+                    <div className="grid gap-3 text-sm text-slate-600">
+                      <div className="flex items-start gap-2">
+                        <Heart className="mt-0.5 h-4 w-4 shrink-0 text-rose-500" />
+                        <span className="min-w-0">
+                          Chủ:{" "}
+                          <span className="font-medium text-slate-800">
+                            {customerName}
+                          </span>
+                          {customerEmail && (
+                            <span className="block truncate text-xs text-slate-500">
+                              {customerEmail}
+                            </span>
+                          )}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <FileText className="h-4 w-4 text-slate-400" />
+                        <span>
+                          Hồ sơ y tế{" "}
+                          {pet.dateOfBirth
+                            ? `- sinh ${new Date(pet.dateOfBirth).getFullYear()}`
+                            : ""}
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className="grid gap-3 sm:grid-cols-2">
+                      <Button asChild variant="outline" className="w-full">
+                        <Link to={`/pet-card/${pet.id}`} target="_blank">
+                          Xem Digital Pet Card
+                        </Link>
+                      </Button>
+                      <Button
+                        asChild
+                        className="w-full bg-slate-950 text-white hover:bg-slate-800"
+                      >
+                        <Link to={`/manager/pets/${pet.id}/medical-record`}>
+                          Hồ sơ y tế
+                        </Link>
+                      </Button>
+                    </div>
+
+                    <PetQRCode petId={pet.id} petName={pet.name} />
                   </div>
-
-                  <PetQRCode petId={pet.id} petName={pet.name} />
-                </div>
-              </article>
-            ))
+                </article>
+              );
+            })
           ) : (
             <div className="col-span-full rounded-[2rem] border border-slate-200 bg-white p-10 text-center text-slate-500 shadow-sm">
               Không tìm thấy thú cưng nào với từ khóa hiện tại.

@@ -7,6 +7,8 @@ import {
   Package,
   MessageSquare,
   CreditCard,
+  ReceiptText,
+  QrCode,
   // Zap,
   Settings,
 } from "lucide-react";
@@ -40,6 +42,12 @@ const managerMenuItems = [
     url: "/manager/pets",
     icon: PawPrint,
     description: "Quản lý thú cưng",
+  },
+  {
+    title: "PetCard",
+    url: "/manager/petcards",
+    icon: QrCode,
+    description: "Quản lý Digital PetCard",
   },
   {
     title: "Lịch hẹn",
@@ -76,6 +84,12 @@ const managerMenuItems = [
     url: "/manager/payments",
     icon: CreditCard,
     description: "Thanh toán và hoá đơn",
+  },
+  {
+    title: "Quản lý hóa đơn",
+    url: "/manager/invoices",
+    icon: ReceiptText,
+    description: "Danh sách hóa đơn",
   },
   // {
   //   title: "Tự động hóa",

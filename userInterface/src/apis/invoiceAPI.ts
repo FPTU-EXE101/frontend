@@ -17,10 +17,22 @@ const invoiceApi = {
   createInvoice: (data: CreateInvoice) =>
     axiosClient.post<GetInvoiceByIdResponse>(INVOICE_API_URL, data),
 
-  getInvoiceById: (id: string) =>
-    axiosClient.get<GetInvoiceByIdResponse>(`${INVOICE_API_URL}/${id}`),
+  getInvoiceById: (id: string, config?: AxiosRequestConfig) =>
+    axiosClient.get<GetInvoiceByIdResponse>(
+      `${INVOICE_API_URL}/${id}`,
+      config,
+    ),
 
   getInvoiceByCustomerId: (customerId: string, config?: AxiosRequestConfig) =>
+    axiosClient.get<GetInvoiceByCustomerIdResponse[]>(
+      `${INVOICE_API_URL}/customer/${customerId}`,
+      config,
+    ),
+
+  getInvoicesByCustomerId: (
+    customerId: string,
+    config?: AxiosRequestConfig,
+  ) =>
     axiosClient.get<GetInvoiceByCustomerIdResponse[]>(
       `${INVOICE_API_URL}/customer/${customerId}`,
       config,
@@ -29,6 +41,12 @@ const invoiceApi = {
   getInvoiceDetails: (id: string) =>
     axiosClient.get<GetInvoiceDetailsResponse[]>(
       `${INVOICE_API_URL}/invoice-detail/${id}`,
+    ),
+
+  getInvoiceDetail: (invoiceId: string, config?: AxiosRequestConfig) =>
+    axiosClient.get<GetInvoiceDetailsResponse[]>(
+      `${INVOICE_API_URL}/invoice-detail/${invoiceId}`,
+      config,
     ),
 
   confirmInvoice: (id: string) =>

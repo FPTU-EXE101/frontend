@@ -140,8 +140,8 @@ const Navbar = () => {
                         <Link
                           to={
                             userRole?.toLowerCase() === "admin"
-                              ? "/admin"
-                              : "/manager"
+                              ? "/admin/dashboard"
+                              : "/manager/dashboard"
                           }
                           className="w-full"
                         >
