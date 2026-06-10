@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, NavLink, useNavigate } from "react-router-dom";
 import {
   getCurrentUser,
   isAuthenticated as checkIsAuthenticated,
@@ -63,6 +63,14 @@ const Navbar = () => {
     navigate("/auth/login");
   };
 
+  const navLinkClass = ({ isActive }: { isActive: boolean }) =>
+    [
+      "rounded-full border px-4 py-2 text-sm font-semibold transition",
+      isActive
+        ? "border-[#D56756]/45 bg-[#F8DED9] text-[#B24C40] shadow-sm"
+        : "border-transparent text-slate-600 hover:border-slate-200 hover:bg-slate-100 hover:text-slate-950",
+    ].join(" ");
+
   return (
     <header className="sticky top-0 z-50 w-full border-b border-slate-200/70 bg-white/82 shadow-sm shadow-slate-200/40 backdrop-blur-xl supports-[backdrop-filter]:bg-white/72">
       <div className="mx-auto flex max-w-[1200px] items-center justify-between px-4 py-3">
@@ -79,30 +87,43 @@ const Navbar = () => {
         {isAuthenticated ? (
           <>
             <nav className="hidden items-center gap-8 md:flex">
-              <Link
+              <NavLink
                 to="/"
-                className="rounded-full px-3 py-2 text-sm font-semibold text-slate-600 transition hover:bg-slate-100 hover:text-slate-950"
+                end
+                className={navLinkClass}
               >
                 Trang chủ
-              </Link>
-              <Link
+              </NavLink>
+              <NavLink
                 to="/user/service"
-                className="rounded-full px-3 py-2 text-sm font-semibold text-slate-600 transition hover:bg-slate-100 hover:text-slate-950"
+                className={navLinkClass}
               >
                 Dịch vụ
-              </Link>
-              <Link
+              </NavLink>
+              <NavLink
                 to="/user/booking"
-                className="rounded-full px-3 py-2 text-sm font-semibold text-slate-600 transition hover:bg-slate-100 hover:text-slate-950"
+                className={navLinkClass}
               >
                 Lịch hẹn
-              </Link>
-              <Link
+              </NavLink>
+              <NavLink
                 to="/user/pet"
-                className="rounded-full px-3 py-2 text-sm font-semibold text-slate-600 transition hover:bg-slate-100 hover:text-slate-950"
+                className={navLinkClass}
               >
                 Thú cưng
-              </Link>
+              </NavLink>
+              <NavLink
+                to="/user/invoices"
+                className={navLinkClass}
+              >
+                Hóa đơn
+              </NavLink>
+              <NavLink
+                to="/user/profile"
+                className={navLinkClass}
+              >
+                Hồ sơ
+              </NavLink>
             </nav>
             <div className="hidden items-center gap-3 md:flex">
               <div
@@ -149,11 +170,11 @@ const Navbar = () => {
                         </Link>
                       </DropdownMenuItem>
                     )}
-                    <DropdownMenuItem asChild>
+                    {/* <DropdownMenuItem asChild>
                       <Link to="/user/profile" className="w-full">
                         Hồ sơ
                       </Link>
-                    </DropdownMenuItem>
+                    </DropdownMenuItem> */}
                     <DropdownMenuItem
                       onSelect={(event) => {
                         event.preventDefault();
@@ -171,30 +192,30 @@ const Navbar = () => {
         ) : (
           <>
             <nav className="hidden items-center gap-8 md:flex">
-              <Link
+              <NavLink
                 to="/features"
-                className="rounded-full px-3 py-2 text-sm font-semibold text-slate-600 transition hover:bg-slate-100 hover:text-slate-950"
+                className={navLinkClass}
               >
                 Tính năng
-              </Link>
-              <Link
+              </NavLink>
+              <NavLink
                 to="/pricing"
-                className="rounded-full px-3 py-2 text-sm font-semibold text-slate-600 transition hover:bg-slate-100 hover:text-slate-950"
+                className={navLinkClass}
               >
                 Bảng giá
-              </Link>
-              <Link
+              </NavLink>
+              <NavLink
                 to="/about-us"
-                className="rounded-full px-3 py-2 text-sm font-semibold text-slate-600 transition hover:bg-slate-100 hover:text-slate-950"
+                className={navLinkClass}
               >
                 Về chúng tôi
-              </Link>
-              <Link
+              </NavLink>
+              <NavLink
                 to="/auth/login"
-                className="rounded-full px-3 py-2 text-sm font-semibold text-slate-600 transition hover:bg-slate-100 hover:text-slate-950"
+                className={navLinkClass}
               >
                 Đăng nhập
-              </Link>
+              </NavLink>
             </nav>
 
             <div className="flex items-center gap-3">

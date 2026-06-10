@@ -34,6 +34,12 @@ const UserServicePage = lazy(
 const UserBookingPage = lazy(
   () => import("@/pages/User/UserBookingPage/userBookingPage"),
 );
+const UserInvoicePage = lazy(
+  () => import("@/pages/User/UserInvoicePage/userInvoicePage"),
+);
+const UserInvoiceDetailPage = lazy(
+  () => import("@/pages/User/UserInvoicePage/userInvoiceDetailPage"),
+);
 const UserCreateBookingPage = lazy(
   () =>
     import("@/pages/User/UserBookingPage/UserCreateBooking/userCreateBookingPage"),
@@ -155,6 +161,8 @@ const AppRoutes = () => {
             <Route path="service" element={<UserServicePage />} />
             <Route path="booking" element={<UserBookingPage />} />
             <Route path="booking/new" element={<UserCreateBookingPage />} />
+            <Route path="invoices" element={<UserInvoicePage />} />
+            <Route path="invoices/:id" element={<UserInvoiceDetailPage />} />
           </Route>
         </Route>
         <Route path="/admin" element={<AdminLayout />}>

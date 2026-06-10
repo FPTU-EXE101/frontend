@@ -4,8 +4,8 @@ import {
   AlertCircle,
   CalendarDays,
   CheckCircle2,
+  CreditCard,
   Heart,
-  Home,
   Mail,
   MapPin,
   Phone,
@@ -339,26 +339,44 @@ export default function CustomerProfilePage() {
       : "Không tải được hồ sơ cá nhân. Vui lòng thử lại sau.";
 
   return (
-    <div className="min-h-[calc(100vh-3rem)] bg-[#fff8f3] px-4 py-8 sm:px-6 lg:px-8">
-      <div className="mx-auto flex max-w-6xl flex-col gap-6">
-        <header className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
-          <div>
-            <div className="mb-3 flex items-center gap-2 text-sm font-medium text-slate-500">
-              <Home className="h-4 w-4" />
-              <span>/</span>
-              <span className="text-slate-900">Customer Profile</span>
+    <div className="min-h-[calc(100vh-3rem)] bg-slate-50 px-4 py-6 sm:px-6 lg:px-8">
+      <div className="flex w-full flex-col gap-6">
+        <header className="rounded-[30px] border border-slate-200 bg-white p-6 shadow-sm">
+          <div className="flex flex-col  gap-5 md:flex-row md:items-center md:justify-between">
+            <div >
+              <div className="mb-3 inline-flex items-center gap-2 rounded-full bg-rose-50 px-3 py-1 text-sm font-semibold text-[#B24C40]">
+                <User className="h-4 w-4" />
+                Hồ sơ khách hàng
+              </div>
+              <h1 className="text-3xl font-semibold text-slate-950">
+                Hồ sơ cá nhân
+              </h1>
+              <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-600">
+                Xin chào, <span className="font-semibold">{displayName}</span>.
+                Theo dõi thông tin cá nhân, thú cưng, lịch hẹn và trạng thái tài
+                khoản của bạn.
+              </p>
             </div>
-            <h1 className="text-3xl font-bold text-slate-950">Hồ sơ cá nhân</h1>
-            <p className="mt-2 text-sm leading-6 text-slate-600">
-              Xin chào, <span className="font-semibold">{displayName}</span>.
-              Quản lý thông tin cá nhân, thú cưng và lịch hẹn của bạn.
-            </p>
+            <div className="flex items-center gap-3 rounded-2xl border border-slate-200 bg-slate-50 p-4">
+              <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-[#D56756] text-xl font-bold text-white shadow-sm">
+                {initial}
+              </div>
+              <div className="min-w-0">
+                <p className="truncate font-semibold text-slate-950">
+                  {displayName}
+                </p>
+                <p className="truncate text-sm text-slate-500">
+                  {email || "Chưa có email"}
+                </p>
+              </div>
+            </div>
           </div>
         </header>
 
         {isLoading ? (
-          <div className="rounded-[28px] border border-slate-200 bg-white p-8 text-center text-slate-600 shadow-sm">
-            Đang tải hồ sơ cá nhân...
+          <div className="rounded-[30px] border border-slate-200 bg-white p-8 text-center text-slate-600 shadow-sm">
+            <div className="mx-auto mb-4 h-10 w-10 animate-pulse rounded-full bg-rose-100" />
+            <p>Đang tải hồ sơ cá nhân...</p>
           </div>
         ) : !userId ? (
           <div className="rounded-[28px] border border-rose-200 bg-rose-50 p-5 text-sm text-rose-700 shadow-sm">
@@ -371,8 +389,8 @@ export default function CustomerProfilePage() {
           </div>
         ) : (
           <>
-            <section className="grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
-              <div className="rounded-[28px] border border-slate-200 bg-white p-6 shadow-sm">
+            <section className="grid gap-6 xl:grid-cols-[1.35fr_0.65fr]">
+              <div className="rounded-[30px] border border-slate-200 bg-white p-6 shadow-sm">
                 <div className="flex flex-col gap-5 sm:flex-row sm:items-center">
                   <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-full bg-[#D56756] text-3xl font-bold text-white shadow-sm">
                     {initial}
@@ -393,7 +411,7 @@ export default function CustomerProfilePage() {
                   </div>
                 </div>
 
-                <div className="mt-6 grid gap-3 sm:grid-cols-2">
+                <div className="mt-6 grid gap-3 md:grid-cols-2 2xl:grid-cols-3">
                   <FieldRow icon={User} label="Họ tên" value={displayName} />
                   <FieldRow icon={Mail} label="Email" value={email} />
                   <FieldRow
@@ -416,7 +434,7 @@ export default function CustomerProfilePage() {
               </div>
 
               <aside className="flex flex-col gap-4">
-                <div className="rounded-[28px] border border-slate-200 bg-white p-6 shadow-sm">
+                <div className="rounded-[30px] border border-slate-200 bg-white p-6 shadow-sm">
                   <h2 className="text-lg font-bold text-slate-950">
                     Thao tác nhanh
                   </h2>
@@ -437,10 +455,20 @@ export default function CustomerProfilePage() {
                     >
                       <Link to="/user/booking">Xem lịch hẹn</Link>
                     </Button>
+                    <Button
+                      asChild
+                      variant="outline"
+                      className="rounded-full border-slate-200 text-slate-800 hover:bg-slate-50"
+                    >
+                      <Link to="/user/invoices">
+                        <CreditCard className="h-4 w-4" />
+                        Xem hóa đơn
+                      </Link>
+                    </Button>
                   </div>
                 </div>
 
-                <div className="rounded-[28px] border border-slate-200 bg-white p-6 shadow-sm">
+                <div className="rounded-[30px] border border-slate-200 bg-white p-6 shadow-sm">
                   <h2 className="text-lg font-bold text-slate-950">
                     Mẹo sử dụng
                   </h2>
@@ -464,7 +492,7 @@ export default function CustomerProfilePage() {
               totalAppointments={data?.appointments.length ?? 0}
             />
 
-            <section className="grid gap-4 sm:grid-cols-2">
+            <section className="grid gap-4 md:grid-cols-2">
               <StatCard
                 icon={Heart}
                 label="Thú cưng của tôi"
