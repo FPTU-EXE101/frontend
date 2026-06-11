@@ -11,7 +11,7 @@ import {
   FieldSeparator,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import authApi from "@/apis/authAPI";
 import { useFormik } from "formik";
 import * as Yup from "yup";
@@ -26,11 +26,46 @@ const validationSchema = Yup.object({
   password: Yup.string().required("Vui lòng nhập mật khẩu."),
 });
 
+const normalizeRole = (role?: string | null) => role?.trim().toLowerCase() ?? "";
+
+const defaultPathByRole = (role: string) => {
+  switch (normalizeRole(role)) {
+    case "admin":
+      return "/admin/dashboard";
+    case "manager":
+      return "/manager/dashboard";
+    case "customer":
+    case "user":
+      return "/user/service";
+    default:
+      return "/";
+  }
+};
+
+const isPathAllowedForRole = (path: string, role: string) => {
+  const normalizedRole = normalizeRole(role);
+
+  if (path.startsWith("/admin")) {
+    return normalizedRole === "admin";
+  }
+
+  if (path.startsWith("/manager") || path.startsWith("/staff")) {
+    return normalizedRole === "manager";
+  }
+
+  if (path.startsWith("/user")) {
+    return normalizedRole === "customer" || normalizedRole === "user";
+  }
+
+  return true;
+};
+
 export function LoginForm({ className, ...props }: ComponentProps<"form">) {
   const [loading, setLoading] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
 
   const formik = useFormik({
     initialValues: {
@@ -52,17 +87,25 @@ export function LoginForm({ className, ...props }: ComponentProps<"form">) {
 
           window.dispatchEvent(new Event("authChanged"));
 
-          if (role?.toLowerCase() === "admin") {
-            navigate("/admin/dashboard");
-            return;
-          }
+          const fromPath =
+            typeof location.state === "object" &&
+            location.state !== null &&
+            "from" in location.state &&
+            typeof location.state.from === "object" &&
+            location.state.from !== null &&
+            "pathname" in location.state.from &&
+            typeof location.state.from.pathname === "string"
+              ? location.state.from.pathname
+              : "";
+          const targetPath =
+            fromPath && isPathAllowedForRole(fromPath, role)
+              ? fromPath
+              : defaultPathByRole(role);
 
-          if (role?.toLowerCase() === "manager") {
-            navigate("/manager/dashboard");
-            return;
-          }
+          navigate(targetPath, { replace: true });
+          return;
         }
-        navigate("/");
+        navigate("/", { replace: true });
       } catch (err) {
         console.error(err);
         setSubmitError(getBackendErrorMessage(err));

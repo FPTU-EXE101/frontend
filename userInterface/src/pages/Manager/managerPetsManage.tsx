@@ -73,10 +73,29 @@ const getCustomerEmail = (customer?: Customer, pet?: Pet) =>
 const getCustomerPhone = (customer?: Customer, pet?: Pet) =>
   customer?.phoneNumber || customer?.phone || pet?.customer?.phone || pet?.phone || "";
 
+const getPetType = (pet: Pet) => pet.species || pet.type || "Chưa phân loại";
+
+const getDateTime = (value?: string) => {
+  if (!value) return 0;
+  const time = new Date(value).getTime();
+  return Number.isNaN(time) ? 0 : time;
+};
+
+const formatDate = (value?: string) => {
+  if (!value) return "Chưa rõ";
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return "Chưa rõ";
+  return date.toLocaleDateString("vi-VN");
+};
+
 const ManagerPetsManage = () => {
   const [pets, setPets] = useState<Pet[]>([]);
   const [customers, setCustomers] = useState<Customer[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
+  const [petTypeFilter, setPetTypeFilter] = useState("all");
+  const [createdSort, setCreatedSort] = useState<"newest" | "oldest">(
+    "newest",
+  );
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const debouncedSearchTerm = useDebounce(searchTerm);
@@ -123,28 +142,66 @@ const ManagerPetsManage = () => {
     [customers],
   );
 
+  const petTypeOptions = useMemo(() => {
+    const typeMap = new Map<string, string>();
+
+    pets.forEach((pet) => {
+      const type = getPetType(pet);
+      const normalizedType = normalizeText(type);
+
+      if (normalizedType && normalizedType !== normalizeText("Chưa phân loại")) {
+        typeMap.set(normalizedType, type);
+      }
+    });
+
+    return Array.from(typeMap.entries())
+      .map(([value, label]) => ({ value, label }))
+      .sort((a, b) => a.label.localeCompare(b.label, "vi"));
+  }, [pets]);
+
   const filteredPets = useMemo(() => {
     const query = normalizeText(debouncedSearchTerm);
+    const selectedType = normalizeText(petTypeFilter);
 
-    if (!query) {
-      return pets;
-    }
+    return pets
+      .filter((pet) => {
+        if (selectedType !== "all" && normalizeText(getPetType(pet)) !== selectedType) {
+          return false;
+        }
 
-    return pets.filter((pet) => {
-      const customer = customersById[pet.customerId];
-      const searchableValues = [
-        pet.name,
-        pet.id,
-        getCustomerName(customer, pet),
-        getCustomerEmail(customer, pet),
-        getCustomerPhone(customer, pet),
-      ];
+        if (!query) {
+          return true;
+        }
 
-      return searchableValues.some((value) =>
-        normalizeText(value).includes(query),
-      );
-    });
-  }, [customersById, debouncedSearchTerm, pets]);
+        const customer = customersById[pet.customerId];
+        const searchableValues = [
+          pet.name,
+          pet.id,
+          getPetType(pet),
+          getCustomerName(customer, pet),
+          getCustomerEmail(customer, pet),
+          getCustomerPhone(customer, pet),
+        ];
+
+        return searchableValues.some((value) =>
+          normalizeText(value).includes(query),
+        );
+      })
+      .sort((firstPet, secondPet) => {
+        const firstBirthTime = getDateTime(firstPet.dateOfBirth);
+        const secondBirthTime = getDateTime(secondPet.dateOfBirth);
+        const dateDiff =
+          createdSort === "newest"
+            ? secondBirthTime - firstBirthTime
+            : firstBirthTime - secondBirthTime;
+
+        if (dateDiff !== 0) {
+          return dateDiff;
+        }
+
+        return firstPet.name.localeCompare(secondPet.name, "vi");
+      });
+  }, [createdSort, customersById, debouncedSearchTerm, petTypeFilter, pets]);
 
   const petPagination = usePagination(filteredPets, 12);
 
@@ -166,8 +223,8 @@ const ManagerPetsManage = () => {
               Tổng số {pets.length} thú cưng
             </p>
           </div>
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-            <div className="relative w-full sm:w-[28rem]">
+          <div className="flex flex-col gap-3 xl:flex-row xl:items-center">
+            <div className="relative w-full xl:w-[24rem]">
               <Search className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-400" />
               <Input
                 value={searchTerm}
@@ -176,6 +233,28 @@ const ManagerPetsManage = () => {
                 className="pl-12"
               />
             </div>
+            <select
+              value={petTypeFilter}
+              onChange={(event) => setPetTypeFilter(event.target.value)}
+              className="h-11 rounded-md border border-input bg-white px-3 text-sm text-slate-700 shadow-sm outline-none transition-colors focus-visible:ring-2 focus-visible:ring-ring xl:w-44"
+            >
+              <option value="all">Tất cả loại</option>
+              {petTypeOptions.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
+            <select
+              value={createdSort}
+              onChange={(event) =>
+                setCreatedSort(event.target.value === "oldest" ? "oldest" : "newest")
+              }
+              className="h-11 rounded-md border border-input bg-white px-3 text-sm text-slate-700 shadow-sm outline-none transition-colors focus-visible:ring-2 focus-visible:ring-ring xl:w-48"
+            >
+              <option value="newest">Ngày sinh mới nhất</option>
+              <option value="oldest">Ngày sinh cũ nhất</option>
+            </select>
             <Button className="h-11 whitespace-nowrap bg-[#D56756] text-white hover:bg-[#b2483c]">
               <Link to="/manager/pets/new">+ Thêm thú cưng mới</Link>
             </Button>
@@ -210,7 +289,9 @@ const ManagerPetsManage = () => {
                           {pet.name}
                         </h3>
                         <p className="text-sm text-slate-500">
-                          {pet.color || "Golden Retriever"}
+                          {[getPetType(pet), pet.breed, pet.color]
+                            .filter(Boolean)
+                            .join(" • ")}
                         </p>
                       </div>
                       <div className="rounded-full bg-white px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-slate-600 shadow-sm">
@@ -242,6 +323,12 @@ const ManagerPetsManage = () => {
                             : ""}
                         </span>
                       </div>
+                      <div className="flex items-center gap-2">
+                        <FileText className="h-4 w-4 text-slate-400" />
+                        <span>
+                          Ngày sinh: {formatDate(pet.dateOfBirth)}
+                        </span>
+                      </div>
                     </div>
 
                     <div className="grid gap-3 sm:grid-cols-2">
@@ -267,7 +354,7 @@ const ManagerPetsManage = () => {
             })
           ) : (
             <div className="col-span-full rounded-[2rem] border border-slate-200 bg-white p-10 text-center text-slate-500 shadow-sm">
-              Không tìm thấy thú cưng nào với từ khóa hiện tại.
+              Không tìm thấy thú cưng nào với bộ lọc hiện tại.
             </div>
           )}
         </div>

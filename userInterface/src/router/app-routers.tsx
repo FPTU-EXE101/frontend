@@ -1,5 +1,6 @@
 import { lazy, Suspense } from "react";
 import { Navigate, Route, Routes } from "react-router-dom";
+import ProtectedRoute from "@/components/auth/protected-route";
 
 const Mainlayout = lazy(() => import("@/layout"));
 const AdminLayout = lazy(() => import("@/pages/Admin/adminLayout"));
@@ -14,6 +15,7 @@ const Home = lazy(() => import("@/pages/home"));
 const ManagerLayout = lazy(() => import("@/pages/Manager/managerLayout"));
 const StaffLayout = lazy(() => import("@/pages/Staff/staffLayout"));
 const NotFound = lazy(() => import("@/pages/NotFound"));
+const Unauthorized = lazy(() => import("@/pages/Unauthorized"));
 const LoginPage = lazy(() => import("@/pages/Auth/loginPage"));
 const SignupPage = lazy(() => import("@/pages/Auth/signUpPage"));
 const ConfirmEmailPage = lazy(() => import("@/pages/Auth/confirmEmailPage"));
@@ -149,58 +151,67 @@ const AppRoutes = () => {
           <Route path="help" element={<HelpCenter />} />
           <Route path="terms" element={<Terms />} />
           <Route path="privacy" element={<Privacy />} />
-          <Route path="payment/success" element={<PaymentSuccessPage />} />
+          <Route path="unauthorized" element={<Unauthorized />} />
           <Route path="confirm-email" element={<ConfirmEmailPage />} />
           <Route path="verify-email-notice" element={<VerifyEmailNotice />} />
           <Route path="pet-card/:petId" element={<DigitalPetCard />} />
-          <Route path="user" element={<UserInfoLayout />}>
-            <Route path="profile" element={<CustomerProfilePage />} />
-            <Route path="home" element={<UserHomePage />} />
-            <Route path="pet" element={<UserPetPage />} />
-            <Route path="pet/new" element={<CreatePetPage />} />
-            <Route path="service" element={<UserServicePage />} />
-            <Route path="booking" element={<UserBookingPage />} />
-            <Route path="booking/new" element={<UserCreateBookingPage />} />
-            <Route path="invoices" element={<UserInvoicePage />} />
-            <Route path="invoices/:id" element={<UserInvoiceDetailPage />} />
+          <Route element={<ProtectedRoute allowedRoles={["manager"]} />}>
+            <Route path="payment/success" element={<PaymentSuccessPage />} />
+          </Route>
+          <Route element={<ProtectedRoute allowedRoles={["customer", "user"]} />}>
+            <Route path="user" element={<UserInfoLayout />}>
+              <Route path="profile" element={<CustomerProfilePage />} />
+              <Route path="home" element={<UserHomePage />} />
+              <Route path="pet" element={<UserPetPage />} />
+              <Route path="pet/new" element={<CreatePetPage />} />
+              <Route path="service" element={<UserServicePage />} />
+              <Route path="booking" element={<UserBookingPage />} />
+              <Route path="booking/new" element={<UserCreateBookingPage />} />
+              <Route path="invoices" element={<UserInvoicePage />} />
+              <Route path="invoices/:id" element={<UserInvoiceDetailPage />} />
+            </Route>
           </Route>
         </Route>
-        <Route path="/admin" element={<AdminLayout />}>
-          <Route index element={<Navigate to="dashboard" replace />} />
-          <Route path="dashboard" element={<AdminDashboard />} />
-          <Route path="managers/new" element={<AdminCreateManager />} />
-          <Route path="managers" element={<AdminManagersManage />} />
-          <Route path="petcards" element={<ManagerPetCardManagement />} />
+        <Route element={<ProtectedRoute allowedRoles={["admin"]} />}>
+          <Route path="/admin" element={<AdminLayout />}>
+            <Route index element={<Navigate to="dashboard" replace />} />
+            <Route path="dashboard" element={<AdminDashboard />} />
+            <Route path="managers/new" element={<AdminCreateManager />} />
+            <Route path="managers" element={<AdminManagersManage />} />
+            <Route path="petcards" element={<ManagerPetCardManagement />} />
+          </Route>
         </Route>
-        <Route path="/staff" element={<StaffLayout />}></Route>
-        <Route path="/manager" element={<ManagerLayout />}>
-          <Route index element={<Navigate to="dashboard" replace />} />
-          <Route path="dashboard" element={<ManagerDashboard />} />
-          <Route path="customers" element={<ManagerCustomersManage />} />
-          <Route path="petcards" element={<ManagerPetCardManagement />} />
-          <Route path="pets" element={<ManagerPetsManage />} />
-          <Route path="pets/new" element={<ManagerPetCreatePage />} />
-          <Route
-            path="pets/:id/medical-record"
-            element={<ManagerPetMedicalRecord />}
-          />
-          <Route
-            path="pets/:id/medical-record/new"
-            element={<ManagerPetMedicalRecordCreate />}
-          />
-          <Route path="appointments" element={<ManagerAppointmentsManage />} />
-          <Route path="services" element={<ManagerServicesManage />} />
-          <Route path="services/new" element={<ManagerServiceCreate />} />
-          <Route path="services/:id/edit" element={<ManagerServiceEdit />} />
-          <Route path="categories" element={<ManagerCategoriesManage />} />
-          <Route path="products" element={<ManagerProductsMange />} />
-          <Route path="products/new" element={<ManagerProductCreate />} />
-          <Route path="products/:id/edit" element={<ManagerProductEdit />} />
-          <Route path="crm" element={<ManagerCRMManage />} />
-          <Route path="payments" element={<ManagerPaymentManage />} />
-          <Route path="invoices" element={<ManagerInvoicesManage />} />
-          <Route path="automation" element={<ManagerAutomationManage />} />
-          <Route path="settings" element={<ManagerSettingManage />} />
+        <Route element={<ProtectedRoute allowedRoles={["manager"]} />}>
+          <Route path="/staff" element={<StaffLayout />}></Route>
+          <Route path="/manager" element={<ManagerLayout />}>
+            <Route index element={<Navigate to="dashboard" replace />} />
+            <Route path="dashboard" element={<ManagerDashboard />} />
+            <Route path="customers" element={<ManagerCustomersManage />} />
+            <Route path="petcards" element={<ManagerPetCardManagement />} />
+            <Route path="pets" element={<ManagerPetsManage />} />
+            <Route path="pets/new" element={<ManagerPetCreatePage />} />
+            <Route
+              path="pets/:id/medical-record"
+              element={<ManagerPetMedicalRecord />}
+            />
+            <Route
+              path="pets/:id/medical-record/new"
+              element={<ManagerPetMedicalRecordCreate />}
+            />
+            <Route path="appointments" element={<ManagerAppointmentsManage />} />
+            <Route path="services" element={<ManagerServicesManage />} />
+            <Route path="services/new" element={<ManagerServiceCreate />} />
+            <Route path="services/:id/edit" element={<ManagerServiceEdit />} />
+            <Route path="categories" element={<ManagerCategoriesManage />} />
+            <Route path="products" element={<ManagerProductsMange />} />
+            <Route path="products/new" element={<ManagerProductCreate />} />
+            <Route path="products/:id/edit" element={<ManagerProductEdit />} />
+            <Route path="crm" element={<ManagerCRMManage />} />
+            <Route path="payments" element={<ManagerPaymentManage />} />
+            <Route path="invoices" element={<ManagerInvoicesManage />} />
+            <Route path="automation" element={<ManagerAutomationManage />} />
+            <Route path="settings" element={<ManagerSettingManage />} />
+          </Route>
         </Route>
         {/* 404 Page - must be last */}
         <Route path="*" element={<NotFound />} />

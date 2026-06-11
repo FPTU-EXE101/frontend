@@ -70,15 +70,23 @@ const Navbar = () => {
         ? "border-[#D56756]/45 bg-[#F8DED9] text-[#B24C40] shadow-sm"
         : "border-transparent text-slate-600 hover:border-slate-200 hover:bg-slate-100 hover:text-slate-950",
     ].join(" ");
+  const normalizedRole = userRole.toLowerCase();
+  const isCustomer = normalizedRole === "customer" || normalizedRole === "user";
+  const roleDashboardPath =
+    normalizedRole === "admin"
+      ? "/admin/dashboard"
+      : normalizedRole === "manager"
+        ? "/manager/dashboard"
+        : "";
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-slate-200/70 bg-white/82 shadow-sm shadow-slate-200/40 backdrop-blur-xl supports-[backdrop-filter]:bg-white/72">
       <div className="mx-auto flex max-w-full items-center justify-around px-4 py-3">
         <Link to="/" className="flex items-center gap-3">
           <img
-            src="/logoPethub.png"
+            src="/Artboard 5.svg"
             alt="PetHub"
-            className="h-11 w-auto max-w-none object-contain sm:h-12"
+            className="h-auto w-[180px] object-contain sm:w-[220px]"
             fetchPriority="high"
             decoding="async"
           />
@@ -94,36 +102,30 @@ const Navbar = () => {
               >
                 Trang chủ
               </NavLink>
-              <NavLink
-                to="/user/service"
-                className={navLinkClass}
-              >
-                Dịch vụ
-              </NavLink>
-              <NavLink
-                to="/user/booking"
-                className={navLinkClass}
-              >
-                Lịch hẹn
-              </NavLink>
-              <NavLink
-                to="/user/pet"
-                className={navLinkClass}
-              >
-                Thú cưng
-              </NavLink>
-              <NavLink
-                to="/user/invoices"
-                className={navLinkClass}
-              >
-                Hóa đơn
-              </NavLink>
-              <NavLink
-                to="/user/profile"
-                className={navLinkClass}
-              >
-                Hồ sơ
-              </NavLink>
+              {isCustomer ? (
+                <>
+                  <NavLink to="/user/service" className={navLinkClass}>
+                    Dịch vụ
+                  </NavLink>
+                  <NavLink to="/user/booking" className={navLinkClass}>
+                    Lịch hẹn
+                  </NavLink>
+                  <NavLink to="/user/pet" className={navLinkClass}>
+                    Thú cưng
+                  </NavLink>
+                  <NavLink to="/user/invoices" className={navLinkClass}>
+                    Hóa đơn
+                  </NavLink>
+                  <NavLink to="/user/profile" className={navLinkClass}>
+                    Hồ sơ
+                  </NavLink>
+                </>
+              ) : null}
+              {roleDashboardPath ? (
+                <NavLink to={roleDashboardPath} className={navLinkClass}>
+                  Dashboard
+                </NavLink>
+              ) : null}
             </nav>
             <div className="hidden items-center gap-3 md:flex">
               <div
@@ -155,18 +157,13 @@ const Navbar = () => {
                     align="end"
                     className="min-w-[12rem]"
                   >
-                    {(userRole?.toLowerCase() === "admin" ||
-                      userRole?.toLowerCase() === "manager") && (
+                    {roleDashboardPath && (
                       <DropdownMenuItem asChild>
                         <Link
-                          to={
-                            userRole?.toLowerCase() === "admin"
-                              ? "/admin/dashboard"
-                              : "/manager/dashboard"
-                          }
+                          to={roleDashboardPath}
                           className="w-full"
                         >
-                          Quản lý
+                          Dashboard
                         </Link>
                       </DropdownMenuItem>
                     )}

@@ -107,6 +107,7 @@ const POSPaymentPage = ({ appointmentId }: POSPaymentPageProps) => {
         <CartSidebar
           cartItems={payment.cartItems}
           lastInvoiceId={payment.lastInvoiceId}
+          medicalRecordForm={payment.medicalRecordForm}
           paying={payment.paying}
           selectedAppointment={payment.selectedAppointment}
           summary={payment.summary}
@@ -114,6 +115,7 @@ const POSPaymentPage = ({ appointmentId }: POSPaymentPageProps) => {
           onCreateAndConfirmInvoice={payment.handleCreateAndConfirmInvoice}
           onDecreaseQuantity={payment.handleDecreaseQuantity}
           onIncreaseQuantity={payment.handleIncreaseQuantity}
+          onMedicalRecordFieldChange={payment.handleMedicalRecordFieldChange}
           onRemoveItem={payment.handleRemoveItem}
         />
       </div>

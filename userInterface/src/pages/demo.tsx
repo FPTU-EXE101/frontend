@@ -99,7 +99,7 @@ const DemoPage = () => {
               {/* Sidebar */}
               <aside className="hidden w-52 shrink-0 border-r border-slate-100 bg-slate-50 p-4 sm:block">
                 <div className="mb-6 flex items-center gap-2 px-2 pt-1">
-                  <img src="/logoPethub.png" alt="PetHub" className="h-8 w-auto object-contain" />
+                  <img src="/Artboard 5.svg" alt="PetHub" className="h-auto w-[150px] object-contain" />
                 </div>
                 <nav className="space-y-1">
                   {sidebarItems.map((item) => {

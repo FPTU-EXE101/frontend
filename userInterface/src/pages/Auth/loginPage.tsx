@@ -50,9 +50,9 @@ export default function LoginPage() {
         <div className="auth-card-in auth-glass w-full max-w-[460px] rounded-[28px] border border-white/20 bg-white/[0.08] p-6 shadow-[0_24px_64px_rgba(0,0,0,0.22)] backdrop-blur-xl [animation:authCardIn_600ms_ease-out_both] sm:p-8">
           <div className="mb-8 text-center">
             <img
-              src="/logoPethub.png"
+              src="/Artboard 5.svg"
               alt="PetHub"
-              className="mx-auto h-12 w-auto max-w-none object-contain sm:h-14"
+              className="mx-auto h-auto w-[220px] object-contain sm:w-[280px]"
               fetchPriority="high"
               decoding="async"
             />

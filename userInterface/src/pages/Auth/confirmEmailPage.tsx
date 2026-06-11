@@ -56,9 +56,9 @@ export default function ConfirmEmailPage() {
           {/* Header */}
           <div className="mb-8 text-center">
             <img
-              src="/logoPethub.png"
+              src="/Artboard 5.svg"
               alt="PetHub"
-              className="mx-auto mb-6 h-14 w-auto object-contain"
+              className="mx-auto mb-6 h-auto w-[240px] object-contain"
               fetchPriority="high"
               decoding="async"
             />

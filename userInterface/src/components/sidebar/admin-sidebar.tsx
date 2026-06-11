@@ -54,9 +54,9 @@ export function AdminSidebar() {
         <div className="space-y-3 bg-white px-4 py-5">
           <Link to="/" className="flex items-center gap-3">
             <img
-              src="/logoPethub.png"
+              src="/Artboard 5.svg"
               alt="PetHub"
-              className="h-12 w-auto max-w-none object-contain sm:h-12"
+              className="h-auto w-full max-w-[170px] object-contain"
               loading="lazy"
               decoding="async"
             />

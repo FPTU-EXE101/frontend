@@ -17,9 +17,9 @@ export default function VerifyEmailNotice() {
       <main className="relative z-10 w-full max-w-[520px]">
         <div className="rounded-[28px] border border-[#f0c7bd] bg-white/90 p-6 text-center shadow-[0_24px_70px_rgba(112,63,48,0.14)] backdrop-blur sm:p-8">
           <img
-            src="/logoPethub.png"
+            src="/Artboard 5.svg"
             alt="PetHub"
-            className="mx-auto h-12 w-auto object-contain sm:h-14"
+            className="mx-auto h-auto w-[220px] object-contain sm:w-[280px]"
             fetchPriority="high"
             decoding="async"
           />

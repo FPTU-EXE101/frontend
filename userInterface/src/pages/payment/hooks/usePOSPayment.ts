@@ -3,10 +3,12 @@ import appointmentApi from "@/apis/appointmentAPI";
 import { getBackendErrorMessage } from "@/utils/getBackendErrorMessage";
 import invoiceApi from "@/apis/invoiceAPI";
 import itemApi from "@/apis/itemsAPI";
+import medicalRecordApi from "@/apis/medicalRecordAPI";
 import petApi from "@/apis/petAPI";
 import userApi from "@/apis/userAPI";
 import type { Appointment } from "@/types/appointment.type";
 import type { CreateInvoice } from "@/types/invoice.type";
+import type { CreateMedicalRecordRequest } from "@/types/medicalRecord.type";
 import type { Items } from "@/types/item.type";
 import type { Pet } from "@/types/pet.type";
 import type { User } from "@/types/user.type";
@@ -40,6 +42,12 @@ export const usePOSPayment = ({
   const [appointments, setAppointments] = useState<AppointmentPOS[]>([]);
   const [selectedAppointment, setSelectedAppointment] =
     useState<AppointmentPOS | null>(null);
+  const [medicalRecordForm, setMedicalRecordForm] = useState({
+    diagnosis: "",
+    medicalRecordNote: "",
+    prescription: "",
+    treatment: "",
+  });
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [appointmentSearchTerm, setAppointmentSearchTerm] = useState("");
@@ -161,7 +169,9 @@ export const usePOSPayment = ({
         const initialAppointment = appointmentPOSItems.find(
           (appointment) => appointment.id === initialAppointmentId,
         );
-        if (initialAppointment) setSelectedAppointment(initialAppointment);
+        if (initialAppointment) {
+          setSelectedAppointment(initialAppointment);
+        }
       }
     } catch (err) {
       if (signal?.aborted) return;
@@ -229,7 +239,26 @@ export const usePOSPayment = ({
 
   const handleSelectAppointment = (appointment: AppointmentPOS) => {
     setSelectedAppointment(appointment);
+    setMedicalRecordForm({
+      diagnosis: "",
+      medicalRecordNote: "",
+      prescription: "",
+      treatment: "",
+    });
     setError("");
+  };
+
+  const handleMedicalRecordFieldChange = (
+    field: keyof Pick<
+      CreateMedicalRecordRequest,
+      "diagnosis" | "treatment" | "prescription" | "medicalRecordNote"
+    >,
+    value: string,
+  ) => {
+    setMedicalRecordForm((current) => ({
+      ...current,
+      [field]: value,
+    }));
   };
 
   const handleAddItem = (item: Items) => {
@@ -298,6 +327,11 @@ export const usePOSPayment = ({
       return;
     }
 
+    if (payingAppointment && !medicalRecordForm.diagnosis.trim()) {
+      setError("Vui lòng nhập chẩn đoán y tế.");
+      return;
+    }
+
     const details = mapCartToCreateInvoiceDetails(cartItems);
     const payload: CreateInvoice = payingAppointment
       ? {
@@ -340,6 +374,16 @@ export const usePOSPayment = ({
         }
 
         try {
+          await medicalRecordApi.createMedicalRecord({
+            appointmentId: payingAppointment.id,
+            createAt: new Date().toISOString(),
+            diagnosis: medicalRecordForm.diagnosis.trim(),
+            medicalRecordNote: medicalRecordForm.medicalRecordNote.trim(),
+            petId: payingAppointment.petId,
+            prescription: medicalRecordForm.prescription.trim(),
+            treatment: medicalRecordForm.treatment.trim(),
+          });
+
           await appointmentApi.updateAppointment(payingAppointment.id, {
             appointmentDate: toDateOnly(payingAppointment.appointmentDate),
             appointmentNote:
@@ -358,6 +402,12 @@ export const usePOSPayment = ({
 
         resetCart();
         setSelectedAppointment(null);
+        setMedicalRecordForm({
+          diagnosis: "",
+          medicalRecordNote: "",
+          prescription: "",
+          treatment: "",
+        });
         setAppointmentSearchTerm("");
         setAppointments((current) =>
           current.filter(
@@ -388,11 +438,13 @@ export const usePOSPayment = ({
     handleCreateAndConfirmInvoice,
     handleDecreaseQuantity,
     handleIncreaseQuantity,
+    handleMedicalRecordFieldChange,
     handleRemoveItem,
     handleSelectAppointment,
     lastInvoiceId,
     loadingAppointments,
     loadingItems,
+    medicalRecordForm,
     paying,
     productItems,
     resetCart,
