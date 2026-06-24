@@ -299,7 +299,7 @@ const ManagerInvoicesManage = () => {
     try {
       const [invoiceResponse, userResponse] = await Promise.all([
         invoiceApi.getAllInvoices({ signal }),
-        userApi.getAllUsers({ signal }),
+        userApi.getStoreCustomers({ signal }),
       ]);
       setInvoices(normalizeList<Invoice>(invoiceResponse?.data));
       setUsers(normalizeList<User>(userResponse?.data));

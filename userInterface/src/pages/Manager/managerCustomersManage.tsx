@@ -123,7 +123,7 @@ const ManagerCustomersManage = () => {
 
       try {
         const [usersResponse, petsResponse] = await Promise.all([
-          userApi.getAllUsers({
+          userApi.getStoreCustomers({
             signal: controller.signal,
           }),
           petApi.getAllPets({

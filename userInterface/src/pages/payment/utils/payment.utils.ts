@@ -25,13 +25,13 @@ export const normalizeList = <T,>(value: unknown): T[] => {
 };
 
 export const getItemTypeLabel = (type: POSItem["type"]) =>
-  type === 0 || type === "service" ? "Dịch vụ" : "Sản phẩm";
+  type === 0 ? "Dịch vụ" : "Sản phẩm";
 
 export const isServiceItem = (item: POSItem) =>
-  item.type === 0 || item.type === "service";
+  item.type === 0;
 
 export const isProductItem = (item: POSItem) =>
-  item.type === 1 || item.type === "product";
+  item.type === 1;
 
 export const calculateSubtotal = (cartItem: CartItem) =>
   cartItem.item.price * cartItem.quantity;

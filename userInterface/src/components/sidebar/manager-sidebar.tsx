@@ -11,6 +11,7 @@ import {
   QrCode,
   // Zap,
   Settings,
+  Store,
 } from "lucide-react";
 import {
   Sidebar,
@@ -24,6 +25,7 @@ import {
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { getCurrentUserName, logout } from "@/lib/auth";
+import { useManagerStore } from "@/hooks/useManagerStore";
 
 const managerMenuItems = [
   {
@@ -109,6 +111,8 @@ const managerMenuItems = [
 export function ManagerSidebar() {
   const navigate = useNavigate();
   const managerName = getCurrentUserName() || "Manager";
+  const { data: managerStore, isLoading, isStoreIdMissing } =
+    useManagerStore();
 
   const handleLogout = () => {
     logout();
@@ -175,6 +179,21 @@ export function ManagerSidebar() {
         </div>
 
         <div className="rounded-[2rem] border border-slate-200 bg-white p-4 shadow-sm">
+          <div className="mb-4 flex items-start gap-3 rounded-lg bg-[#F8DED9]/55 px-3 py-3">
+            <Store className="mt-0.5 h-4 w-4 shrink-0 text-[#B24C40]" />
+            <div className="min-w-0">
+              <p className="text-[11px] font-semibold uppercase text-[#B24C40]">
+                Phòng khám của bạn
+              </p>
+              <p className="mt-1 truncate text-sm font-bold text-slate-950">
+                {isLoading
+                  ? "Đang tải..."
+                  : isStoreIdMissing
+                    ? "Chưa gắn phòng khám"
+                  : managerStore?.name || "Chưa xác định"}
+              </p>
+            </div>
+          </div>
           <div className="flex items-center gap-3">
             <div className="flex h-11 w-11 items-center justify-center rounded-full bg-slate-950 text-sm font-semibold text-white">
               {managerName.charAt(0).toUpperCase()}
@@ -183,7 +202,9 @@ export function ManagerSidebar() {
               <p className="text-sm font-semibold text-slate-950">
                 {managerName}
               </p>
-              <p className="text-xs text-slate-500">Happy Pets Clinic</p>
+              <p className="truncate text-xs text-slate-500">
+                {managerStore?.email || "Tài khoản quản lý"}
+              </p>
             </div>
           </div>
           <div className="mt-4">

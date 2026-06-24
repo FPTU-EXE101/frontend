@@ -475,7 +475,7 @@ export default function CustomerProfilePage() {
 
                   <ul className="mt-3 space-y-2 text-sm text-slate-600">
                     <li>
-                      • Cập nhật thông tin cá nhân để cửa hàng liên hệ dễ dàng
+                      • Cập nhật thông tin cá nhân để phòng khám liên hệ dễ dàng
                       hơn.
                     </li>
                     <li>

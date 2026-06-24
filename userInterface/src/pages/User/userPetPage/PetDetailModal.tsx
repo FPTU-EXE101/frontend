@@ -134,8 +134,8 @@ const PetDetailModal = ({
                           {rec.diagnosis || "Khám tổng quát"}
                         </p>
                         <span className="shrink-0 text-xs text-slate-400">
-                          {rec.createAt
-                            ? new Date(rec.createAt).toLocaleDateString("vi-VN")
+                          {rec.createdAt
+                            ? new Date(rec.createdAt).toLocaleDateString("vi-VN")
                             : ""}
                         </span>
                       </div>

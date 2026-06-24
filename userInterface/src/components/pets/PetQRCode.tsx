@@ -1,7 +1,9 @@
-import { useMemo, useRef, useState } from "react";
-import { Check, Copy, Download, QrCode } from "lucide-react";
+import { useMemo, useRef
+  // , useState 
+} from "react";
+// import { Check, Copy, Download, QrCode } from "lucide-react";
 import { QRCodeCanvas } from "qrcode.react";
-import { Button } from "@/components/ui/button";
+// import { Button } from "@/components/ui/button";
 
 interface PetQRCodeProps {
   petId: string;
@@ -14,35 +16,37 @@ const getPublicPetCardUrl = (petId: string) => {
   return `${origin}/pet-card/${petId}`;
 };
 
-const PetQRCode = ({ petId, petName }: PetQRCodeProps) => {
+const PetQRCode = ({ petId
+  // , petName 
+}: PetQRCodeProps) => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
-  const [copied, setCopied] = useState(false);
+  // const [copied, setCopied] = useState(false);
   const petCardUrl = useMemo(() => getPublicPetCardUrl(petId), [petId]);
 
-  const handleCopy = async () => {
-    try {
-      await navigator.clipboard.writeText(petCardUrl);
-      setCopied(true);
-      window.setTimeout(() => setCopied(false), 1800);
-    } catch {
-      setCopied(false);
-    }
-  };
+  // const handleCopy = async () => {
+  //   try {
+  //     await navigator.clipboard.writeText(petCardUrl);
+  //     setCopied(true);
+  //     window.setTimeout(() => setCopied(false), 1800);
+  //   } catch {
+  //     setCopied(false);
+  //   }
+  // };
 
-  const handleDownload = () => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
+  // const handleDownload = () => {
+  //   const canvas = canvasRef.current;
+  //   if (!canvas) return;
 
-    const link = document.createElement("a");
-    const safeName = (petName || petId).replace(/[^a-z0-9-_]/gi, "-");
-    link.download = `${safeName}-pet-card-qr.png`;
-    link.href = canvas.toDataURL("image/png");
-    link.click();
-  };
+  //   const link = document.createElement("a");
+  //   const safeName = (petName || petId).replace(/[^a-z0-9-_]/gi, "-");
+  //   link.download = `${safeName}-pet-card-qr.png`;
+  //   link.href = canvas.toDataURL("image/png");
+  //   link.click();
+  // };
 
   return (
-    <section className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
-      <div className="mb-4 flex items-center gap-2">
+    <section className="rounded-3xl border border-slate-200 bg-white  shadow-sm">
+      {/* <div className="mb-4 flex items-center gap-2">
         <span className="flex h-9 w-9 items-center justify-center rounded-full bg-slate-950 text-white">
           <QrCode className="h-4 w-4" />
         </span>
@@ -52,7 +56,7 @@ const PetQRCode = ({ petId, petName }: PetQRCodeProps) => {
             Quét để mở Digital Pet Card public
           </p>
         </div>
-      </div>
+      </div> */}
 
       <div className="flex justify-center rounded-2xl bg-slate-50 p-4">
         <QRCodeCanvas
@@ -66,11 +70,11 @@ const PetQRCode = ({ petId, petName }: PetQRCodeProps) => {
         />
       </div>
 
-      <p className="mt-3 break-all rounded-2xl bg-slate-50 px-3 py-2 text-xs text-slate-500">
+      {/* <p className="mt-3 break-all rounded-2xl bg-slate-50 px-3 py-2 text-xs text-slate-500">
         {petCardUrl}
-      </p>
+      </p> */}
 
-      <div className="mt-4 grid gap-2 sm:grid-cols-2">
+      {/* <div className="mt-4 grid gap-2 sm:grid-cols-2">
         <Button
           type="button"
           variant="outline"
@@ -92,7 +96,7 @@ const PetQRCode = ({ petId, petName }: PetQRCodeProps) => {
           <Download className="mr-2 h-4 w-4" />
           Download PNG
         </Button>
-      </div>
+      </div> */}
     </section>
   );
 };

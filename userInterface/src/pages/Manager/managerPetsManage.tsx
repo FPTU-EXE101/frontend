@@ -8,7 +8,6 @@ import userApi from "@/apis/userAPI";
 import type { Pet } from "@/types/pet.type";
 import type { User } from "@/types/user.type";
 import { getBackendErrorMessage } from "@/utils/getBackendErrorMessage";
-import PetQRCode from "@/components/pets/PetQRCode";
 import { useDebounce } from "@/hooks/useDebounce";
 import { PaginationControls } from "@/components/ui/pagination-controls";
 import { usePagination } from "@/hooks/usePagination";
@@ -112,7 +111,7 @@ const ManagerPetsManage = () => {
           petApi.getAllPets({
             signal: controller.signal,
           }),
-          userApi.getAllUsers({
+          userApi.getStoreCustomers({
             signal: controller.signal,
           }),
         ]);
@@ -346,8 +345,6 @@ const ManagerPetsManage = () => {
                         </Link>
                       </Button>
                     </div>
-
-                    <PetQRCode petId={pet.id} petName={pet.name} />
                   </div>
                 </article>
               );

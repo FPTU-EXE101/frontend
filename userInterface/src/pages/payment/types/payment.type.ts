@@ -10,6 +10,7 @@ export type CartItem = {
 export type AppointmentPOS = {
   id: string;
   petId: string;
+  storeId?: string | null;
   petName: string;
   customerId: string;
   customerName: string;

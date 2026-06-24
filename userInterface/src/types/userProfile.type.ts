@@ -5,8 +5,8 @@ export type UserProfileValues = {
   userName: string;
   email: string;
   plan: number;
-  createAt: string;
-  updateAt: string;
+  createdAt: string;
+  updatedAt: string;
   emailConfirmed: boolean;
 };
 export type AccountUpdateFormValues = {
@@ -15,11 +15,9 @@ export type AccountUpdateFormValues = {
   confirm: string;
 };
 export type UserProfileUpdateValues = {
-  fullName: string;
-  dob: string;
-  gender: string;
-  address: string;
-  phoneNumber: string;
+  id?: string;
+  firstName?: string | null;
+  lastName?: string | null;
 };
 export type UserProfileResponse = {
   code: number;

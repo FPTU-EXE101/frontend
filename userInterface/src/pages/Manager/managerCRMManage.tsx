@@ -306,7 +306,7 @@ const ManagerCRMManage = () => {
 
       try {
         const [usersResponse, petsResponse] = await Promise.all([
-          userApi.getAllUsers({ signal: controller.signal }),
+          userApi.getStoreCustomers({ signal: controller.signal }),
           petApi.getAllPets({ signal: controller.signal }),
         ]);
 

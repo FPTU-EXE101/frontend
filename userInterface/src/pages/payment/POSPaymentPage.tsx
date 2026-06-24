@@ -52,7 +52,7 @@ const POSPaymentPage = ({ appointmentId }: POSPaymentPageProps) => {
         </div>
       )}
 
-      <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_24.5rem]">
+      <div className="space-y-6">
         <main className="space-y-4">
           <AppointmentSelector
             appointments={payment.visibleAppointments}

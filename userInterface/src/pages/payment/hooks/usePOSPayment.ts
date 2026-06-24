@@ -6,6 +6,7 @@ import itemApi from "@/apis/itemsAPI";
 import medicalRecordApi from "@/apis/medicalRecordAPI";
 import petApi from "@/apis/petAPI";
 import userApi from "@/apis/userAPI";
+import { getCurrentStoreId } from "@/lib/auth";
 import type { Appointment } from "@/types/appointment.type";
 import type { CreateInvoice } from "@/types/invoice.type";
 import type { CreateMedicalRecordRequest } from "@/types/medicalRecord.type";
@@ -217,7 +218,7 @@ export const usePOSPayment = ({
     const query = debouncedSearchTerm.trim().toLowerCase();
     if (!query) return items;
 
-    return items.filter((item) => item.name.toLowerCase().includes(query));
+    return items.filter((item) => (item.name ?? "").toLowerCase().includes(query));
   }, [debouncedSearchTerm, items]);
 
   const serviceItems = useMemo(
@@ -333,15 +334,21 @@ export const usePOSPayment = ({
     }
 
     const details = mapCartToCreateInvoiceDetails(cartItems);
+    const storeId =
+      payingAppointment?.storeId ||
+      cartItems.find((cartItem) => cartItem.item.storeId)?.item.storeId ||
+      getCurrentStoreId();
     const payload: CreateInvoice = payingAppointment
       ? {
           appointmentId: payingAppointment.id,
           customerId: payingAppointment.customerId,
           details,
           petId: payingAppointment.petId,
+          storeId,
         }
       : {
           details,
+          storeId,
         };
 
     setPaying(true);
@@ -376,7 +383,7 @@ export const usePOSPayment = ({
         try {
           await medicalRecordApi.createMedicalRecord({
             appointmentId: payingAppointment.id,
-            createAt: new Date().toISOString(),
+            createdAt: new Date().toISOString(),
             diagnosis: medicalRecordForm.diagnosis.trim(),
             medicalRecordNote: medicalRecordForm.medicalRecordNote.trim(),
             petId: payingAppointment.petId,

@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { getCurrentUser } from "@/lib/auth";
 import userApi from "@/apis/userAPI";
-import storePackageApi, { PLANTEST_ITEM_ID } from "@/apis/storePackageAPI";
+import storePackageApi, { PLANTEST_PLAN_ID } from "@/apis/storePackageAPI";
 import { getBackendErrorMessage } from "@/utils/getBackendErrorMessage";
 
 type ApiEnvelope<T> = {
@@ -138,8 +138,7 @@ export const usePremiumUpgradePayment = () => {
 
     try {
       const packageResponse = await storePackageApi.createStorePackage({
-        managerId: user.userId,
-        itemId: PLANTEST_ITEM_ID,
+        planId: PLANTEST_PLAN_ID,
       });
       const createdPackage = packageResponse.data;
 

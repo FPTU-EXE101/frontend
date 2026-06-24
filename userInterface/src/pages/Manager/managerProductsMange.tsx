@@ -73,7 +73,9 @@ const ManagerProductsMange = () => {
       items.filter(
         (item) =>
           isProductItem(item) &&
-          item.name.toLowerCase().includes(debouncedSearchTerm.toLowerCase()),
+          (item.name ?? "")
+            .toLowerCase()
+            .includes(debouncedSearchTerm.toLowerCase()),
       ),
     [debouncedSearchTerm, items],
   );

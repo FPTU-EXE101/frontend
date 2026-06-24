@@ -61,8 +61,8 @@ function Footer() {
               </div>
             </div>
             <p className="max-w-sm text-sm leading-7 text-white/75">
-              Giải pháp quản lý Pet Shop & phòng khám thú y toàn diện, hiện đại
-              và nhân văn.
+              Nền tảng phần mềm trung gian kết nối chủ nuôi với các phòng khám
+              thú y đối tác, và cung cấp công cụ vận hành cho phòng khám.
             </p>
             <div className="flex items-center gap-3">
               {socialLinks.map((item) => {

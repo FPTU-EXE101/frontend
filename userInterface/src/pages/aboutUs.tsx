@@ -16,29 +16,29 @@ import {
 const coreValues = [
   {
     icon: Shield,
-    title: "Vận hành chuẩn hóa",
+    title: "Kết nối đáng tin cậy",
     description:
-      "Từ tiếp nhận khách, đặt lịch, chăm sóc đến thanh toán đều theo một luồng rõ ràng và dễ kiểm soát.",
+      "Chủ nuôi dễ dàng tìm phòng khám thú y đối tác trên nền tảng và đặt lịch khám chỉ trong vài bước, minh bạch và rõ ràng.",
   },
   {
     icon: Heart,
-    title: "Giữ chân khách hàng",
+    title: "Gắn kết chủ nuôi & phòng khám",
     description:
-      "Nhắc lịch thông minh, dữ liệu khách hàng tập trung và trải nghiệm liền mạch giúp khách quay lại đều đặn hơn.",
+      "Nhắc lịch thông minh, hồ sơ thú cưng tập trung và trải nghiệm liền mạch giúp chủ nuôi và phòng khám đối tác đồng hành lâu dài.",
   },
   {
     icon: Sparkles,
-    title: "Sẵn sàng mở rộng",
+    title: "Phần mềm sẵn sàng mở rộng",
     description:
-      "Phù hợp cho cả cửa hàng đơn lẻ lẫn mô hình nhiều chi nhánh, giữ chuẩn dịch vụ đồng nhất khi tăng trưởng.",
+      "Phần mềm quản lý của PetHub phù hợp cho cả phòng khám đơn lẻ lẫn chuỗi nhiều chi nhánh, giữ chuẩn vận hành đồng nhất khi tăng trưởng.",
   },
 ];
 
 const stats = [
-  { value: "500+", label: "Cửa hàng tin dùng" },
-  { value: "50.000+", label: "Thú cưng được quản lý" },
-  { value: "98%", label: "Khách hàng hài lòng" },
-  { value: "3x", label: "Tỷ lệ khách quay lại" },
+  { value: "500+", label: "Phòng khám đối tác" },
+  { value: "50.000+", label: "Thú cưng được kết nối" },
+  { value: "98%", label: "Chủ nuôi hài lòng" },
+  { value: "3x", label: "Tỷ lệ đặt lịch lại" },
 ];
 
 const teamMembers = [
@@ -92,25 +92,25 @@ const milestones = [
     year: "1/2026",
     title: "Khởi đầu hành trình",
     description:
-      "PetHub được thành lập với mong muốn giúp các cửa hàng thú cưng Việt Nam vận hành chuyên nghiệp hơn.",
+      "PetHub được thành lập với mong muốn trở thành nền tảng trung gian kết nối chủ nuôi với các phòng khám thú y đối tác tại Việt Nam.",
   },
   {
     year: "3/2026",
     title: "Ra mắt phiên bản Beta",
     description:
-      "Phiên bản đầu tiên với tính năng quản lý lịch hẹn và hồ sơ thú cưng được 20 cửa hàng đón nhận.",
+      "Phiên bản đầu tiên cho phép chủ nuôi tìm phòng khám và đặt lịch, đồng thời cung cấp phần mềm quản lý cho 20 phòng khám đối tác.",
   },
   {
     year: "4/2026",
     title: "Digital Pet Card",
     description:
-      "Ra mắt tính năng độc quyền Digital Pet Card với QR Code, tăng tỷ lệ khách quay lại lên 3x.",
+      "Ra mắt tính năng độc quyền Digital Pet Card với QR Code, giúp chủ nuôi và phòng khám đối tác tra cứu hồ sơ thú cưng tức thì.",
   },
   {
     year: "6/2026",
     title: "Mở rộng toàn quốc",
     description:
-      "Phục vụ hơn 500 cửa hàng trên khắp Việt Nam với hệ sinh thái quản lý toàn diện từ A-Z.",
+      "Kết nối chủ nuôi với mạng lưới hơn 500 phòng khám đối tác trên khắp Việt Nam qua một nền tảng quản lý toàn diện.",
   },
 ];
 
@@ -133,17 +133,18 @@ const AboutUs = () => {
             </span>
 
             <h1 className="mt-6 text-5xl font-bold leading-tight tracking-tight text-slate-950 sm:text-6xl">
-              Được xây dựng vì <span className="text-[#D56756]">thú cưng</span>{" "}
-              và <span className="text-[#D56756]">người yêu chúng</span>
+              Nền tảng kết nối{" "}
+              <span className="text-[#D56756]">chủ nuôi</span> và{" "}
+              <span className="text-[#D56756]">phòng khám đối tác</span>
             </h1>
 
             <p className="mx-auto mt-6 max-w-2xl text-lg leading-8 text-slate-600">
-              PetHub được xây dựng để giúp chủ pet clinic và pet store vận hành
-              tự tin hơn mỗi ngày: lịch hẹn rõ ràng, chăm sóc khách hàng nhất
-              quán và tăng trưởng doanh thu dựa trên dữ liệu thực tế.
+              PetHub là nền tảng phần mềm trung gian: giúp chủ nuôi tìm và đặt
+              lịch tại các phòng khám thú y đối tác, đồng thời cung cấp phần mềm
+              quản lý để phòng khám và pet shop vận hành chuyên nghiệp mỗi ngày.
             </p>
 
-          
+
           </div>
         </div>
       </section> */}
@@ -157,14 +158,15 @@ const AboutUs = () => {
             </span>
 
             <h1 className="mt-6 text-5xl font-bold leading-tight tracking-tight text-slate-950 sm:text-6xl">
-              Được xây dựng vì <span className="text-[#D56756]">thú cưng</span>{" "}
-              và <span className="text-[#D56756]">người yêu chúng</span>
+              Nền tảng kết nối{" "}
+              <span className="text-[#D56756]">chủ nuôi</span> và{" "}
+              <span className="text-[#D56756]">phòng khám đối tác</span>
             </h1>
 
             <p className="mx-auto mt-6 max-w-2xl text-lg leading-8 text-slate-600">
-              PetHub được xây dựng để giúp chủ pet clinic và pet store vận hành
-              tự tin hơn mỗi ngày: lịch hẹn rõ ràng, chăm sóc khách hàng nhất
-              quán và tăng trưởng doanh thu dựa trên dữ liệu thực tế.
+              PetHub là nền tảng phần mềm trung gian: giúp chủ nuôi tìm và đặt
+              lịch tại các phòng khám thú y đối tác, đồng thời cung cấp phần mềm
+              quản lý để phòng khám và pet shop vận hành chuyên nghiệp mỗi ngày.
             </p>
           </div>
 
@@ -269,26 +271,27 @@ const AboutUs = () => {
                 Câu chuyện của chúng tôi
               </p>
               <h2 className="text-4xl font-bold leading-tight text-slate-950">
-                Chúng tôi hiểu bạn — vì chúng tôi từng ở vị trí đó
+                Chúng tôi là cầu nối giữa bạn và phòng khám phù hợp
               </h2>
               <div className="space-y-4 text-slate-600 leading-8">
                 <p>
-                  Nhóm sáng lập PetHub bắt đầu từ việc quan sát các chủ pet
-                  store và phòng khám thú y vật lộn với sổ sách, cuộc gọi nhắc
-                  lịch thủ công và hồ sơ bệnh án giấy chồng chất.
+                  Nhóm sáng lập PetHub bắt đầu từ việc quan sát chủ nuôi khó
+                  tìm được phòng khám uy tín, trong khi các phòng khám thú y và
+                  pet shop vật lộn với sổ sách, nhắc lịch thủ công và hồ sơ bệnh
+                  án giấy chồng chất.
                 </p>
                 <p>
-                  Chúng tôi nhận ra: ngành thú cưng đang tăng trưởng mạnh mẽ,
-                  nhưng công cụ quản lý thì vẫn còn rất lạc hậu. Đó là lý do
-                  PetHub ra đời — một nền tảng được thiết kế riêng cho người
-                  Việt, giải quyết đúng vấn đề thực tế của ngành.
+                  Chúng tôi nhận ra cần một cầu nối. Đó là lý do PetHub ra đời —
+                  nền tảng trung gian kết nối chủ nuôi với các phòng khám đối
+                  tác, đồng thời cung cấp phần mềm quản lý được thiết kế riêng
+                  cho ngành thú cưng Việt Nam.
                 </p>
               </div>
               <ul className="space-y-3">
                 {[
-                  "Không cần kỹ năng IT, bất kỳ ai cũng dùng được",
-                  "Hỗ trợ người Việt, hiểu văn hóa kinh doanh Việt",
-                  "Cập nhật liên tục theo phản hồi của cộng đồng",
+                  "Chủ nuôi tìm phòng khám đối tác và đặt lịch dễ dàng",
+                  "Phần mềm quản lý cho phòng khám, không cần kỹ năng IT",
+                  "Hỗ trợ người Việt, cập nhật liên tục theo phản hồi cộng đồng",
                 ].map((item, i) => (
                   <li key={i} className="flex items-start gap-3">
                     <CheckCircle className="mt-0.5 h-5 w-5 shrink-0 text-[#D56756]" />
@@ -309,7 +312,7 @@ const AboutUs = () => {
                   <div>
                     <p className="font-bold text-slate-900">Cộng đồng PetHub</p>
                     <p className="text-sm text-slate-500">
-                      500+ cửa hàng đang dùng
+                      500+ phòng khám đối tác
                     </p>
                   </div>
                 </div>
@@ -350,8 +353,8 @@ const AboutUs = () => {
                     Sứ mệnh
                   </p>
                   <p className="mt-2 font-semibold leading-7">
-                    "Mọi cửa hàng thú cưng đều có thể vận hành chuyên nghiệp —
-                    dù lớn hay nhỏ."
+                    "Kết nối mọi chủ nuôi với phòng khám phù hợp, và trao cho
+                    phòng khám phần mềm để vận hành chuyên nghiệp."
                   </p>
                 </div>
               </div>
@@ -426,11 +429,12 @@ const AboutUs = () => {
 
         <div className="container relative mx-auto max-w-3xl text-center">
           <h2 className="text-4xl font-bold tracking-tight sm:text-5xl">
-            Sẵn sàng nâng cấp cửa hàng của bạn?
+            Sẵn sàng cùng PetHub kết nối và phát triển?
           </h2>
           <p className="mx-auto mt-5 max-w-xl text-lg text-white/85 leading-8">
-            Tham gia cùng hơn 500 cửa hàng đang sử dụng PetHub để vận hành
-            chuyên nghiệp và phát triển bền vững.
+            Dù bạn là chủ nuôi muốn tìm phòng khám, hay phòng khám muốn dùng
+            phần mềm quản lý — hãy tham gia nền tảng cùng hơn 500 đối tác của
+            PetHub.
           </p>
 
           <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">

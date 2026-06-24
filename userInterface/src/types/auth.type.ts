@@ -4,6 +4,7 @@ export interface Register {
   lastName: string;
   password: string;
   email: string;
+  storeId?: string;
 }
 export interface RegisterManager {
   userName: string;
@@ -11,10 +12,19 @@ export interface RegisterManager {
   password: string;
   firstName: string;
   lastName: string;
+  storeName?: string;
+  storeAddress?: string;
+  storePhone?: string;
 }
 export interface Login {
   email: string;
   password: string;
+  storeId?: string;
+}
+export interface JoinStore {
+  email: string;
+  password: string;
+  storeId: string;
 }
 export interface ChangePassword {
   email: string;

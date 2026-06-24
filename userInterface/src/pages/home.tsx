@@ -103,7 +103,7 @@ const careJourney = [
     label: "Lịch hẹn",
     title: "Tiếp nhận lịch hẹn rõ ràng",
     description:
-      "Cửa hàng theo dõi lịch đặt, thời gian chăm sóc và ghi chú dịch vụ trong cùng một luồng.",
+      "Phòng khám đối tác theo dõi lịch khách đặt, thời gian chăm sóc và ghi chú dịch vụ trong cùng một luồng.",
   },
   {
     icon: PawPrint,
@@ -237,29 +237,30 @@ const Home = () => {
           <div className="max-w-5xl">
             <div className="space-y-8">
               <div className="inline-flex w-max max-w-full items-center whitespace-nowrap rounded-full border border-white/25 bg-white/15 px-4 py-2 text-sm font-semibold text-white shadow-sm shadow-slate-950/10 backdrop-blur">
-                Giải pháp quản lý thú cưng toàn diện
+                Nền tảng kết nối chủ nuôi & phòng khám thú y
               </div>
 
               <div className="space-y-6">
                 <h1 className="max-w-none text-4xl font-black leading-[1.05] tracking-tight text-white md:whitespace-nowrap lg:text-6xl">
-                  Quản lý Pet Shop & Phòng khám thú y
+                  Đặt lịch khám thú cưng với phòng khám uy tín
                 </h1>
                 <p className="bg-linear-to-r from-[#F7C5BD] via-white to-[#8FF1E5] bg-clip-text text-5xl font-black leading-none tracking-tight text-transparent drop-shadow-sm sm:text-5xl">
-                  Dễ dàng hơn bao giờ hết
+                  Chỉ trong vài bước
                 </p>
                 <p className="max-w-2xl text-lg leading-8 text-white/85 sm:text-xl">
-                  PetHub giúp bạn quản lý khách hàng, lịch hẹn, hồ sơ thú cưng
-                  và tăng doanh thu với Digital Pet Card - “vũ khí bí mật” giữ
-                  chân khách hàng của bạn.
+                  PetHub là nền tảng phần mềm trung gian: chủ nuôi tìm và đặt
+                  lịch khám với các phòng khám thú y đối tác hiển thị trên nền
+                  tảng, còn phòng khám có đầy đủ công cụ để vận hành và chăm sóc
+                  khách hàng.
                 </p>
               </div>
 
               <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
                 <Link
-                  to="/auth/signup"
+                  to="/stores"
                   className="inline-flex w-full items-center justify-center rounded-full bg-[#D56756] px-7 py-3.5 text-base font-bold text-white shadow-[0_18px_45px_rgba(213,103,86,0.35)] transition duration-300 hover:-translate-y-0.5 hover:bg-[#B24C40] hover:shadow-[0_22px_60px_rgba(213,103,86,0.42)] sm:w-auto"
                 >
-                  Đăng ký miễn phí
+                  Tìm phòng khám & đặt lịch
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Link>
                 <Link
@@ -322,8 +323,8 @@ const Home = () => {
               Từ lịch hẹn đầu tiên đến lần khách quay lại tiếp theo.
             </h2>
             <p className="mt-5 text-lg leading-8 text-slate-600">
-              PetHub kết nối các thao tác quen thuộc của cửa hàng thành một câu
-              chuyện vận hành liền mạch hơn.
+              PetHub kết nối chủ nuôi với phòng khám đối tác và gom các thao tác
+              vận hành quen thuộc thành một câu chuyện chăm sóc liền mạch hơn.
             </p>
           </div>
 
@@ -385,8 +386,8 @@ const Home = () => {
               Mọi tính năng bạn cần, trong một hệ thống
             </h2>
             <p className="mx-auto max-w-3xl text-lg leading-8 text-slate-600 sm:text-xl">
-              PetHub được thiết kế đặc biệt cho Pet Shop & Phòng khám thú y, với
-              đầy đủ tính năng từ A-Z
+              PetHub cung cấp cho các phòng khám & pet shop đối tác đầy đủ công
+              cụ vận hành từ A-Z, để chủ nuôi đặt lịch và được chăm sóc tốt hơn.
             </p>
           </div>
 

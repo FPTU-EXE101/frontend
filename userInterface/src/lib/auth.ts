@@ -19,7 +19,14 @@ const LEGACY_AUTH_KEYS = [
   "role",
   "name",
   "isLoggedIn",
+  "selectedStoreId",
+  "selectedStoreName",
 ] as const;
+
+if (typeof window !== "undefined") {
+  localStorage.removeItem("selectedStoreId");
+  localStorage.removeItem("selectedStoreName");
+}
 
 export type JwtPayload = {
   [CLAIM_USER_ID]: string;
@@ -29,6 +36,9 @@ export type JwtPayload = {
   exp: number;
   iss?: string;
   aud?: string;
+  storeId?: string;
+  StoreId?: string;
+  store_id?: string;
 };
 
 export type CurrentUser = {
@@ -37,6 +47,21 @@ export type CurrentUser = {
   email: string;
   role: string;
   exp: number;
+  storeId?: string;
+};
+
+const getStoreIdFromPayload = (payload: JwtPayload): string | undefined => {
+  const directStoreId = payload.storeId ?? payload.StoreId ?? payload.store_id;
+  if (directStoreId) {
+    return directStoreId;
+  }
+
+  const matchingClaim = Object.entries(payload).find(([key, value]) => {
+    const normalizedKey = key.toLowerCase().replace(/[^a-z0-9]/g, "");
+    return normalizedKey.endsWith("storeid") && typeof value === "string";
+  });
+
+  return matchingClaim?.[1] as string | undefined;
 };
 
 export const generateUsername = (email: string): string => {
@@ -112,6 +137,7 @@ export const getCurrentUser = (): CurrentUser | null => {
   const name = payload[CLAIM_NAME];
   const email = payload[CLAIM_EMAIL];
   const role = payload[CLAIM_ROLE];
+  const storeId = getStoreIdFromPayload(payload);
 
   if (!userId || !name || !email || !role) {
     return null;
@@ -123,6 +149,7 @@ export const getCurrentUser = (): CurrentUser | null => {
     email,
     role,
     exp: payload.exp,
+    ...(storeId ? { storeId } : {}),
   };
 };
 
@@ -140,6 +167,14 @@ export const getCurrentUserRole = (): string | null => {
 
 export const getCurrentUserName = (): string | null => {
   return getCurrentUser()?.name ?? null;
+};
+
+export const getCurrentStoreId = (): string | null => {
+  return getCurrentUser()?.storeId ?? null;
+};
+
+export const getAuthenticatedStoreId = (): string | null => {
+  return getCurrentUser()?.storeId ?? null;
 };
 
 export const isAuthenticated = (): boolean => {

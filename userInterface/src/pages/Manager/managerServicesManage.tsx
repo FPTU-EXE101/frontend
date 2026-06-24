@@ -77,7 +77,9 @@ const ManagerServicesManage = () => {
       items.filter(
         (item) =>
           isServiceItem(item) &&
-          item.name.toLowerCase().includes(debouncedSearchTerm.toLowerCase()),
+          (item.name ?? "")
+            .toLowerCase()
+            .includes(debouncedSearchTerm.toLowerCase()),
       ),
     [debouncedSearchTerm, items],
   );

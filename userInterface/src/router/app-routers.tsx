@@ -1,6 +1,7 @@
 import { lazy, Suspense } from "react";
 import { Navigate, Route, Routes } from "react-router-dom";
 import ProtectedRoute from "@/components/auth/protected-route";
+import GuestRoute from "@/components/auth/guest-route";
 
 const Mainlayout = lazy(() => import("@/layout"));
 const AdminLayout = lazy(() => import("@/pages/Admin/adminLayout"));
@@ -18,9 +19,11 @@ const NotFound = lazy(() => import("@/pages/NotFound"));
 const Unauthorized = lazy(() => import("@/pages/Unauthorized"));
 const LoginPage = lazy(() => import("@/pages/Auth/loginPage"));
 const SignupPage = lazy(() => import("@/pages/Auth/signUpPage"));
+const JoinStorePage = lazy(() => import("@/pages/Auth/joinStorePage"));
 const ConfirmEmailPage = lazy(() => import("@/pages/Auth/confirmEmailPage"));
 const VerifyEmailNotice = lazy(() => import("@/pages/Auth/verifyEmailNotice"));
 const PricingPage = lazy(() => import("@/pages/pricing"));
+const StoresPage = lazy(() => import("@/pages/stores"));
 const UserInfoLayout = lazy(
   () => import("@/pages/User/userInfoLayout/userInfoLayout"),
 );
@@ -51,6 +54,7 @@ const CreatePetPage = lazy(() => import("@/pages/User/CreatePetPage"));
 const DigitalPetCard = lazy(() => import("@/pages/DigitalPetCard"));
 const AboutUs = lazy(() => import("@/pages/aboutUs"));
 const Features = lazy(() => import("@/pages/features"));
+const UserGuide = lazy(() => import("@/pages/userGuide"));
 const DemoPage = lazy(() => import("@/pages/demo"));
 const HelpCenter = lazy(() => import("@/pages/helpCenter"));
 const Terms = lazy(() => import("@/pages/terms"));
@@ -136,17 +140,27 @@ const AppRoutes = () => {
   return (
     <Suspense fallback={<RouteLoadingFallback />}>
       <Routes>
-        <Route element={<Mainlayout />}>
-          <Route path="auth">
+        {/* Các trang xác thực render full-screen, không dùng navbar/footer */}
+        <Route path="auth">
+          {/* Login chặn người đã đăng nhập, trừ chế độ đổi cửa hàng (?switch=1) */}
+          <Route element={<GuestRoute allowWhenSwitching />}>
             <Route path="login" element={<LoginPage />} />
-            <Route path="signup" element={<SignupPage />} />
-            <Route path="confirm-email" element={<ConfirmEmailPage />} />
-            {/* <Route path="forgot-password" element={<ForgetPassword />} /> */}
           </Route>
+          {/* Signup chặn hoàn toàn nếu đã đăng nhập */}
+          <Route element={<GuestRoute />}>
+            <Route path="signup" element={<SignupPage />} />
+          </Route>
+          {/* join-store & confirm-email vẫn mở cho người đang đăng nhập */}
+          <Route path="join-store" element={<JoinStorePage />} />
+          <Route path="confirm-email" element={<ConfirmEmailPage />} />
+        </Route>
+        <Route element={<Mainlayout />}>
           <Route index element={<Home />} />
           <Route path="pricing" element={<PricingPage />} />
+          <Route path="stores" element={<StoresPage />} />
           <Route path="about-us" element={<AboutUs />} />
           <Route path="features" element={<Features />} />
+          <Route path="user-guide" element={<UserGuide />} />
           <Route path="demo" element={<DemoPage />} />
           <Route path="help" element={<HelpCenter />} />
           <Route path="terms" element={<Terms />} />
@@ -213,7 +227,6 @@ const AppRoutes = () => {
             <Route path="settings" element={<ManagerSettingManage />} />
           </Route>
         </Route>
-        {/* 404 Page - must be last */}
         <Route path="*" element={<NotFound />} />
       </Routes>
     </Suspense>

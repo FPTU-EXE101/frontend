@@ -14,6 +14,7 @@ import type { CreateItemRequest } from "@/types/item.type";
 import type { Items } from "@/types/item.type";
 import { queryKeys } from "@/lib/queryKeys";
 import { getBackendErrorMessage } from "@/utils/getBackendErrorMessage";
+import { getCurrentStoreId } from "@/lib/auth";
 
 interface ManagerItemFormProps {
   itemType: "service" | "product";
@@ -131,6 +132,7 @@ const ManagerItemForm = ({ itemType, mode }: ManagerItemFormProps) => {
     }
 
     const payload: CreateItemRequest = {
+      ...(isEdit ? {} : { storeId: getCurrentStoreId() }),
       name: name.trim(),
       price: parsedPrice,
       type: meta.typeValue,

@@ -161,7 +161,7 @@ const ManagerAppointmentsManage = () => {
   const { data: users = [] } = useQuery({
     queryKey: queryKeys.managerUsers,
     queryFn: async ({ signal }) => {
-      const response = await userApi.getAllUsers({ signal });
+      const response = await userApi.getStoreCustomers({ signal });
       return (response?.data ?? []) as UserProfileValues[];
     },
   });
@@ -189,7 +189,9 @@ const ManagerAppointmentsManage = () => {
     () =>
       reminders.reduce<Record<string, AppointmentRemind>>(
         (result, reminder) => {
-          result[reminder.appointmentId] = reminder;
+          if (reminder.appointmentId) {
+            result[reminder.appointmentId] = reminder;
+          }
           return result;
         },
         {},

@@ -1,8 +1,9 @@
 export interface Invoice {
   id: string;
-  petName: string;
-  appointmentNote: string;
-  customerName: string;
+  storeId?: string | null;
+  petName: string | null;
+  appointmentNote: string | null;
+  customerName: string | null;
   customerId?: string;
   customerEmail?: string;
   customer?: {
@@ -13,16 +14,17 @@ export interface Invoice {
   };
   totalAmount: number;
   status: string;
-  payOsOrderCode: string | number | null;
+  payOsOrderCode: number | null;
   createdAt: string;
 }
 
 //api request invoice
 export interface CreateInvoice {
-  petId?: string;
-  appointmentId?: string;
-  customerId?: string;
-  details: CreateInvoiceDetail[];
+  storeId?: string | null;
+  petId?: string | null;
+  appointmentId?: string | null;
+  customerId?: string | null;
+  details?: CreateInvoiceDetail[] | null;
 }
 
 //api response invoice
@@ -52,6 +54,6 @@ export interface GetInvoiceDetailsResponse {
   [key: string]: unknown;
 }
 export interface CreateInvoiceDetail {
-  itemId: string;
+  itemId?: string | null;
   quantity: number;
 }

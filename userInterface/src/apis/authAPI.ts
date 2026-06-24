@@ -1,5 +1,6 @@
 import type {
   ChangePassword,
+  JoinStore,
   Login,
   Register,
   RegisterManager,
@@ -23,6 +24,8 @@ const authApi = {
   registerManager: (data: RegisterManager) =>
     axiosClient.post(`${USER_API_URL}/registermanager`, data),
   loginUser: (data: Login) => axiosClient.post(`${USER_API_URL}/login`, data),
+  joinStore: (data: JoinStore) =>
+    axiosClient.post(`${USER_API_URL}/join-store`, data),
   changePassword: (data: ChangePassword) =>
     axiosClient.patch(`${USER_API_URL}/changePassword`, data),
   confirmEmail: (data: { userId: string; token: string }) =>

@@ -7,9 +7,7 @@ const REMINDER_API_URL = "/remind"
 const reminderApi = {
     getAllReminders: (config?: AxiosRequestConfig) => axiosClient.get(`${REMINDERS_API_URL}`, config),
     getReminderById: (id: string, config?: AxiosRequestConfig) => axiosClient.get(`${REMINDER_API_URL}/${id}`, config),
-    updateReminder:(id: string, data: UpdateAppointmentRemind) => axiosClient.patch(`${REMINDER_API_URL}/${id}`, data, {
-      headers: { "Content-Type": "multipart/form-data" },
-    }),
+    updateReminder:(id: string, data: UpdateAppointmentRemind) => axiosClient.patch(`${REMINDER_API_URL}/${id}`, data),
     deleteReminder:(id: string)=> axiosClient.delete(`${REMINDER_API_URL}/${id}`),
     getReminderByAppoinmentId: (id: string) => axiosClient.get(`${REMINDER_API_URL}/appointment/${id}`),
     createRemind: (data: CreateAppointmentRemind)=> axiosClient.post(`${REMINDER_API_URL}`, data)

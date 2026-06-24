@@ -18,6 +18,7 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import { ArrowLeft } from "lucide-react";
 import { useDebounce } from "@/hooks/useDebounce";
+import { getCurrentStoreId } from "@/lib/auth";
 
 const validationSchema = Yup.object({
   name: Yup.string().trim().required("Vui lòng chọn tên thú cưng."),
@@ -57,7 +58,7 @@ const ManagerPetCreatePage = () => {
 
     const loadUsers = async () => {
       try {
-        const response = await userApi.getAllUsers({
+        const response = await userApi.getStoreCustomers({
           signal: controller.signal,
         });
         setUsers(response?.data ?? []);
@@ -152,6 +153,7 @@ const ManagerPetCreatePage = () => {
         setLoading(true);
         const petData: CreatePetRequest = {
           customerId,
+          storeId: getCurrentStoreId(),
           name: values.name,
           species: values.species,
           color: values.color,

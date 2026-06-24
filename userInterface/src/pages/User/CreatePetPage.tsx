@@ -15,7 +15,7 @@ import {
   FieldLabel,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { getCurrentUserId } from "@/lib/auth";
+import { getCurrentStoreId, getCurrentUserId } from "@/lib/auth";
 import { queryKeys } from "@/lib/queryKeys";
 import type { CreatePetRequest } from "@/types/pet.type";
 
@@ -77,6 +77,7 @@ const CreatePetPage = () => {
 
       const payload: CreatePetRequest = {
         customerId,
+        storeId: getCurrentStoreId(),
         name: values.name,
         species: values.species,
         color: values.color,

@@ -5,48 +5,59 @@ import {
   isAuthenticated as checkIsAuthenticated,
   logout,
 } from "@/lib/auth";
+import { ChevronsUpDown, Store } from "lucide-react";
+import { useAuthenticatedStore } from "@/hooks/useAuthenticatedStore";
 import {
   DropdownMenu,
   DropdownMenuTrigger,
   DropdownMenuContent,
   DropdownMenuItem,
 } from "@/components/ui/dropdown-menu";
+import { StoreSwitcher } from "@/components/auth/store-switcher";
+import { clearSwitchCredentials } from "@/lib/storeSession";
+
+const getAuthSnapshot = () => {
+  if (!checkIsAuthenticated()) {
+    return {
+      isAuthenticated: false,
+      userName: "",
+      userEmail: "",
+      userRole: "",
+    };
+  }
+
+  const currentUser = getCurrentUser();
+
+  if (!currentUser) {
+    return {
+      isAuthenticated: false,
+      userName: "",
+      userEmail: "",
+      userRole: "",
+    };
+  }
+
+  return {
+    isAuthenticated: true,
+    userName: currentUser.name || "User",
+    userEmail: currentUser.email,
+    userRole: currentUser.role,
+  };
+};
 
 const Navbar = () => {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [userName, setUserName] = useState("");
-  const [userEmail, setUserEmail] = useState("");
-  const [userRole, setUserRole] = useState("");
+  const [authState, setAuthState] = useState(getAuthSnapshot);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [switcherOpen, setSwitcherOpen] = useState(false);
   const navigate = useNavigate();
+  const { data: authenticatedStore, isLoading: storeLoading } =
+    useAuthenticatedStore();
 
   const updateAuthState = () => {
-    if (!checkIsAuthenticated()) {
-      setIsAuthenticated(false);
-      setUserName("");
-      setUserEmail("");
-      setUserRole("");
-      return;
-    }
-
-    const currentUser = getCurrentUser();
-
-    if (!currentUser) {
-      setIsAuthenticated(false);
-      setUserName("");
-      setUserEmail("");
-      setUserRole("");
-      return;
-    }
-
-    setIsAuthenticated(true);
-    setUserRole(currentUser.role);
-    setUserName(currentUser.name || "User");
-    setUserEmail(currentUser.email);
+    setAuthState(getAuthSnapshot());
   };
 
   useEffect(() => {
-    updateAuthState();
     const handleAuthChanged = () => updateAuthState();
     window.addEventListener("authChanged", handleAuthChanged);
     return () => window.removeEventListener("authChanged", handleAuthChanged);
@@ -54,11 +65,9 @@ const Navbar = () => {
 
   const handleLogout = () => {
     logout();
+    clearSwitchCredentials();
     window.dispatchEvent(new Event("authChanged"));
-    setIsAuthenticated(false);
-    setUserName("");
-    setUserEmail("");
-    setUserRole("");
+    setAuthState(getAuthSnapshot());
     setMenuOpen(false);
     navigate("/auth/login");
   };
@@ -70,6 +79,7 @@ const Navbar = () => {
         ? "border-[#D56756]/45 bg-[#F8DED9] text-[#B24C40] shadow-sm"
         : "border-transparent text-slate-600 hover:border-slate-200 hover:bg-slate-100 hover:text-slate-950",
     ].join(" ");
+  const { isAuthenticated, userName, userEmail, userRole } = authState;
   const normalizedRole = userRole.toLowerCase();
   const isCustomer = normalizedRole === "customer" || normalizedRole === "user";
   const roleDashboardPath =
@@ -80,6 +90,7 @@ const Navbar = () => {
         : "";
 
   return (
+    <>
     <header className="sticky top-0 z-50 w-full border-b border-slate-200/70 bg-white/82 shadow-sm shadow-slate-200/40 backdrop-blur-xl supports-[backdrop-filter]:bg-white/72">
       <div className="mx-auto flex max-w-full items-center justify-around px-4 py-3">
         <Link to="/" className="flex items-center gap-3">
@@ -128,6 +139,27 @@ const Navbar = () => {
               ) : null}
             </nav>
             <div className="hidden items-center gap-3 md:flex">
+              {isCustomer ? (
+                <button
+                  type="button"
+                  onClick={() => setSwitcherOpen(true)}
+                  title="Đổi cửa hàng"
+                  className="flex max-w-56 items-center gap-2 rounded-lg border border-[#D56756]/25 bg-[#F8DED9]/60 px-3 py-2 text-[#8F3F36] transition hover:border-[#D56756]/50 hover:bg-[#F8DED9]"
+                >
+                  <Store className="h-4 w-4 shrink-0" />
+                  <div className="min-w-0 text-left">
+                    <p className="text-[11px] font-semibold uppercase text-[#B24C40]">
+                      Cửa hàng của bạn
+                    </p>
+                    <p className="truncate text-sm font-bold">
+                      {storeLoading
+                        ? "Đang tải..."
+                        : authenticatedStore?.name || "Chưa xác định"}
+                    </p>
+                  </div>
+                  <ChevronsUpDown className="h-4 w-4 shrink-0 text-[#B24C40]/70" />
+                </button>
+              ) : null}
               <div
                 className="relative"
                 onMouseEnter={() => setMenuOpen(true)}
@@ -159,12 +191,12 @@ const Navbar = () => {
                   >
                     {roleDashboardPath && (
                       <DropdownMenuItem asChild>
-                        <Link
+                        {/* <Link
                           to={roleDashboardPath}
                           className="w-full"
                         >
                           Dashboard
-                        </Link>
+                        </Link> */}
                       </DropdownMenuItem>
                     )}
                     {/* <DropdownMenuItem asChild>
@@ -172,6 +204,17 @@ const Navbar = () => {
                         Hồ sơ
                       </Link>
                     </DropdownMenuItem> */}
+                    {isCustomer ? (
+                      <DropdownMenuItem
+                        onSelect={(event) => {
+                          event.preventDefault();
+                          setMenuOpen(false);
+                          setSwitcherOpen(true);
+                        }}
+                      >
+                        Đổi cửa hàng
+                      </DropdownMenuItem>
+                    ) : null}
                     <DropdownMenuItem
                       onSelect={(event) => {
                         event.preventDefault();
@@ -194,12 +237,23 @@ const Navbar = () => {
                 className={navLinkClass}
               >
                 Tính năng
+              </NavLink><NavLink
+                to="/stores"
+                className={navLinkClass}
+              >
+                Phòng khám
               </NavLink>
               <NavLink
                 to="/pricing"
                 className={navLinkClass}
               >
                 Bảng giá
+              </NavLink>
+              <NavLink
+                to="/user-guide"
+                className={navLinkClass}
+              >
+                Hướng dẫn sử dụng
               </NavLink>
               <NavLink
                 to="/about-us"
@@ -216,9 +270,9 @@ const Navbar = () => {
             </nav>
 
             <div className="flex items-center gap-3">
-              <Link to="/auth/signup">
+              <Link to="/stores">
                 <button className="rounded-full bg-[#D56756] px-5 py-2.5 text-sm font-bold text-white shadow-[0_16px_42px_rgba(213,103,86,0.28)] transition hover:-translate-y-0.5 hover:bg-[#B24C40] hover:shadow-[0_20px_55px_rgba(213,103,86,0.36)]">
-                  Dùng thử miễn phí
+                  Tìm phòng khám
                 </button>
               </Link>
             </div>
@@ -226,6 +280,16 @@ const Navbar = () => {
         )}
       </div>
     </header>
+    {isAuthenticated && isCustomer ? (
+      <StoreSwitcher
+        key={switcherOpen ? "open" : "closed"}
+        open={switcherOpen}
+        onClose={() => setSwitcherOpen(false)}
+        currentStoreId={authenticatedStore?.id}
+        currentStoreName={authenticatedStore?.name ?? undefined}
+      />
+    ) : null}
+    </>
   );
 };
 

@@ -169,13 +169,17 @@ const ManagerPetCardManagement = () => {
       setError("");
 
       try {
-        const [petsResponse, usersResponse, appointmentsResponse, invoicesResponse] =
-          await Promise.all([
-            petApi.getAllPets({ signal: controller.signal }),
-            userApi.getAllUsers({ signal: controller.signal }),
-            appointmentApi.getAllAppointments({ signal: controller.signal }),
-            invoiceApi.getAllInvoices({ signal: controller.signal }),
-          ]);
+        const [
+          petsResponse,
+          usersResponse,
+          appointmentsResponse,
+          invoicesResponse,
+        ] = await Promise.all([
+          petApi.getAllPets({ signal: controller.signal }),
+          userApi.getStoreCustomers({ signal: controller.signal }),
+          appointmentApi.getAllAppointments({ signal: controller.signal }),
+          invoiceApi.getAllInvoices({ signal: controller.signal }),
+        ]);
 
         setPets(normalizeList<Pet>(petsResponse?.data));
         setCustomers(normalizeList<Customer>(usersResponse?.data));

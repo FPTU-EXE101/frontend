@@ -1,5 +1,6 @@
 export interface Pet {
   id: string;
+  storeId?: string | null;
   customerId: string;
   name: string;
   color: string;
@@ -39,9 +40,10 @@ export interface GetPetByIdResponse {
 }
 
 export interface CreatePetRequest {
+  storeId?: string | null;
   customerId: string;
-  name: string;
-  species: string;
-  color: string;
-  dateOfBirth: string;
+  name?: string | null;
+  species?: string | null;
+  color?: string | null;
+  dateOfBirth?: string | null;
 }

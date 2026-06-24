@@ -16,6 +16,9 @@ type CreateManagerFormValues = {
   confirmPassword: string;
   firstName: string;
   lastName: string;
+  storeName: string;
+  storeAddress: string;
+  storePhone: string;
 };
 
 const initialFormValues: CreateManagerFormValues = {
@@ -24,6 +27,9 @@ const initialFormValues: CreateManagerFormValues = {
   confirmPassword: "",
   firstName: "",
   lastName: "",
+  storeName: "",
+  storeAddress: "",
+  storePhone: "",
 };
 
 const validationSchema: Yup.ObjectSchema<CreateManagerFormValues> = Yup.object({
@@ -44,6 +50,11 @@ const validationSchema: Yup.ObjectSchema<CreateManagerFormValues> = Yup.object({
     .oneOf([Yup.ref("password")], "Mật khẩu xác nhận không khớp."),
   firstName: Yup.string().trim().required("Vui lòng nhập tên."),
   lastName: Yup.string().trim().required("Vui lòng nhập họ."),
+  storeName: Yup.string().trim().required("Vui lòng nhập tên cửa hàng."),
+  storeAddress: Yup.string().trim().required("Vui lòng nhập địa chỉ cửa hàng."),
+  storePhone: Yup.string()
+    .trim()
+    .required("Vui lòng nhập số điện thoại cửa hàng."),
 });
 
 const AdminCreateManager = () => {
@@ -68,9 +79,12 @@ const AdminCreateManager = () => {
         password: values.password,
         firstName: values.firstName.trim(),
         lastName: values.lastName.trim(),
+        storeName: values.storeName.trim(),
+        storeAddress: values.storeAddress.trim(),
+        storePhone: values.storePhone.trim(),
       };
 
-        setLoading(true);
+      setLoading(true);
 
       try {
         await authApi.registerManager(request);
@@ -220,6 +234,60 @@ const AdminCreateManager = () => {
             {getFieldError("confirmPassword") ? (
               <p className="text-sm font-medium text-red-600">
                 {getFieldError("confirmPassword")}
+              </p>
+            ) : null}
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="storeName">Tên cửa hàng</Label>
+            <Input
+              id="storeName"
+              name="storeName"
+              value={formik.values.storeName}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              placeholder="PetHub Quận 1"
+              disabled={loading}
+            />
+            {getFieldError("storeName") ? (
+              <p className="text-sm font-medium text-red-600">
+                {getFieldError("storeName")}
+              </p>
+            ) : null}
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="storePhone">Số điện thoại cửa hàng</Label>
+            <Input
+              id="storePhone"
+              name="storePhone"
+              value={formik.values.storePhone}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              placeholder="0901234567"
+              disabled={loading}
+            />
+            {getFieldError("storePhone") ? (
+              <p className="text-sm font-medium text-red-600">
+                {getFieldError("storePhone")}
+              </p>
+            ) : null}
+          </div>
+
+          <div className="space-y-2 sm:col-span-2">
+            <Label htmlFor="storeAddress">Địa chỉ cửa hàng</Label>
+            <Input
+              id="storeAddress"
+              name="storeAddress"
+              value={formik.values.storeAddress}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              placeholder="Nhập địa chỉ cửa hàng"
+              disabled={loading}
+            />
+            {getFieldError("storeAddress") ? (
+              <p className="text-sm font-medium text-red-600">
+                {getFieldError("storeAddress")}
               </p>
             ) : null}
           </div>

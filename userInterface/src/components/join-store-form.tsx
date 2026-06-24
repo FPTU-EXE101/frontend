@@ -11,8 +11,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import authApi from "@/apis/authAPI";
-import type { Register } from "@/types/auth.type";
-import { generateUsername } from "@/lib/auth";
+import type { JoinStore } from "@/types/auth.type";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { getBackendErrorMessage } from "@/utils/getBackendErrorMessage";
@@ -20,19 +19,14 @@ import { ArrowLeft, ArrowRight, Eye, EyeOff } from "lucide-react";
 import { WizardStepper } from "@/components/auth/wizard-stepper";
 import { StorePicker } from "@/components/auth/store-picker";
 
-type SignupFormValues = {
+type JoinStoreFormValues = {
   storeId: string;
-  firstName: string;
-  lastName: string;
   email: string;
   password: string;
-  confirmPassword: string;
 };
 
-const validationSchema: Yup.ObjectSchema<SignupFormValues> = Yup.object({
+const validationSchema: Yup.ObjectSchema<JoinStoreFormValues> = Yup.object({
   storeId: Yup.string().trim().required("Vui lòng chọn phòng khám."),
-  firstName: Yup.string().trim().required("Vui lòng nhập tên."),
-  lastName: Yup.string().trim().required("Vui lòng nhập họ."),
   email: Yup.string()
     .trim()
     .email("Email không hợp lệ.")
@@ -43,37 +37,29 @@ const validationSchema: Yup.ObjectSchema<SignupFormValues> = Yup.object({
     )
     .required("Vui lòng nhập email."),
   password: Yup.string().required("Vui lòng nhập mật khẩu."),
-  confirmPassword: Yup.string()
-    .required("Vui lòng xác nhận mật khẩu.")
-    .oneOf([Yup.ref("password")], "Mật khẩu xác nhận không khớp."),
 });
 
-// Mỗi bước chỉ validate đúng các trường của bước đó. Không bước nào gửi request —
-// toàn bộ dữ liệu được gom lại và chỉ gửi 1 request duy nhất ở bước cuối.
-const STEPS: { label: string; fields: (keyof SignupFormValues)[] }[] = [
+// Không bước nào gửi request — gom dữ liệu và chỉ gửi 1 request join-store ở cuối.
+const STEPS: { label: string; fields: (keyof JoinStoreFormValues)[] }[] = [
   { label: "Phòng khám", fields: ["storeId"] },
-  { label: "Thông tin", fields: ["firstName", "lastName"] },
-  { label: "Tài khoản", fields: ["email", "password", "confirmPassword"] },
+  { label: "Tài khoản", fields: ["email", "password"] },
 ];
 
-export function SignupForm({ className, ...props }: ComponentProps<"form">) {
+export function JoinStoreForm({ className, ...props }: ComponentProps<"form">) {
   const [loading, setLoading] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [stepIndex, setStepIndex] = useState(0);
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const initialStoreId = searchParams.get("storeId")?.trim() ?? "";
+  const prefillEmail = searchParams.get("email")?.trim() ?? "";
 
-  const formik = useFormik<SignupFormValues>({
+  const formik = useFormik<JoinStoreFormValues>({
     initialValues: {
       storeId: initialStoreId,
-      firstName: "",
-      lastName: "",
-      email: "",
+      email: prefillEmail,
       password: "",
-      confirmPassword: "",
     },
     validationSchema,
     onSubmit: async (values) => {
@@ -81,18 +67,16 @@ export function SignupForm({ className, ...props }: ComponentProps<"form">) {
 
       setSubmitError(null);
 
-      const payload: Register = {
-        userName: generateUsername(values.email),
+      const payload: JoinStore = {
         email: values.email,
         password: values.password,
-        firstName: values.firstName,
-        lastName: values.lastName,
         storeId: values.storeId,
       };
 
       try {
         setLoading(true);
-        await authApi.registerUser(payload);
+        await authApi.joinStore(payload);
+        // Tài khoản ở cửa hàng mới cần xác nhận email trước khi đăng nhập được.
         navigate("/verify-email-notice");
       } catch (err) {
         console.error(err);
@@ -135,12 +119,18 @@ export function SignupForm({ className, ...props }: ComponentProps<"form">) {
     >
       <WizardStepper steps={STEPS.map((step) => step.label)} current={stepIndex} />
 
+      <div className="rounded-xl border border-[#f0d8d0] bg-[#fff8f3] px-4 py-3 text-sm text-slate-600">
+        Dùng <span className="font-semibold text-[#B24C40]">email và mật khẩu
+        hiện có</span> để khám ở phòng khám khác — bạn{" "}
+        <span className="font-semibold">không cần tạo tài khoản mới</span>.
+      </div>
+
       <FieldGroup>
         {stepIndex === 0 ? (
           <Field>
-            <FieldLabel>Chọn phòng khám</FieldLabel>
+            <FieldLabel>Chọn phòng khám muốn tham gia</FieldLabel>
             <FieldDescription>
-              Tài khoản, thú cưng và lịch hẹn của bạn sẽ gắn với phòng khám này.
+              Mỗi phòng khám quản lý hồ sơ riêng — chọn nơi bạn muốn đặt lịch.
             </FieldDescription>
             <StorePicker
               value={formik.values.storeId}
@@ -158,49 +148,6 @@ export function SignupForm({ className, ...props }: ComponentProps<"form">) {
 
         {stepIndex === 1 ? (
           <div className="grid gap-6 sm:grid-cols-2">
-            <Field>
-              <FieldLabel htmlFor="firstName">First Name</FieldLabel>
-              <Input
-                id="firstName"
-                name="firstName"
-                type="text"
-                placeholder="Nguyễn"
-                value={formik.values.firstName}
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-              />
-              <FieldError
-                errors={
-                  formik.touched.firstName && formik.errors.firstName
-                    ? [{ message: formik.errors.firstName }]
-                    : undefined
-                }
-              />
-            </Field>
-            <Field>
-              <FieldLabel htmlFor="lastName">Last Name</FieldLabel>
-              <Input
-                id="lastName"
-                name="lastName"
-                type="text"
-                placeholder="Văn A"
-                value={formik.values.lastName}
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-              />
-              <FieldError
-                errors={
-                  formik.touched.lastName && formik.errors.lastName
-                    ? [{ message: formik.errors.lastName }]
-                    : undefined
-                }
-              />
-            </Field>
-          </div>
-        ) : null}
-
-        {stepIndex === 2 ? (
-          <>
             <Field>
               <FieldLabel htmlFor="email">Email</FieldLabel>
               <Input
@@ -220,7 +167,6 @@ export function SignupForm({ className, ...props }: ComponentProps<"form">) {
                 }
               />
             </Field>
-            <div className="grid gap-6 sm:grid-cols-2">
             <Field>
               <FieldLabel htmlFor="password">Mật khẩu</FieldLabel>
               <div className="relative">
@@ -255,49 +201,7 @@ export function SignupForm({ className, ...props }: ComponentProps<"form">) {
                 }
               />
             </Field>
-            <Field>
-              <FieldLabel htmlFor="confirmPassword">
-                Xác nhận mật khẩu
-              </FieldLabel>
-              <div className="relative">
-                <Input
-                  id="confirmPassword"
-                  name="confirmPassword"
-                  type={showConfirmPassword ? "text" : "password"}
-                  value={formik.values.confirmPassword}
-                  onChange={formik.handleChange}
-                  onBlur={formik.handleBlur}
-                  className="pr-10"
-                />
-                <button
-                  type="button"
-                  aria-label={
-                    showConfirmPassword ? "Ẩn mật khẩu" : "Hiện mật khẩu"
-                  }
-                  aria-pressed={showConfirmPassword}
-                  onClick={() =>
-                    setShowConfirmPassword((current) => !current)
-                  }
-                  className="absolute right-3 top-1/2 flex h-5 w-5 -translate-y-1/2 items-center justify-center text-slate-500 transition hover:text-slate-800"
-                >
-                  {showConfirmPassword ? (
-                    <EyeOff className="h-4 w-4" aria-hidden="true" />
-                  ) : (
-                    <Eye className="h-4 w-4" aria-hidden="true" />
-                  )}
-                </button>
-              </div>
-              <FieldError
-                errors={
-                  formik.touched.confirmPassword &&
-                  formik.errors.confirmPassword
-                    ? [{ message: formik.errors.confirmPassword }]
-                    : undefined
-                }
-              />
-            </Field>
-            </div>
-          </>
+          </div>
         ) : null}
 
         {submitError ? (
@@ -325,7 +229,7 @@ export function SignupForm({ className, ...props }: ComponentProps<"form">) {
                 disabled={loading}
                 className="flex-1 rounded-full bg-[#D56756] px-5 py-3 text-base font-semibold text-white hover:bg-[#b34c47] disabled:cursor-not-allowed disabled:bg-[#d89992]"
               >
-                {loading ? "Đang tạo tài khoản..." : "Tạo tài khoản miễn phí"}
+                {loading ? "Đang xử lý..." : "Xác nhận tham gia"}
               </Button>
             ) : (
               <Button
@@ -341,12 +245,16 @@ export function SignupForm({ className, ...props }: ComponentProps<"form">) {
         </Field>
 
         <FieldDescription className="text-center text-sm text-slate-600">
-          Đã có tài khoản?{" "}
+          Chưa có tài khoản nào?{" "}
           <Link
-            to="/auth/login"
+            to={
+              formik.values.storeId
+                ? `/auth/signup?${new URLSearchParams({ storeId: formik.values.storeId }).toString()}`
+                : "/auth/signup"
+            }
             className="font-semibold text-[#D56756] hover:text-[#b34c47]"
           >
-            Đăng nhập
+            Đăng ký mới
           </Link>
         </FieldDescription>
       </FieldGroup>

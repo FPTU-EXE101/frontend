@@ -2,7 +2,8 @@ import type { ItemType } from "./enum.type";
 
 export interface Items {
   id: string;
-  name: string;
+  storeId?: string | null;
+  name: string | null;
   description?: string;
   price: number;
   duration?: number;
@@ -11,7 +12,14 @@ export interface Items {
   type: ItemType; //service = 0, product = 1
 }
 export interface CreateItemRequest {
-  name: string;
+  storeId?: string | null;
+  name?: string | null;
   price: number;
-  type: ItemType; //service = 0, product = 1
+  type: ItemType;
+}
+
+export interface UpdateItemRequest {
+  name?: string | null;
+  price: number;
+  type: ItemType;
 }

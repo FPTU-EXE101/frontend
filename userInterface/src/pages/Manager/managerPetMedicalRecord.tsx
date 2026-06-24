@@ -84,7 +84,7 @@ const ManagerPetMedicalRecord = () => {
       try {
         const [petResponse, recordsResponse] = await Promise.all([
           petApi.getPetById(petId),
-          medicalRecordApi.getAllMedicalRecords(),
+          medicalRecordApi.getMedicalRecordsByPetId(petId),
         ]);
 
         const petData = getResponseData<Pet>(petResponse);
@@ -111,7 +111,7 @@ const ManagerPetMedicalRecord = () => {
           .filter((record) => record.petId === petId)
           .sort(
             (a, b) =>
-              new Date(b.createAt).getTime() - new Date(a.createAt).getTime(),
+              new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
           );
         setRecords(filteredRecords);
       } catch (err) {
@@ -274,7 +274,7 @@ const ManagerPetMedicalRecord = () => {
           </div>
           {records.length > 0 ? (
             <div className="rounded-full bg-emerald-50 px-4 py-2 text-sm font-semibold text-emerald-700">
-              Cập nhật mới nhất: {formatDate(records[0].createAt)}
+              Cập nhật mới nhất: {formatDate(records[0].createdAt)}
             </div>
           ) : null}
         </div>
@@ -300,7 +300,7 @@ const ManagerPetMedicalRecord = () => {
                         {record.diagnosis || "Khám bệnh"}
                       </h3>
                       <p className="text-sm text-slate-500">
-                        {formatDate(record.createAt)}
+                        {formatDate(record.createdAt)}
                       </p>
                     </div>
                   </div>

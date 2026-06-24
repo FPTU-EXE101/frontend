@@ -78,7 +78,7 @@ const ManagerPetMedicalRecordCreate = () => {
       treatment: treatment.trim(),
       prescription: prescription.trim(),
       medicalRecordNote: medicalRecordNote.trim(),
-      createAt: new Date(date).toISOString(),
+      createdAt: new Date(date).toISOString(),
     };
 
     try {

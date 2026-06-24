@@ -69,7 +69,7 @@ const UserServicePage = () => {
                 Dịch vụ chăm sóc thú cưng
               </h1>
               <p className="mt-2 max-w-2xl text-sm text-slate-500">
-                Xem các dịch vụ hiện có của cửa hàng để chọn gói chăm sóc phù
+                Xem các dịch vụ hiện có của phòng khám để chọn gói chăm sóc phù
                 hợp cho bé cưng.
               </p>
             </div>
@@ -165,7 +165,7 @@ const UserServicePage = () => {
                           </p>
                         ) : (
                           <p className="mt-2 text-sm leading-6 text-slate-500">
-                            Dịch vụ chăm sóc thú cưng tại cửa hàng.
+                            Dịch vụ chăm sóc thú cưng tại phòng khám.
                           </p>
                         )}
                       </div>

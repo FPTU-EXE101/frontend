@@ -6,7 +6,7 @@ export interface User {
   email: string;
   role?: string;
   plan: number;
-  createAt: string;
-  updateAt: string;
+  createdAt: string;
+  updatedAt: string;
   emailConfirmed: boolean;
 }

@@ -2,15 +2,14 @@ import type { AxiosRequestConfig } from "axios";
 import axiosClient from "./axiosClient";
 
 const STORE_PACKAGE_API_URL = "/storepackage";
-const STORE_PACKAGE_PAYMENT_API_URL = "/storePackage/payment";
+const STORE_PACKAGE_PAYMENT_API_URL = "/storepackage/payment";
 const ITEM_API_URL = "/items";
 
-export const PLANTEST_ITEM_ID = "ca52c739-fc77-40f8-beb0-7175fdb1d01e";
+export const PLANTEST_PLAN_ID = "ca52c739-fc77-40f8-beb0-7175fdb1d01e";
 export const PLANTEST_ITEM_NAME = "Plantest";
 
 export interface StorePackageRequest {
-  managerId: string;
-  itemId: string;
+  planId: string;
 }
 
 export interface StorePackageResponse {

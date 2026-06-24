@@ -81,7 +81,7 @@ const CartSidebar = ({
   ] as const;
 
   return (
-    <aside className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm xl:sticky xl:top-6 xl:self-start">
+    <aside className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
       <div className="mb-6 flex items-center justify-between gap-3">
         <h2 className="text-sm font-bold text-slate-950">Đơn hàng</h2>
         <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-600">
@@ -89,7 +89,9 @@ const CartSidebar = ({
         </span>
       </div>
 
-      <div className="mb-5">
+      <div className="grid gap-6 lg:grid-cols-2">
+      <div className="space-y-5">
+      <div>
         {selectedAppointment ? (
           <div className="space-y-3">
             <SelectedAppointmentCard appointment={selectedAppointment} compact />
@@ -112,7 +114,7 @@ const CartSidebar = ({
                   </span>
                   <textarea
                     name={item.field}
-                    value={item.value}
+                    value={item.value ?? ""}
                     onChange={(event) =>
                       onMedicalRecordFieldChange(item.field, event.target.value)
                     }
@@ -150,8 +152,9 @@ const CartSidebar = ({
           </div>
         )}
       </div>
+      </div>
 
-      <div className="my-6 border-t border-slate-200" />
+      <div className="space-y-6 border-t border-slate-100 pt-6 lg:border-l lg:border-t-0 lg:pl-6 lg:pt-0">
 
       <PaymentSummary summary={summary} />
 
@@ -178,6 +181,8 @@ const CartSidebar = ({
         <Printer className="h-4 w-4" />
         In hóa đơn
       </button> */}
+      </div>
+      </div>
     </aside>
   );
 };

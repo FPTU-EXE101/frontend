@@ -5,13 +5,14 @@ export interface Appointment {
   id: string;
   customerId: string;
   petId: string;
+  storeId?: string | null;
   appointmentDate: string;
   startTime: string;
   endTime: string;
   appointmentNote: string;
   status: AppointmentStatus;
-  createAt: string;
-  updateAt: string;
+  createdAt: string;
+  updatedAt: string;
 }
 export interface CreateAppointmentRequest {
   customerId: string;

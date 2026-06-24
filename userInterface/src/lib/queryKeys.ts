@@ -9,4 +9,9 @@ export const queryKeys = {
   userInvoice: (invoiceId: string) => ["user", "invoice", invoiceId] as const,
   userPets: (userId: string) => ["user", userId, "pets"] as const,
   customerProfile: (userId: string) => ["customer", userId, "profile"] as const,
+  customerStores: ["customer", "stores"] as const,
+  managerStore: (managerId: string) =>
+    ["manager", managerId, "store"] as const,
+  authenticatedStore: (storeId: string) =>
+    ["authenticated", "store", storeId] as const,
 };
