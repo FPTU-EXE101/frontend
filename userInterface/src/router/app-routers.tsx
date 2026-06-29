@@ -29,6 +29,7 @@ const JoinStorePage = lazy(() => import("@/pages/Auth/joinStorePage"));
 const ConfirmEmailPage = lazy(() => import("@/pages/Auth/confirmEmailPage"));
 const VerifyEmailNotice = lazy(() => import("@/pages/Auth/verifyEmailNotice"));
 const PricingPage = lazy(() => import("@/pages/pricing"));
+const ForPetStore = lazy(() => import("@/pages/forPetStore"));
 const StoresPage = lazy(() => import("@/pages/stores"));
 const UserInfoLayout = lazy(
   () => import("@/pages/User/userInfoLayout/userInfoLayout"),
@@ -163,6 +164,7 @@ const AppRoutes = () => {
         <Route element={<Mainlayout />}>
           <Route index element={<Home />} />
           <Route path="pricing" element={<PricingPage />} />
+          <Route path="for-pet-store" element={<ForPetStore />} />
           <Route path="stores" element={<StoresPage />} />
           <Route path="about-us" element={<AboutUs />} />
           <Route path="features" element={<Features />} />

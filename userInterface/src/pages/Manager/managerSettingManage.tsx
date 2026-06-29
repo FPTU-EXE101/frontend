@@ -46,8 +46,8 @@ const ManagerSettingManage = () => {
 
         {isStoreIdMissing ? (
           <div className="rounded-[20px] border border-amber-200 bg-amber-50 px-5 py-4 text-sm font-medium text-amber-800">
-            Không tìm thấy cửa hàng gắn với tài khoản của bạn. Vui lòng đăng nhập
-            lại.
+            Không tìm thấy cửa hàng gắn với tài khoản của bạn. Vui lòng đăng
+            nhập lại.
           </div>
         ) : isLoading ? (
           <div className="rounded-[30px] border border-slate-200 bg-white p-8 shadow-sm">
@@ -76,10 +76,10 @@ const ManagerSettingManage = () => {
                 <span className="font-semibold text-[#B24C40]">PetHub</span> qua
                 email{" "}
                 <a
-                  href="mailto:support@pethub.vn"
+                  href="mailto:pethub0103@gmail.com"
                   className="font-semibold text-[#D56756] underline-offset-2 hover:underline"
                 >
-                  support@pethub.vn
+                  pethub0103@gmail.com
                 </a>{" "}
                 để được hỗ trợ.
               </p>
