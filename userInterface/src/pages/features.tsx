@@ -14,7 +14,8 @@ import {
   Zap,
   Star,
 } from "lucide-react";
-import type { LucideIcon } from "lucide-react";
+import { DraggableMarqueeRow } from "@/components/ui/draggable-marquee-row";
+import { FeatureMarqueeCard } from "@/components/ui/feature-marquee-card";
 
 /* ─── DATA ──────────────────────────────────────────────────────────── */
 
@@ -163,83 +164,6 @@ const highlights = [
 
 /* ─── COMPONENT ─────────────────────────────────────────────────────── */
 
-type Feature = {
-  icon: LucideIcon;
-  title: string;
-  description: string;
-  details: string[];
-  color: string;
-  bgColor: string;
-  tag: string;
-  highlight?: boolean;
-};
-
-const FeatureCard = ({ feature }: { feature: Feature }) => {
-  const Icon = feature.icon;
-
-  return (
-    <div className="group relative h-full w-[280px] shrink-0 rounded-[24px] border border-slate-200 bg-white p-5 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-slate-300 hover:shadow-[0_16px_48px_rgba(0,0,0,0.08)] sm:w-[340px] sm:p-6 lg:w-[380px]">
-      <span
-        className="absolute right-4 top-4 rounded-full px-3 py-1 text-xs font-bold sm:right-5 sm:top-5"
-        style={{ backgroundColor: feature.bgColor, color: feature.color }}
-      >
-        {feature.tag}
-      </span>
-
-      <div
-        className="inline-flex h-12 w-12 items-center justify-center rounded-2xl transition-transform duration-300 group-hover:scale-110 sm:h-13 sm:w-13"
-        style={{ backgroundColor: feature.bgColor, color: feature.color }}
-      >
-        <Icon className="h-6 w-6" />
-      </div>
-
-      <h3 className="mt-5 pr-16 text-lg font-bold text-slate-900 sm:text-xl">
-        {feature.title}
-      </h3>
-      <p className="mt-2 text-sm leading-6 text-slate-500 sm:text-base sm:leading-7">
-        {feature.description}
-      </p>
-
-      <ul className="mt-5 space-y-2">
-        {feature.details.map((detail) => (
-          <li key={detail} className="flex items-start gap-2 text-sm text-slate-600">
-            <CheckCircle
-              className="mt-0.5 h-4 w-4 shrink-0"
-              style={{ color: feature.color }}
-            />
-            <span>{detail}</span>
-          </li>
-        ))}
-      </ul>
-    </div>
-  );
-};
-
-const FeatureMarqueeRow = ({
-  items,
-  direction,
-}: {
-  items: Feature[];
-  direction: "left" | "right";
-}) => {
-  const duplicatedItems = [...items, ...items];
-  const animationClass =
-    direction === "right" ? "features-marquee-right" : "features-marquee-left";
-
-  return (
-    <div className="features-marquee-row overflow-hidden py-2">
-      <div className={`flex w-max gap-4 sm:gap-5 lg:gap-6 ${animationClass}`}>
-        {duplicatedItems.map((feature, index) => (
-          <FeatureCard
-            key={`${feature.title}-${index}`}
-            feature={feature}
-          />
-        ))}
-      </div>
-    </div>
-  );
-};
-
 const Features = () => {
   const midpoint = Math.ceil(features.length / 2);
   const firstFeatureRow = features.slice(0, midpoint);
@@ -303,7 +227,7 @@ const Features = () => {
         </div>
       </section>
       {/* ── 3. ALL FEATURES MARQUEE ─────────────────────────────── */}
-      <section className="features-marquee-section overflow-hidden bg-[#f9f2e8] px-4 py-20">
+      <section className="features-marquee-section overflow-hidden bg-[#ffffff] px-4 py-20">
         <div className="container mx-auto max-w-6xl">
           <div className="mb-14 text-center">
             <p className="text-sm font-semibold uppercase tracking-[0.3em] text-[#D56756]">
@@ -320,15 +244,25 @@ const Features = () => {
           </div>
 
           <div className="relative -mx-4 space-y-4 sm:space-y-5 lg:space-y-6">
-            <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-16 bg-gradient-to-r from-[#f9f2e8] to-transparent sm:w-24" />
-            <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-16 bg-gradient-to-l from-[#f9f2e8] to-transparent sm:w-24" />
-            <FeatureMarqueeRow items={firstFeatureRow} direction="right" />
-            <FeatureMarqueeRow items={secondFeatureRow} direction="left" />
+            <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-16 bg-gradient-to-r from-[#ffffff] to-transparent sm:w-24" />
+            <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-16 bg-gradient-to-l from-[#ffffff] to-transparent sm:w-24" />
+            <DraggableMarqueeRow
+              items={firstFeatureRow}
+              direction="right"
+              getKey={(feature, index) => `${feature.title}-${index}`}
+              renderItem={(feature) => <FeatureMarqueeCard feature={feature} />}
+            />
+            <DraggableMarqueeRow
+              items={secondFeatureRow}
+              direction="left"
+              getKey={(feature, index) => `${feature.title}-${index}`}
+              renderItem={(feature) => <FeatureMarqueeCard feature={feature} />}
+            />
           </div>
         </div>
       </section>
       {/* ── 2. FEATURED CARD (Digital Pet Card - highlight) ─────── */}
-      <section className="bg-white px-4 py-20">
+      <section className="bg-white px-4 py-20 bg-gradient-to-br from-[#F7E3DF] via-[#F4D2CA] to-[#F5E0D9]">
         <div className="container mx-auto max-w-6xl">
           <div className="overflow-hidden rounded-[32px] bg-gradient-to-br from-[#80421C] to-[#D56756] p-10 text-white shadow-2xl lg:p-14">
             <div className="grid items-center gap-12 lg:grid-cols-2">

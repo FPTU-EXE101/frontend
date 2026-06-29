@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { getCurrentUser } from "@/lib/auth";
 import userApi from "@/apis/userAPI";
-import storePackageApi, { PLANTEST_PLAN_ID } from "@/apis/storePackageAPI";
+import storePackageApi from "@/apis/storePackageAPI";
 import { getBackendErrorMessage } from "@/utils/getBackendErrorMessage";
 
 type ApiEnvelope<T> = {
@@ -22,6 +22,8 @@ const MANAGER_ROLE_MESSAGE = "Chỉ tài khoản Manager mới có thể nâng c
 const CHECKOUT_URL_MESSAGE =
   "Không tạo được liên kết thanh toán. Vui lòng thử lại.";
 const ALREADY_PREMIUM_MESSAGE = "Bạn đang sử dụng gói Premium.";
+const PLAN_NOT_READY_MESSAGE =
+  "Đang tải thông tin gói Premium. Vui lòng thử lại sau giây lát.";
 
 const getResponseData = <T,>(value: unknown): T | null => {
   const axiosData = (value as ApiEnvelope<unknown>).data;
@@ -57,7 +59,7 @@ const isPremiumProfile = (profile: UserPlanProfile | null): boolean => {
   return false;
 };
 
-export const usePremiumUpgradePayment = () => {
+export const usePremiumUpgradePayment = (premiumPlanId?: string | null) => {
   const currentUser = getCurrentUser();
   const isAuthenticated = Boolean(currentUser);
   const isManager =
@@ -134,11 +136,16 @@ export const usePremiumUpgradePayment = () => {
       return;
     }
 
+    if (!premiumPlanId) {
+      setError(PLAN_NOT_READY_MESSAGE);
+      return;
+    }
+
     setLoading(true);
 
     try {
       const packageResponse = await storePackageApi.createStorePackage({
-        planId: PLANTEST_PLAN_ID,
+        planId: premiumPlanId,
       });
       const createdPackage = packageResponse.data;
 
@@ -163,7 +170,7 @@ export const usePremiumUpgradePayment = () => {
     } finally {
       setLoading(false);
     }
-  }, [isPremium]);
+  }, [isPremium, premiumPlanId]);
 
   return {
     checkingPlan,

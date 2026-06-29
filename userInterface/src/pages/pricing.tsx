@@ -1,6 +1,10 @@
+import { Link } from "react-router-dom";
 import { CheckCircle, MinusCircle, Rocket, Sparkles, Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { usePremiumUpgradePayment } from "@/hooks/usePremiumUpgradePayment";
+import { usePlatformPlans } from "@/hooks/usePlatformPlans";
+
+const formatVnd = (price: number) => `${price.toLocaleString("vi-VN")}đ`;
 
 type PricingFeature = {
   label: string;
@@ -59,7 +63,9 @@ const pricingPlans: PricingPlan[] = [
 ];
 
 const PricingPage = () => {
-  const premiumUpgrade = usePremiumUpgradePayment();
+  // GET /api/platformplan: lấy id thật của gói Premium để tạo thanh toán.
+  const { freePlan, premiumPlan } = usePlatformPlans();
+  const premiumUpgrade = usePremiumUpgradePayment(premiumPlan?.id);
 
   return (
     <div className="min-h-screen bg-[#fff8f3]">
@@ -138,13 +144,21 @@ const PricingPage = () => {
             {pricingPlans.map((plan, index) => {
               const Icon = plan.icon;
               const isPremiumPlan = plan.name.toLowerCase() === "premium";
+              const apiPlan = isPremiumPlan ? premiumPlan : freePlan;
+              const displayName = apiPlan?.name?.trim() || plan.name;
+              const displayPrice = apiPlan
+                ? formatVnd(apiPlan.price)
+                : plan.price;
               const showUpgradeButton =
                 !isPremiumPlan || premiumUpgrade.isManager;
+              const showGuestLoginButton =
+                isPremiumPlan && !premiumUpgrade.isAuthenticated;
               const disablePremiumButton =
                 isPremiumPlan &&
                 (premiumUpgrade.loading ||
                   premiumUpgrade.checkingPlan ||
-                  premiumUpgrade.isPremium);
+                  premiumUpgrade.isPremium ||
+                  !premiumPlan);
 
               return (
                 <article
@@ -175,11 +189,11 @@ const PricingPage = () => {
 
                   <div className="mt-7">
                     <p className="text-sm font-semibold uppercase tracking-[0.18em] text-[#D56756]">
-                      {plan.name}
+                      {displayName}
                     </p>
                     <div className="mt-3 flex items-end gap-2">
                       <h2 className="text-4xl font-bold tracking-tight text-slate-950 sm:text-5xl">
-                        {plan.price}
+                        {displayPrice}
                       </h2>
                       <span className="pb-1 text-sm font-medium text-slate-500">
                         {plan.period}
@@ -208,7 +222,14 @@ const PricingPage = () => {
                     ))}
                   </ul>
 
-                  {showUpgradeButton ? (
+                  {showGuestLoginButton ? (
+                    <Button
+                      asChild
+                      className="mt-9 w-full rounded-full bg-[#D56756] px-5 py-6 text-sm font-semibold text-white shadow-[0_14px_34px_rgba(213,103,86,0.24)] transition duration-300 hover:scale-[1.01] hover:bg-[#B24C40]"
+                    >
+                      <Link to="/auth/login">Đăng nhập để nâng cấp gói</Link>
+                    </Button>
+                  ) : showUpgradeButton ? (
                     <Button
                       className={`mt-9 w-full rounded-full px-5 py-6 text-sm font-semibold transition duration-300 hover:scale-[1.01] ${
                         plan.highlighted

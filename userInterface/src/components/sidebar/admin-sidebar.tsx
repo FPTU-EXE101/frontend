@@ -1,4 +1,4 @@
-import { LayoutDashboard, QrCode, UserPlus, Users } from "lucide-react";
+import { Layers, LayoutDashboard, QrCode, UserPlus, Users } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
@@ -30,6 +30,12 @@ const adminMenuItems = [
     url: "/admin/managers",
     icon: Users,
     description: "Quản lý tài khoản Manager",
+  },
+  {
+    title: "Gói dịch vụ",
+    url: "/admin/plans",
+    icon: Layers,
+    description: "Quản lý gói nền tảng",
   },
   {
     title: "PetCard",

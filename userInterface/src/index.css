@@ -1,44 +1,11 @@
 @import "tailwindcss";
 
-@keyframes features-marquee-left {
-  from {
-    transform: translateX(0);
-  }
-
-  to {
-    transform: translateX(-50%);
-  }
+/* Ẩn thanh cuộn cho dải tính năng kéo-thả */
+.no-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
 }
 
-@keyframes features-marquee-right {
-  from {
-    transform: translateX(-50%);
-  }
-
-  to {
-    transform: translateX(0);
-  }
-}
-
-.features-marquee-left,
-.features-marquee-right {
-  animation-duration: 34s;
-  animation-iteration-count: infinite;
-  animation-timing-function: linear;
-  will-change: transform;
-}
-
-.features-marquee-left {
-  animation-name: features-marquee-left;
-}
-
-.features-marquee-right {
-  animation-name: features-marquee-right;
-}
-
-@media (max-width: 640px) {
-  .features-marquee-left,
-  .features-marquee-right {
-    animation-duration: 28s;
-  }
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
 }

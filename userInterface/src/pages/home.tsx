@@ -1,5 +1,10 @@
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
+import { DraggableMarqueeRow } from "@/components/ui/draggable-marquee-row";
+import {
+  FeatureMarqueeCard,
+  type FeatureMarqueeItem,
+} from "@/components/ui/feature-marquee-card";
 import {
   ArrowRight,
   Bell,
@@ -20,8 +25,10 @@ import {
   Sparkles,
   Star,
 } from "lucide-react";
-import type { LucideIcon } from "lucide-react";
 import { usePremiumUpgradePayment } from "@/hooks/usePremiumUpgradePayment";
+import { usePlatformPlans } from "@/hooks/usePlatformPlans";
+
+const formatVnd = (price: number) => `${price.toLocaleString("vi-VN")}đ`;
 
 const features = [
   {
@@ -162,57 +169,24 @@ const storeValueCards = [
   },
 ];
 
-type HomeFeature = {
-  icon: LucideIcon;
-  title: string;
-  description: string;
-};
-
-const HomeFeatureCard = ({ feature }: { feature: HomeFeature }) => {
-  const Icon = feature.icon;
-
-  return (
-    <div className="group h-full w-[280px] shrink-0 rounded-[28px] border border-slate-200/80 bg-white p-5 shadow-sm shadow-slate-200/70 transition duration-300 hover:-translate-y-1 hover:border-[#D56756]/30 hover:shadow-[0_24px_70px_rgba(15,23,42,0.10)] sm:w-[330px] sm:p-6 lg:w-[370px] lg:p-7">
-      <div className="mb-5 flex h-13 w-13 items-center justify-center rounded-2xl bg-[#fff1ee] text-[#D56756] ring-1 ring-[#f3d3cd] transition duration-300 group-hover:scale-105 group-hover:bg-[#D56756] group-hover:text-white sm:h-14 sm:w-14">
-        <Icon className="h-6 w-6 sm:h-7 sm:w-7" />
-      </div>
-      <h3 className="mb-3 text-lg font-bold tracking-tight text-slate-950 sm:text-xl">
-        {feature.title}
-      </h3>
-      <p className="text-sm leading-7 text-slate-600">
-        {feature.description}
-      </p>
-    </div>
-  );
-};
-
 const HomeFeatureMarqueeRow = ({
   items,
   direction,
 }: {
-  items: HomeFeature[];
+  items: FeatureMarqueeItem[];
   direction: "left" | "right";
-}) => {
-  const duplicatedItems = [...items, ...items];
-  const animationClass =
-    direction === "right" ? "features-marquee-right" : "features-marquee-left";
-
-  return (
-    <div className="overflow-hidden py-2">
-      <div className={`flex w-max gap-4 sm:gap-5 lg:gap-6 ${animationClass}`}>
-        {duplicatedItems.map((feature, index) => (
-          <HomeFeatureCard
-            key={`${feature.title}-${index}`}
-            feature={feature}
-          />
-        ))}
-      </div>
-    </div>
-  );
-};
+}) => (
+  <DraggableMarqueeRow
+    items={items}
+    direction={direction}
+    getKey={(feature, index) => `${feature.title}-${index}`}
+    renderItem={(feature) => <FeatureMarqueeCard feature={feature} />}
+  />
+);
 
 const Home = () => {
-  const premiumUpgrade = usePremiumUpgradePayment();
+  const { freePlan, premiumPlan } = usePlatformPlans();
+  const premiumUpgrade = usePremiumUpgradePayment(premiumPlan?.id);
   const midpoint = Math.ceil(features.length / 2);
   const firstFeatureRow = features.slice(0, midpoint);
   const secondFeatureRow = features.slice(midpoint);
@@ -804,7 +778,9 @@ const Home = () => {
                 <p className="text-sm font-semibold uppercase tracking-[0.2em] text-slate-500">
                   Starter
                 </p>
-                <h3 className="mt-2 text-3xl font-bold text-slate-950">0đ</h3>
+                <h3 className="mt-2 text-3xl font-bold text-slate-950">
+                  {freePlan ? formatVnd(freePlan.price) : "0đ"}
+                </h3>
                 <p className="mt-1 text-sm text-slate-500">/tháng</p>
                 <p className="mt-4 text-sm text-slate-600">Dùng thử miễn phí</p>
               </div>
@@ -861,7 +837,7 @@ const Home = () => {
                   Premium
                 </p>
                 <h3 className="mt-2 text-3xl font-bold text-slate-950">
-                  249.000đ
+                  {premiumPlan ? formatVnd(premiumPlan.price) : "249.000đ"}
                 </h3>
                 <p className="mt-1 text-sm text-slate-500">/tháng</p>
                 <p className="mt-4 text-sm text-slate-600">
@@ -910,7 +886,8 @@ const Home = () => {
                   disabled={
                     premiumUpgrade.loading ||
                     premiumUpgrade.checkingPlan ||
-                    premiumUpgrade.isPremium
+                    premiumUpgrade.isPremium ||
+                    !premiumPlan
                   }
                   onClick={premiumUpgrade.handleUpgrade}
                 >
@@ -918,7 +895,14 @@ const Home = () => {
                     ? "Đang tạo thanh toán..."
                     : premiumUpgrade.isPremium
                       ? "Bạn đang sử dụng gói Premium."
-                      : "Gói Premium"}
+                      : "Nâng cấp gói Premium"}
+                </Button>
+              ) : !premiumUpgrade.isAuthenticated ? (
+                <Button
+                  asChild
+                  className="mt-8 w-full rounded-full bg-[#D56756] px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-[0_25px_60px_rgba(213,103,86,0.2)] hover:bg-[#B24C40]"
+                >
+                  <Link to="/auth/login">Đăng nhập để nâng cấp gói</Link>
                 </Button>
               ) : null}
             </div>
