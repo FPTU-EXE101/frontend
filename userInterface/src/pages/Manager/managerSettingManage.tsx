@@ -1,49 +1,25 @@
-import { useState } from "react";
-import { useQueryClient } from "@tanstack/react-query";
-import { useFormik } from "formik";
-import * as Yup from "yup";
-import { Store } from "lucide-react";
+import { Info, Lock, Store } from "lucide-react";
 
-import { Button } from "@/components/ui/button";
-import {
-  Field,
-  FieldDescription,
-  FieldError,
-  FieldGroup,
-  FieldLabel,
-} from "@/components/ui/field";
-import { Input } from "@/components/ui/input";
-import storeApi from "@/apis/storeAPI";
 import { useManagerStore } from "@/hooks/useManagerStore";
-import { getAuthenticatedStoreId, getCurrentUserId } from "@/lib/auth";
-import { queryKeys } from "@/lib/queryKeys";
-import { getBackendErrorMessage } from "@/utils/getBackendErrorMessage";
-import type { UpdateStore } from "@/types/store.type";
 
-interface StoreFormValues {
-  name: string;
-  address: string;
-  phone: string;
-  email: string;
-  isActive: boolean;
-}
+const emptyText = "Chưa cập nhật";
 
-const validationSchema: Yup.ObjectSchema<StoreFormValues> = Yup.object({
-  name: Yup.string().trim().required("Vui lòng nhập tên cửa hàng."),
-  address: Yup.string().trim().required("Vui lòng nhập địa chỉ."),
-  phone: Yup.string()
-    .trim()
-    .matches(/^[0-9+\-\s()]*$/, "Số điện thoại không hợp lệ.")
-    .required("Vui lòng nhập số điện thoại."),
-  email: Yup.string()
-    .trim()
-    .email("Email không hợp lệ.")
-    .required("Vui lòng nhập email."),
-  isActive: Yup.boolean().required(),
-});
+const ReadOnlyField = ({
+  label,
+  value,
+}: {
+  label: string;
+  value?: string | null;
+}) => (
+  <div>
+    <p className="text-sm font-medium text-slate-700">{label}</p>
+    <div className="mt-1.5 rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-900">
+      {value ? value : <span className="text-slate-400">{emptyText}</span>}
+    </div>
+  </div>
+);
 
 const ManagerSettingManage = () => {
-  const queryClient = useQueryClient();
   const {
     data: store,
     isLoading,
@@ -51,67 +27,9 @@ const ManagerSettingManage = () => {
     isStoreIdMissing,
   } = useManagerStore();
 
-  const [loading, setLoading] = useState(false);
-  const [submitError, setSubmitError] = useState<string | null>(null);
-  const [submitSuccess, setSubmitSuccess] = useState(false);
-
-  const managerId = getCurrentUserId() ?? "";
-  const storeId = getAuthenticatedStoreId() ?? "";
-
-  const formik = useFormik<StoreFormValues>({
-    enableReinitialize: true,
-    initialValues: {
-      name: store?.name ?? "",
-      address: store?.address ?? "",
-      phone: store?.phone ?? "",
-      email: store?.email ?? "",
-      isActive: store?.isActive ?? true,
-    },
-    validationSchema,
-    onSubmit: async (values) => {
-      if (loading) return;
-
-      setSubmitError(null);
-      setSubmitSuccess(false);
-
-      if (!storeId || !managerId) {
-        setSubmitError(
-          "Không xác định được cửa hàng của bạn. Vui lòng đăng nhập lại.",
-        );
-        return;
-      }
-
-      const payload: UpdateStore = {
-        managerId,
-        name: values.name.trim(),
-        address: values.address.trim(),
-        phone: values.phone.trim(),
-        email: values.email.trim(),
-        isActive: values.isActive,
-      };
-
-      try {
-        setLoading(true);
-        await storeApi.updateStore(storeId, payload);
-        await queryClient.invalidateQueries({
-          queryKey: queryKeys.managerStore(managerId),
-        });
-        await queryClient.invalidateQueries({
-          queryKey: queryKeys.authenticatedStore(storeId),
-        });
-        setSubmitSuccess(true);
-      } catch (err) {
-        console.error(err);
-        setSubmitError(getBackendErrorMessage(err));
-      } finally {
-        setLoading(false);
-      }
-    },
-  });
-
   return (
     <div className="min-h-[calc(100vh-3rem)] px-4 py-6 sm:px-6 lg:px-8">
-      <div className="mx-auto w-full max-w-3xl">
+      <div className="mx-auto w-full max-w-7xl">
         <div className="mb-6 flex items-center gap-4">
           <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#F8DED9] text-[#B24C40]">
             <Store className="h-6 w-6" />
@@ -121,7 +39,7 @@ const ManagerSettingManage = () => {
               Thông tin cửa hàng
             </h1>
             <p className="mt-1 text-sm text-slate-600">
-              Cập nhật thông tin cửa hàng của bạn.
+              Xem thông tin cửa hàng của bạn.
             </p>
           </div>
         </div>
@@ -147,155 +65,38 @@ const ManagerSettingManage = () => {
             Không tải được thông tin cửa hàng. Vui lòng thử lại sau.
           </div>
         ) : (
-          <form
-            onSubmit={formik.handleSubmit}
-            className="rounded-[30px] border border-slate-200 bg-white p-8 shadow-sm"
-          >
-            <FieldGroup>
-              <Field>
-                <FieldLabel htmlFor="name">Tên cửa hàng *</FieldLabel>
-                <Input
-                  id="name"
-                  name="name"
-                  type="text"
-                  placeholder="Nhập tên cửa hàng"
-                  value={formik.values.name}
-                  onChange={formik.handleChange}
-                  onBlur={formik.handleBlur}
-                />
-                <FieldError
-                  errors={
-                    formik.touched.name && formik.errors.name
-                      ? [{ message: formik.errors.name }]
-                      : undefined
-                  }
-                />
-              </Field>
-
-              <Field>
-                <FieldLabel htmlFor="address">Địa chỉ *</FieldLabel>
-                <Input
-                  id="address"
-                  name="address"
-                  type="text"
-                  placeholder="Nhập địa chỉ cửa hàng"
-                  value={formik.values.address}
-                  onChange={formik.handleChange}
-                  onBlur={formik.handleBlur}
-                />
-                <FieldError
-                  errors={
-                    formik.touched.address && formik.errors.address
-                      ? [{ message: formik.errors.address }]
-                      : undefined
-                  }
-                />
-              </Field>
-
-              <Field>
-                <FieldLabel htmlFor="phone">Số điện thoại *</FieldLabel>
-                <Input
-                  id="phone"
-                  name="phone"
-                  type="tel"
-                  placeholder="VD: 0901234567"
-                  value={formik.values.phone}
-                  onChange={formik.handleChange}
-                  onBlur={formik.handleBlur}
-                />
-                <FieldError
-                  errors={
-                    formik.touched.phone && formik.errors.phone
-                      ? [{ message: formik.errors.phone }]
-                      : undefined
-                  }
-                />
-              </Field>
-
-              <Field>
-                <FieldLabel htmlFor="email">Email *</FieldLabel>
-                <Input
-                  id="email"
-                  name="email"
-                  type="email"
-                  placeholder="store@email.com"
-                  value={formik.values.email}
-                  onChange={formik.handleChange}
-                  onBlur={formik.handleBlur}
-                />
-                <FieldError
-                  errors={
-                    formik.touched.email && formik.errors.email
-                      ? [{ message: formik.errors.email }]
-                      : undefined
-                  }
-                />
-              </Field>
-
-              {/* <Field>
-                <div className="flex items-center justify-between gap-4 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3">
-                  <div>
-                    <FieldLabel htmlFor="isActive" className="mb-0">
-                      Trạng thái hoạt động
-                    </FieldLabel>
-                    <FieldDescription className="text-sm text-slate-500">
-                      Khi tắt, cửa hàng sẽ hiển thị là “Tạm ngưng”.
-                    </FieldDescription>
-                  </div>
-                  <button
-                    type="button"
-                    role="switch"
-                    aria-checked={formik.values.isActive}
-                    onClick={() =>
-                      formik.setFieldValue("isActive", !formik.values.isActive)
-                    }
-                    className={`relative inline-flex h-7 w-12 shrink-0 items-center rounded-full transition ${
-                      formik.values.isActive ? "bg-[#D56756]" : "bg-slate-300"
-                    }`}
-                  >
-                    <span
-                      className={`inline-block h-5 w-5 transform rounded-full bg-white shadow transition ${
-                        formik.values.isActive
-                          ? "translate-x-6"
-                          : "translate-x-1"
-                      }`}
-                    />
-                  </button>
-                </div>
-              </Field> */}
-
-              {submitError ? (
-                <FieldDescription className="text-center text-sm text-red-600 whitespace-pre-line">
-                  {submitError}
-                </FieldDescription>
-              ) : null}
-
-              {submitSuccess ? (
-                <FieldDescription className="text-center text-sm text-emerald-600">
-                  Cập nhật thông tin cửa hàng thành công!
-                </FieldDescription>
-              ) : null}
-
-              <div className="flex gap-4 pt-2">
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => formik.resetForm()}
-                  disabled={loading || !formik.dirty}
-                  className="flex-1 rounded-full"
+          <div className="rounded-[30px] border border-slate-200 bg-white p-8 shadow-sm">
+            {/* Ghi chú: thông tin chỉ xem, muốn đổi thì liên hệ PetHub */}
+            <div className="mb-6 flex items-start gap-3 rounded-2xl border border-[#f0d8d0] bg-[#fff6f2] px-4 py-3">
+              <Info className="mt-0.5 h-5 w-5 shrink-0 text-[#D56756]" />
+              <p className="text-sm leading-6 text-slate-700">
+                Thông tin cửa hàng chỉ dùng để{" "}
+                <span className="font-semibold text-slate-900">xem</span>. Nếu
+                muốn thay đổi, vui lòng liên hệ{" "}
+                <span className="font-semibold text-[#B24C40]">PetHub</span> qua
+                email{" "}
+                <a
+                  href="mailto:support@pethub.vn"
+                  className="font-semibold text-[#D56756] underline-offset-2 hover:underline"
                 >
-                  Hoàn tác
-                </Button>
-                <Button
-                  type="submit"
-                  disabled={loading || !formik.dirty}
-                  className="flex-1 rounded-full bg-[#D56756] px-5 py-3 text-base font-semibold text-white hover:bg-[#b34c47] disabled:cursor-not-allowed disabled:bg-[#d89992]"
-                >
-                  {loading ? "Đang lưu..." : "Lưu thay đổi"}
-                </Button>
-              </div>
-            </FieldGroup>
-          </form>
+                  support@pethub.vn
+                </a>{" "}
+                để được hỗ trợ.
+              </p>
+            </div>
+
+            <div className="space-y-5">
+              <ReadOnlyField label="Tên cửa hàng" value={store?.name} />
+              <ReadOnlyField label="Địa chỉ" value={store?.address} />
+              <ReadOnlyField label="Số điện thoại" value={store?.phone} />
+              {/* <ReadOnlyField label="Email" value={store?.email} /> */}
+            </div>
+
+            <div className="mt-6 flex items-center gap-2 border-t border-slate-100 pt-4 text-xs text-slate-400">
+              <Lock className="h-3.5 w-3.5" />
+              Thông tin được quản lý bởi PetHub, không thể chỉnh sửa trực tiếp.
+            </div>
+          </div>
         )}
       </div>
     </div>

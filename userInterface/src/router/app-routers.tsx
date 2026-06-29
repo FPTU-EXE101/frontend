@@ -15,6 +15,9 @@ const AdminManagersManage = lazy(
 const AdminPlatformPlansManage = lazy(
   () => import("@/pages/Admin/adminPlatformPlansManage"),
 );
+const AdminStoresManage = lazy(
+  () => import("@/pages/Admin/adminStoresManage"),
+);
 const Home = lazy(() => import("@/pages/home"));
 const ManagerLayout = lazy(() => import("@/pages/Manager/managerLayout"));
 const StaffLayout = lazy(() => import("@/pages/Staff/staffLayout"));
@@ -195,6 +198,7 @@ const AppRoutes = () => {
             <Route path="dashboard" element={<AdminDashboard />} />
             <Route path="managers/new" element={<AdminCreateManager />} />
             <Route path="managers" element={<AdminManagersManage />} />
+            <Route path="stores" element={<AdminStoresManage />} />
             <Route path="plans" element={<AdminPlatformPlansManage />} />
             <Route path="petcards" element={<ManagerPetCardManagement />} />
           </Route>
