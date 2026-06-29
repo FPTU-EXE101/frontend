@@ -37,7 +37,7 @@ const socialLinks = [
   },
   {
     name: "TikTok",
-    href: "https://www.tiktok.com/@pethub.vn",
+    href: "https://www.tiktok.com/@pethub.managertech",
     icon: TbBrandTiktok,
   },
 ];
